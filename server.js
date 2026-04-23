@@ -271,18 +271,46 @@ app.post('/api/alrim', async (req, res) => {
 
 // ── GET /api/alrim ────────────────────────────────────────────────────────────
 app.get('/api/alrim', async (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  const { data, error } = await supabase
-    .from('alrim_entries')
-    .select('id, teacher_name, class_name, date, topics, generated_text, edited_text, created_at')
-    .eq('date', today)
-    .order('created_at', { ascending: false });
+  const { all, limit = '20', offset = '0', search, from, to, teacher } = req.query;
+  const lim = Math.min(parseInt(limit) || 20, 100);
+  const off = parseInt(offset) || 0;
 
+  let query = supabase
+    .from('alrim_entries')
+    .select('id, teacher_name, class_name, date, topics, generated_text, edited_text, created_at', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(off, off + lim - 1);
+
+  if (!all) {
+    // 기본: 오늘 날짜만 (기존 동작 유지)
+    query = query.eq('date', new Date().toISOString().split('T')[0]);
+  } else {
+    if (from) query = query.gte('date', from);
+    if (to)   query = query.lte('date', to);
+  }
+  if (search)  query = query.ilike('generated_text', `%${search}%`);
+  if (teacher) query = query.ilike('teacher_name',   `%${teacher}%`);
+
+  const { data, error, count } = await query;
   if (error) {
     console.error('[/api/alrim GET] Supabase 오류:', error.code, error.message);
     return res.status(500).json({ error: '조회 중 오류가 발생했습니다.', detail: error.message });
   }
-  res.json({ data });
+  res.json({ data, total: count });
+});
+
+// ── DELETE /api/alrim/:id ─────────────────────────────────────────────────────
+app.delete('/api/alrim/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ error: '유효하지 않은 ID입니다.' });
+
+  const { error } = await supabase.from('alrim_entries').delete().eq('id', id);
+  if (error) {
+    console.error('[/api/alrim DELETE] Supabase 오류:', error.code, error.message);
+    return res.status(500).json({ error: '삭제 중 오류가 발생했습니다.', detail: error.message });
+  }
+  console.log('[/api/alrim DELETE] 삭제 완료 - id:', id);
+  res.json({ success: true });
 });
 
 // ── POST /api/usage ───────────────────────────────────────────────────────────

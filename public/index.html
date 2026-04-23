@@ -190,6 +190,36 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .history-preview { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .no-history { font-size:.78rem; color:var(--muted); text-align:center; padding:8px 0; }
 
+/* ── 히스토리 모달 ── */
+.h-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; overflow:hidden; }
+.h-modal.open { display:flex; align-items:flex-end; justify-content:center; }
+@media (min-width:480px) { .h-modal.open { align-items:center; } }
+.h-box { background:#fff; border-radius:var(--radius) var(--radius) 0 0; width:100%; max-width:680px; height:90vh; display:flex; flex-direction:column; }
+@media (min-width:480px) { .h-box { border-radius:var(--radius); height:88vh; } }
+.h-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 10px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.h-head h2 { font-size:.95rem; font-weight:800; }
+.h-head-close { background:none; border:none; font-size:1.1rem; cursor:pointer; color:#999; padding:2px 6px; border-radius:6px; }
+.h-head-close:hover { color:var(--text); background:var(--bg); }
+.h-toolbar { padding:10px 14px; display:flex; flex-direction:column; gap:7px; flex-shrink:0; border-bottom:1px solid var(--border); }
+.h-search { width:100%; padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:.83rem; outline:none; font-family:inherit; }
+.h-search:focus { border-color:var(--blue); }
+.h-tabs { display:flex; gap:5px; }
+.h-tab { padding:4px 11px; border:1.5px solid var(--border); border-radius:99px; font-size:.75rem; background:#fff; cursor:pointer; color:var(--muted); transition:all .15s; }
+.h-tab.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+.h-list { flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:8px; }
+.h-card { border:1.5px solid var(--border); border-radius:10px; padding:11px 13px; transition:border-color .15s; }
+.h-card:hover { border-color:var(--blue-d); }
+.h-card-meta { font-size:.7rem; color:var(--muted); margin-bottom:3px; display:flex; gap:6px; align-items:center; }
+.h-card-date { font-weight:700; color:var(--blue-d); }
+.h-card-preview { font-size:.82rem; line-height:1.55; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:var(--text); margin-bottom:8px; white-space:pre-wrap; }
+.h-card-actions { display:flex; gap:5px; flex-wrap:wrap; }
+.h-card-actions button { padding:4px 9px; border:1.5px solid var(--border); border-radius:7px; background:#fff; font-size:.72rem; cursor:pointer; color:var(--text); transition:all .15s; }
+.h-card-actions button:hover { border-color:var(--blue); color:var(--blue); }
+.h-card-del:hover { border-color:var(--red) !important; color:var(--red) !important; }
+.h-empty { text-align:center; padding:30px 16px; color:var(--muted); font-size:.82rem; line-height:1.8; }
+.h-load-more { width:calc(100% - 28px); margin:0 14px 10px; padding:9px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:.8rem; cursor:pointer; color:var(--blue); font-weight:700; flex-shrink:0; }
+.h-load-more:hover { background:var(--blue-l); }
+
 /* ── quote ── */
 .quote-card { text-align:center; padding:14px; }
 .quote-text   { font-size:.83rem; color:var(--text); line-height:1.6; font-style:italic; }
@@ -210,6 +240,11 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .modal-box h3 { font-size:.98rem; font-weight:700; margin-bottom:11px; }
 #modalText { white-space:pre-wrap; font-size:.86rem; line-height:1.75; }
 .modal-close { margin-top:14px; width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:.9rem; cursor:pointer; }
+
+/* ── app-header 히스토리 버튼 ── */
+.app-header { position:relative; }
+.app-header .h-btn { position:absolute; top:14px; right:0; padding:6px 12px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:.78rem; cursor:pointer; font-weight:700; color:var(--text); transition:all .15s; }
+.app-header .h-btn:hover { border-color:var(--blue); color:var(--blue); }
 
 /* ── print card (hidden, for html2canvas) ── */
 #printCard {
@@ -298,6 +333,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
   <div class="app-header">
     <h1>📋 석암 알림봇</h1>
     <p>AI가 알림장을 완성해 드려요</p>
+    <button class="h-btn" id="historyModalBtn">📚 히스토리</button>
   </div>
 
   <!-- 히어로 입력 -->
@@ -522,7 +558,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
       <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
       <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
       <div class="btn-divider"></div>
-      <button id="saveBtn"  class="btn-primary" onclick="saveAlrim()">💾 저장</button>
+      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
       <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
       <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
       <div class="translate-wrap">
@@ -557,6 +593,27 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
     </div>
   </div>
 
+</div>
+
+<!-- 히스토리 모달 -->
+<div id="historyModal" class="h-modal">
+  <div class="h-box">
+    <div class="h-head">
+      <h2>📚 저장된 알림장</h2>
+      <button class="h-head-close" id="historyModalClose">✕</button>
+    </div>
+    <div class="h-toolbar">
+      <input class="h-search" id="hSearch" placeholder="🔍 키워드로 검색…">
+      <div class="h-tabs">
+        <button class="h-tab active" data-period="all">전체</button>
+        <button class="h-tab" data-period="today">오늘</button>
+        <button class="h-tab" data-period="week">이번 주</button>
+        <button class="h-tab" data-period="month">이번 달</button>
+      </div>
+    </div>
+    <div class="h-list" id="hList"></div>
+    <button class="h-load-more" id="hLoadMore" style="display:none;">더 보기</button>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -1249,7 +1306,7 @@ async function saveAlrim() {
     });
     const json = await res.json();
     if (!res.ok || json.error) throw new Error(json.error);
-    showToast('저장됐어요! 💾');
+    showToast('✅ 히스토리에 저장됨');
     loadHistory();
   } catch (err) {
     showToast('저장 오류: ' + err.message);
@@ -1422,6 +1479,174 @@ function renderTransCard(lang, info, translated) {
 function removeTransCard(lang) {
   document.querySelector(`.trans-card[data-lang="${lang}"]`)?.remove();
 }
+
+/* ── 히스토리 모달 ── */
+const H_PAGE = 20;
+let hState = { offset: 0, total: 0, period: 'all', search: '', loading: false };
+
+function openHistoryModal() {
+  document.getElementById('historyModal').classList.add('open');
+  hState = { offset: 0, total: 0, period: 'all', search: '', loading: false };
+  document.getElementById('hSearch').value = '';
+  document.querySelectorAll('.h-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'all'));
+  loadHistoryModal(true);
+}
+
+function closeHistoryModal() {
+  document.getElementById('historyModal').classList.remove('open');
+}
+
+function hPeriodDates(period) {
+  const today = new Date();
+  const fmt = d => d.toISOString().split('T')[0];
+  const todayStr = fmt(today);
+  if (period === 'today') return { from: todayStr, to: todayStr };
+  if (period === 'week') {
+    const mon = new Date(today);
+    mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    return { from: fmt(mon), to: fmt(sun) };
+  }
+  if (period === 'month') {
+    const first = new Date(today.getFullYear(), today.getMonth(), 1);
+    const last  = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    return { from: fmt(first), to: fmt(last) };
+  }
+  return {};
+}
+
+async function loadHistoryModal(reset = false) {
+  if (hState.loading) return;
+  if (reset) { hState.offset = 0; hState.total = 0; }
+  hState.loading = true;
+
+  const params = new URLSearchParams({ all: '1', limit: String(H_PAGE), offset: String(hState.offset) });
+  if (hState.search) params.set('search', hState.search);
+  const dates = hPeriodDates(hState.period);
+  if (dates.from) params.set('from', dates.from);
+  if (dates.to)   params.set('to',   dates.to);
+
+  const list = document.getElementById('hList');
+  if (reset) list.innerHTML = '<div class="h-empty">불러오는 중…</div>';
+
+  try {
+    const res  = await fetch('/api/alrim?' + params);
+    const json = await res.json();
+    hState.total = json.total || 0;
+
+    if (reset) list.innerHTML = '';
+    if (!json.data || json.data.length === 0) {
+      if (reset) list.innerHTML = '<div class="h-empty">아직 저장된 알림장이 없어요.<br>💾 히스토리에 저장 버튼으로<br>첫 알림장을 저장해보세요!</div>';
+      document.getElementById('hLoadMore').style.display = 'none';
+      return;
+    }
+    json.data.forEach(item => list.appendChild(buildHistoryCard(item)));
+    hState.offset += json.data.length;
+    document.getElementById('hLoadMore').style.display = hState.offset < hState.total ? '' : 'none';
+  } catch (_) {
+    if (reset) list.innerHTML = '<div class="h-empty">불러오기 실패. 다시 시도해주세요.</div>';
+  } finally {
+    hState.loading = false;
+  }
+}
+
+function buildHistoryCard(item) {
+  const card = document.createElement('div');
+  card.className  = 'h-card';
+  card.dataset.id = item.id;
+
+  const text    = item.edited_text || item.generated_text || '';
+  const dateStr = item.date || (item.created_at ? item.created_at.split('T')[0] : '');
+  const timeStr = item.created_at ? item.created_at.slice(11, 16) : '';
+  const who     = [item.teacher_name, item.class_name].filter(Boolean).join(' · ');
+
+  const meta = document.createElement('div');
+  meta.className = 'h-card-meta';
+  meta.innerHTML = `<span class="h-card-date">${dateStr}</span>${who ? '<span>·</span><span>' + who + '</span>' : ''}<span style="margin-left:auto">${timeStr}</span>`;
+
+  const preview = document.createElement('div');
+  preview.className   = 'h-card-preview';
+  preview.textContent = text;
+
+  const actions = document.createElement('div');
+  actions.className = 'h-card-actions';
+
+  const viewBtn = document.createElement('button');
+  viewBtn.textContent = '👁️ 보기';
+  viewBtn.addEventListener('click', () => {
+    document.getElementById('modalText').textContent = text;
+    document.getElementById('modal').classList.add('open');
+  });
+
+  const copyBtn = document.createElement('button');
+  copyBtn.textContent = '📋 복사';
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('복사됐어요! 📋'))
+      .catch(() => showToast('복사 실패'));
+  });
+
+  const reuseBtn = document.createElement('button');
+  reuseBtn.textContent = '🔄 재사용';
+  reuseBtn.addEventListener('click', () => {
+    document.getElementById('resultText').value = text;
+    document.getElementById('resultCard').style.display = '';
+    closeHistoryModal();
+    document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
+    showToast('불러왔어요! 수정해서 사용하세요 ✏️');
+  });
+
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '🗑️ 삭제';
+  delBtn.className   = 'h-card-del';
+  delBtn.addEventListener('click', () => deleteHistoryItem(item.id, card));
+
+  actions.append(viewBtn, copyBtn, reuseBtn, delBtn);
+  card.append(meta, preview, actions);
+  return card;
+}
+
+async function deleteHistoryItem(id, cardEl) {
+  if (!confirm('이 알림장을 삭제할까요?')) return;
+  try {
+    const res  = await fetch('/api/alrim/' + id, { method: 'DELETE' });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error);
+    cardEl.remove();
+    hState.total  = Math.max(0, hState.total - 1);
+    hState.offset = Math.max(0, hState.offset - 1);
+    showToast('삭제됐어요 🗑️');
+    const list = document.getElementById('hList');
+    if (list.children.length === 0) {
+      list.innerHTML = '<div class="h-empty">아직 저장된 알림장이 없어요.<br>💾 히스토리에 저장 버튼으로<br>첫 알림장을 저장해보세요!</div>';
+    }
+    loadHistory();
+  } catch (err) {
+    showToast('삭제 실패: ' + err.message);
+  }
+}
+
+document.getElementById('historyModalBtn').addEventListener('click', openHistoryModal);
+document.getElementById('historyModalClose').addEventListener('click', closeHistoryModal);
+document.getElementById('historyModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('historyModal')) closeHistoryModal();
+});
+document.getElementById('hLoadMore').addEventListener('click', () => loadHistoryModal(false));
+
+let hSearchTimer;
+document.getElementById('hSearch').addEventListener('input', e => {
+  clearTimeout(hSearchTimer);
+  hState.search = e.target.value.trim();
+  hSearchTimer  = setTimeout(() => loadHistoryModal(true), 400);
+});
+
+document.querySelectorAll('.h-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    hState.period = tab.dataset.period;
+    document.querySelectorAll('.h-tab').forEach(t => t.classList.toggle('active', t === tab));
+    loadHistoryModal(true);
+  });
+});
 
 /* ── 토스트 ── */
 let toastTimer;
