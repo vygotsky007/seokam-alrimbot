@@ -6,17 +6,11 @@
   <title>석암 알림봇 ✉️</title>
   <style>
     :root {
-      --primary: #2563EB;
-      --mint: #14B8A6;
-      --bg: #F8FAFC;
-      --card: #FFFFFF;
-      --border: #E2E8F0;
-      --text: #1E293B;
-      --text-sub: #64748B;
-      --selected-bg: #EFF6FF;
-      --selected-border: #2563EB;
-      --radius: 12px;
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --primary: #2563EB; --mint: #14B8A6;
+      --bg: #F8FAFC; --card: #FFFFFF; --border: #E2E8F0;
+      --text: #1E293B; --text-sub: #64748B;
+      --selected-bg: #EFF6FF; --selected-border: #2563EB;
+      --radius: 12px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -32,14 +26,28 @@
       min-height: 100vh; padding: 20px 16px 60px;
       max-width: 640px; margin: 0 auto;
     }
-    header { text-align: center; margin-bottom: 28px; }
+    header { text-align: center; margin-bottom: 20px; }
     header h1 { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
     header p  { font-size: 0.9rem; color: var(--text-sub); margin-top: 4px; }
 
+    /* ── 모드 탭 ── */
+    .mode-tabs {
+      display: flex; gap: 8px; margin-bottom: 20px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 6px; box-shadow: var(--shadow);
+    }
+    .mode-tab {
+      flex: 1; padding: 10px 8px; border: none; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; background: transparent; color: var(--text-sub);
+    }
+    .mode-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+
+    /* ── 카드 ── */
     .card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 20px;
-      margin-bottom: 16px; box-shadow: var(--shadow);
+      margin-bottom: 14px; box-shadow: var(--shadow);
     }
     .card-title {
       font-size: 0.82rem; font-weight: 700; color: var(--text-sub);
@@ -52,7 +60,7 @@
       font-size: 0.7rem; font-weight: 700; margin-right: 6px;
     }
 
-    /* ── 공통 토글 ── */
+    /* ── 공통 토글 버튼 ── */
     .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .toggle-btn {
       padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 99px;
@@ -63,7 +71,7 @@
     .toggle-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
     .toggle-btn.icon-btn { padding: 6px 10px; font-size: 1.1rem; }
 
-    /* ── 1. 담임 정보 ── */
+    /* ── 담임 정보 ── */
     .info-row { display: flex; gap: 10px; }
     .info-row input {
       flex: 1; padding: 10px 14px; border: 1px solid var(--border);
@@ -71,9 +79,9 @@
     }
     .info-row input:focus { outline: none; border-color: var(--primary); }
 
-    /* ── 2. 학년 선택 ── */
-    .grade-groups { display: flex; flex-direction: column; gap: 8px; }
+    /* ── 학년 선택 ── */
     .grade-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .grade-divider { width: 1px; background: var(--border); margin: 0 2px; }
     .grade-btn {
       padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px;
       background: var(--card); color: var(--text); font-size: 0.85rem;
@@ -81,19 +89,16 @@
     }
     .grade-btn:hover  { border-color: var(--primary); }
     .grade-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
-    .grade-divider { width: 1px; background: var(--border); margin: 0 2px; }
 
-    /* ── 3. 스타일 템플릿 ── */
-    .template-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    }
+    /* ── 스타일 템플릿 ── */
+    .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     @media (max-width: 420px) { .template-grid { grid-template-columns: 1fr; } }
     .template-card {
       border: 2px solid var(--border); border-radius: 10px; padding: 12px 10px;
       cursor: pointer; transition: all 0.15s; background: var(--card);
       position: relative; display: flex; flex-direction: column; gap: 4px;
     }
-    .template-card:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(37,99,235,0.12); }
+    .template-card:hover    { border-color: var(--primary); box-shadow: 0 2px 12px rgba(37,99,235,0.12); }
     .template-card.selected { border-color: var(--primary); background: var(--selected-bg); }
     .template-card.selected .t-check { display: flex; }
     .t-check {
@@ -102,21 +107,21 @@
       background: var(--primary); color: white;
       font-size: 0.65rem; font-weight: 700; align-items: center; justify-content: center;
     }
-    .t-icon  { font-size: 1.3rem; }
-    .t-name  { font-size: 0.8rem; font-weight: 700; color: var(--text); }
-    .t-prev  { font-size: 0.7rem; color: var(--text-sub); line-height: 1.5; white-space: pre-line; flex: 1; }
+    .t-icon { font-size: 1.3rem; }
+    .t-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .t-prev { font-size: 0.7rem; color: var(--text-sub); line-height: 1.5; white-space: pre-line; flex: 1; }
     .t-prevbtn {
       font-size: 0.68rem; color: var(--primary); background: none; border: none;
-      cursor: pointer; padding: 0; text-align: left; margin-top: 4px;
+      cursor: pointer; padding: 0; margin-top: 4px;
     }
     .t-prevbtn:hover { text-decoration: underline; }
 
-    /* ── 4. 인사말 설정 ── */
+    /* ── 인사말 설정 ── */
     .setting-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .setting-row:last-child { margin-bottom: 0; }
     .setting-label { font-size: 0.8rem; color: var(--text-sub); min-width: 36px; }
 
-    /* ── 5. 주제 선택 ── */
+    /* ── 주제 선택 ── */
     .topics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     @media (max-width: 480px) { .topics-grid { grid-template-columns: repeat(2, 1fr); } }
     .topic-btn {
@@ -126,7 +131,7 @@
       cursor: pointer; transition: all 0.15s; user-select: none;
     }
     .topic-btn .icon { font-size: 1.4rem; }
-    .topic-btn:hover   { border-color: var(--primary); background: var(--selected-bg); }
+    .topic-btn:hover    { border-color: var(--primary); background: var(--selected-bg); }
     .topic-btn.selected { border-color: var(--selected-border); background: var(--selected-bg); color: var(--primary); }
 
     /* ── 키워드 블록 ── */
@@ -137,8 +142,8 @@
     }
     .keyword-block:last-child { margin-bottom: 0; }
     .block-header { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-    .quick-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; margin-bottom: 6px; display: block; }
-    .pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .quick-label  { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; margin-bottom: 6px; display: block; }
+    .pill-group   { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
     .pill {
       padding: 4px 12px; border: 1.5px solid var(--border); border-radius: 99px;
       background: var(--card); color: var(--text); font-size: 0.78rem;
@@ -151,6 +156,51 @@
       border-radius: 8px; background: var(--card); color: var(--text); font-size: 0.88rem;
     }
     .extra-input-row input:focus { outline: none; border-color: var(--primary); }
+
+    /* ── 자유 모드 ── */
+    .free-intro {
+      background: linear-gradient(135deg, #EFF6FF, #F0FDF4);
+      border: 1px solid #BFDBFE; border-radius: 10px;
+      padding: 14px; margin-bottom: 16px; font-size: 0.88rem; line-height: 1.6;
+    }
+    @media (prefers-color-scheme: dark) {
+      .free-intro { background: linear-gradient(135deg, #1E3A5F, #134e4a); border-color: #334155; }
+    }
+    .free-intro strong { color: var(--primary); }
+    .free-examples-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; margin-bottom: 8px; display: block; }
+    .free-examples { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .free-ex-btn {
+      padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 99px;
+      background: var(--card); color: var(--text); font-size: 0.8rem;
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .free-ex-btn:hover { border-color: var(--mint); background: #F0FDF4; color: var(--mint); }
+    @media (prefers-color-scheme: dark) {
+      .free-ex-btn:hover { background: #134e4a; }
+    }
+    #free-input {
+      width: 100%; min-height: 140px; padding: 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--bg); color: var(--text);
+      font-size: 0.95rem; line-height: 1.7; resize: vertical; font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    #free-input:focus { outline: none; border-color: var(--primary); }
+    .free-input-hint { font-size: 0.73rem; color: var(--text-sub); margin-top: 6px; margin-bottom: 14px; }
+    .free-compact-settings { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .free-compact-row { display: flex; align-items: center; gap: 10px; }
+
+    /* 최근 기록 */
+    .free-history-wrap { margin-top: 14px; }
+    .free-history-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; margin-bottom: 6px; display: block; }
+    .free-history-list  { display: flex; flex-wrap: wrap; gap: 6px; }
+    .free-hist-pill {
+      padding: 4px 12px; border: 1.5px solid var(--border); border-radius: 99px;
+      background: var(--card); color: var(--text-sub); font-size: 0.75rem;
+      cursor: pointer; transition: all 0.15s; max-width: 200px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .free-hist-pill:hover { border-color: var(--primary); color: var(--primary); }
 
     /* ── 생성 버튼 ── */
     .btn-generate {
@@ -172,12 +222,24 @@
       font-size: 0.95rem; line-height: 1.7; resize: vertical; font-family: inherit;
     }
     #result-text:focus { outline: none; border-color: var(--mint); }
-    .btn-row { display: flex; gap: 8px; margin-top: 12px; }
-    .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
-    .btn:hover     { opacity: 0.85; }
-    .btn-copy { background: var(--primary); color: white; }
-    .btn-edit { background: var(--border); color: var(--text); }
-    .btn-save { background: var(--mint); color: white; }
+    .btn-row  { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-row2 { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+    .btn {
+      flex: 1; padding: 10px; border: none; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn:hover    { opacity: 0.85; }
+    .btn-copy  { background: var(--primary); color: white; }
+    .btn-edit  { background: var(--border); color: var(--text); }
+    .btn-save  { background: var(--mint); color: white; }
+    .btn-regen { background: #7C3AED; color: white; }
+    .btn-long  { background: #059669; color: white; }
+    .btn-short { background: #D97706; color: white; }
+    .tone-select {
+      flex: 1; padding: 10px 8px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--card); color: var(--text); font-size: 0.88rem; cursor: pointer;
+    }
+    .tone-select:focus { outline: none; border-color: var(--primary); }
 
     /* ── 저장 목록 ── */
     #history-section { display: none; }
@@ -192,18 +254,10 @@
       align-items: center; justify-content: center; padding: 20px;
     }
     .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--card); border-radius: var(--radius);
-      padding: 24px; width: 100%; max-width: 380px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-    }
+    .modal-box { background: var(--card); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 380px; box-shadow: 0 8px 40px rgba(0,0,0,0.25); }
     .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
     .modal-body  { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: var(--text); }
-    .modal-close {
-      margin-top: 18px; width: 100%; padding: 11px;
-      background: var(--primary); color: white; border: none;
-      border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
-    }
+    .modal-close { margin-top: 18px; width: 100%; padding: 11px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
 
     /* ── 토스트 ── */
     #toast {
@@ -224,7 +278,13 @@
   <p>AI가 알림장을 대신 써드려요</p>
 </header>
 
-<!-- 1. 담임 정보 -->
+<!-- 모드 탭 -->
+<div class="mode-tabs">
+  <button class="mode-tab active" data-mode="topic">🏷️ 주제 선택 모드</button>
+  <button class="mode-tab" data-mode="free">✨ AI 자유 모드</button>
+</div>
+
+<!-- SHARED: 담임 정보 -->
 <div class="card">
   <div class="card-title"><span class="section-num">1</span>담임 정보 (선택)</div>
   <div class="info-row">
@@ -233,91 +293,146 @@
   </div>
 </div>
 
-<!-- 2. 학년 선택 -->
+<!-- SHARED: 학년 선택 -->
 <div class="card">
   <div class="card-title"><span class="section-num">2</span>학년 선택</div>
-  <div class="grade-groups">
-    <div class="grade-row" id="grade-group">
-      <button class="grade-btn" data-value="1학년">1학년</button>
-      <button class="grade-btn" data-value="2학년">2학년</button>
-      <button class="grade-btn" data-value="3학년">3학년</button>
-      <button class="grade-btn" data-value="4학년">4학년</button>
-      <button class="grade-btn" data-value="5학년">5학년</button>
-      <button class="grade-btn" data-value="6학년">6학년</button>
-      <div class="grade-divider"></div>
-      <button class="grade-btn" data-value="저학년">저학년</button>
-      <button class="grade-btn" data-value="중학년">중학년</button>
-      <button class="grade-btn" data-value="고학년">고학년</button>
+  <div class="grade-row" id="grade-group">
+    <button class="grade-btn" data-value="1학년">1학년</button>
+    <button class="grade-btn" data-value="2학년">2학년</button>
+    <button class="grade-btn" data-value="3학년">3학년</button>
+    <button class="grade-btn" data-value="4학년">4학년</button>
+    <button class="grade-btn" data-value="5학년">5학년</button>
+    <button class="grade-btn" data-value="6학년">6학년</button>
+    <div class="grade-divider"></div>
+    <button class="grade-btn" data-value="저학년">저학년</button>
+    <button class="grade-btn" data-value="중학년">중학년</button>
+    <button class="grade-btn" data-value="고학년">고학년</button>
+  </div>
+</div>
+
+<!-- ══════════ 주제 선택 모드 패널 ══════════ -->
+<div id="panel-topic">
+
+  <!-- 스타일 템플릿 -->
+  <div class="card">
+    <div class="card-title"><span class="section-num">3</span>스타일 템플릿</div>
+    <div class="template-grid" id="template-grid"></div>
+  </div>
+
+  <!-- 인사말 설정 -->
+  <div class="card">
+    <div class="card-title"><span class="section-num">4</span>인사말 설정</div>
+    <div class="setting-row">
+      <span class="setting-label">길이</span>
+      <div class="toggle-group" id="length-group">
+        <button class="toggle-btn" data-value="짧게">짧게</button>
+        <button class="toggle-btn active" data-value="중간">중간</button>
+        <button class="toggle-btn" data-value="길게">길게</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">위치</span>
+      <div class="toggle-group" id="position-group">
+        <button class="toggle-btn active" data-value="맨 위">맨 위</button>
+        <button class="toggle-btn" data-value="맨 아래">맨 아래</button>
+        <button class="toggle-btn" data-value="둘 다">둘 다</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">아이콘</span>
+      <div class="toggle-group" id="icon-group">
+        <button class="toggle-btn icon-btn active" data-value="😊">😊</button>
+        <button class="toggle-btn icon-btn" data-value="🌟">🌟</button>
+        <button class="toggle-btn icon-btn" data-value="📚">📚</button>
+        <button class="toggle-btn icon-btn" data-value="✏️">✏️</button>
+        <button class="toggle-btn" data-value="없음">없음</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- 3. 스타일 템플릿 -->
-<div class="card">
-  <div class="card-title"><span class="section-num">3</span>스타일 템플릿</div>
-  <div class="template-grid" id="template-grid"></div>
-</div>
-
-<!-- 4. 인사말 설정 -->
-<div class="card">
-  <div class="card-title"><span class="section-num">4</span>인사말 설정</div>
-  <div class="setting-row">
-    <span class="setting-label">길이</span>
-    <div class="toggle-group" id="length-group">
-      <button class="toggle-btn" data-value="짧게">짧게</button>
-      <button class="toggle-btn active" data-value="중간">중간</button>
-      <button class="toggle-btn" data-value="길게">길게</button>
+  <!-- 주제 선택 -->
+  <div class="card">
+    <div class="card-title"><span class="section-num">5</span>주제 선택 (여러 개 가능)</div>
+    <div class="topics-grid" id="topics-grid">
+      <button class="topic-btn" data-subject="안전"><span class="icon">🛡️</span>안전</button>
+      <button class="topic-btn" data-subject="학습"><span class="icon">📚</span>학습</button>
+      <button class="topic-btn" data-subject="준비물"><span class="icon">🎒</span>준비물</button>
+      <button class="topic-btn" data-subject="체육"><span class="icon">🏃</span>체육</button>
+      <button class="topic-btn" data-subject="급식"><span class="icon">🍱</span>급식</button>
+      <button class="topic-btn" data-subject="행사"><span class="icon">📅</span>행사</button>
+      <button class="topic-btn" data-subject="생활"><span class="icon">💬</span>생활</button>
+      <button class="topic-btn" data-subject="가정"><span class="icon">🏠</span>가정</button>
+      <button class="topic-btn" data-subject="칭찬"><span class="icon">🎉</span>칭찬</button>
+      <button class="topic-btn" data-subject="공지"><span class="icon">📢</span>공지</button>
     </div>
   </div>
-  <div class="setting-row">
-    <span class="setting-label">위치</span>
-    <div class="toggle-group" id="position-group">
-      <button class="toggle-btn active" data-value="맨 위">맨 위</button>
-      <button class="toggle-btn" data-value="맨 아래">맨 아래</button>
-      <button class="toggle-btn" data-value="둘 다">둘 다</button>
+
+  <!-- 키워드 입력 -->
+  <div class="card" id="keywords-section">
+    <div class="card-title">키워드 입력</div>
+    <div id="keyword-list"></div>
+  </div>
+
+  <button class="btn-generate" id="btn-generate-topic" onclick="generateAlrim()">
+    ✨ AI로 알림장 생성
+  </button>
+</div>
+
+<!-- ══════════ AI 자유 모드 패널 ══════════ -->
+<div id="panel-free" style="display:none">
+  <div class="card">
+    <div class="card-title"><span class="section-num">3</span>✨ AI 자유 모드</div>
+
+    <div class="free-intro">
+      <strong>키워드만 툭 던져도 AI가 알아서 예쁘게 써드려요.</strong><br>
+      "숙제 리코더", "단톡방 금지", "내일 체육복" — 뭐든 OK!
+    </div>
+
+    <span class="free-examples-label">💡 이렇게 입력해보세요</span>
+    <div class="free-examples" id="free-examples"></div>
+
+    <textarea id="free-input" placeholder="자유롭게 입력하세요.
+
+예) 숙제 가져오기 리코더
+예) 단톡방 금지 친구 사이좋게
+예) 내일 현장학습 준비물 도시락 물통 모자"></textarea>
+    <p class="free-input-hint">짧게 써도 됩니다. AI가 맥락을 파악해 완성된 알림장으로 써드려요.</p>
+
+    <!-- 컴팩트 설정 -->
+    <div class="free-compact-settings">
+      <div class="free-compact-row">
+        <span class="setting-label">스타일</span>
+        <div class="toggle-group" id="free-style-group">
+          <button class="toggle-btn" data-value="기본">📝 기본</button>
+          <button class="toggle-btn" data-value="목록형">📋 목록</button>
+          <button class="toggle-btn" data-value="친근한">💬 친근</button>
+          <button class="toggle-btn" data-value="공식적">📄 공식</button>
+          <button class="toggle-btn" data-value="감성적">🎨 감성</button>
+        </div>
+      </div>
+      <div class="free-compact-row">
+        <span class="setting-label">길이</span>
+        <div class="toggle-group" id="free-length-group">
+          <button class="toggle-btn" data-value="짧게">짧게</button>
+          <button class="toggle-btn" data-value="중간">중간</button>
+          <button class="toggle-btn" data-value="길게">길게</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최근 입력 기록 -->
+    <div class="free-history-wrap" id="free-history-wrap" style="display:none">
+      <span class="free-history-label">🕐 최근 사용한 입력</span>
+      <div class="free-history-list" id="free-history-list"></div>
     </div>
   </div>
-  <div class="setting-row">
-    <span class="setting-label">아이콘</span>
-    <div class="toggle-group" id="icon-group">
-      <button class="toggle-btn icon-btn active" data-value="😊">😊</button>
-      <button class="toggle-btn icon-btn" data-value="🌟">🌟</button>
-      <button class="toggle-btn icon-btn" data-value="📚">📚</button>
-      <button class="toggle-btn icon-btn" data-value="✏️">✏️</button>
-      <button class="toggle-btn" data-value="없음">없음</button>
-    </div>
-  </div>
+
+  <button class="btn-generate" id="btn-generate-free" onclick="generateFreeAlrim()">
+    ✨ AI로 알림장 생성
+  </button>
 </div>
 
-<!-- 5. 주제 선택 -->
-<div class="card">
-  <div class="card-title"><span class="section-num">5</span>주제 선택 (여러 개 가능)</div>
-  <div class="topics-grid" id="topics-grid">
-    <button class="topic-btn" data-subject="안전"><span class="icon">🛡️</span>안전</button>
-    <button class="topic-btn" data-subject="학습"><span class="icon">📚</span>학습</button>
-    <button class="topic-btn" data-subject="준비물"><span class="icon">🎒</span>준비물</button>
-    <button class="topic-btn" data-subject="체육"><span class="icon">🏃</span>체육</button>
-    <button class="topic-btn" data-subject="급식"><span class="icon">🍱</span>급식</button>
-    <button class="topic-btn" data-subject="행사"><span class="icon">📅</span>행사</button>
-    <button class="topic-btn" data-subject="생활"><span class="icon">💬</span>생활</button>
-    <button class="topic-btn" data-subject="가정"><span class="icon">🏠</span>가정</button>
-    <button class="topic-btn" data-subject="칭찬"><span class="icon">🎉</span>칭찬</button>
-    <button class="topic-btn" data-subject="공지"><span class="icon">📢</span>공지</button>
-  </div>
-</div>
-
-<!-- 키워드 입력 -->
-<div class="card" id="keywords-section">
-  <div class="card-title">키워드 입력</div>
-  <div id="keyword-list"></div>
-</div>
-
-<!-- 생성 버튼 -->
-<button class="btn-generate" id="btn-generate" onclick="generateAlrim()">
-  ✨ AI로 알림장 생성
-</button>
-
-<!-- 결과 -->
+<!-- ══════════ 결과 (공통) ══════════ -->
 <div class="card" id="result-section">
   <div class="card-title">생성된 알림장</div>
   <textarea id="result-text" readonly></textarea>
@@ -325,6 +440,20 @@
     <button class="btn btn-copy" onclick="copyText()">📋 복사</button>
     <button class="btn btn-edit" onclick="toggleEdit()">✏️ 수정</button>
     <button class="btn btn-save" onclick="saveAlrim()">💾 저장</button>
+  </div>
+  <div class="btn-row2">
+    <button class="btn btn-regen" onclick="regenAlrim()">🔄 다시 생성</button>
+    <button class="btn btn-long"  onclick="makeLonger()">✨ 더 길게</button>
+    <button class="btn btn-short" onclick="makeShorter()">📝 더 짧게</button>
+    <select class="tone-select" id="tone-select" onchange="changeTone(this.value)">
+      <option value="">🎨 톤 변경</option>
+      <option value="기본">📝 기본</option>
+      <option value="목록형">📋 목록형</option>
+      <option value="핵심만">🎯 핵심만</option>
+      <option value="친근한">💬 친근한</option>
+      <option value="공식적">📄 공식적</option>
+      <option value="감성적">🎨 감성적</option>
+    </select>
   </div>
 </div>
 
@@ -346,7 +475,9 @@
 <div id="toast"></div>
 
 <script>
-  // ── 데이터 ────────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  데이터
+  // ══════════════════════════════════════════
   const TOPICS = [
     { subject: '안전',  icon: '🛡️' }, { subject: '학습',  icon: '📚' },
     { subject: '준비물', icon: '🎒' }, { subject: '체육',  icon: '🏃' },
@@ -380,40 +511,107 @@
       sample:  '안녕하세요\n\n■ 학습: 국어 받아쓰기, 수학 47쪽\n■ 준비물: 체육복\n\n감사합니다.' },
     { id: '친근한', icon: '💬', name: '친근한 (대화체)',
       preview: '오늘도 열심히 공부한 우리 아이들 😊',
-      sample:  '안녕하세요 학부모님! 😊\n\n오늘도 우리 아이들이 정말 열심히 공부했어요 🌟 국어 받아쓰기도 잘하고, 수학도 척척! 👏\n내일은 체육복 꼭 챙겨주세요 🏃\n\n오늘도 감사합니다! 💕' },
+      sample:  '안녕하세요 학부모님! 😊\n\n오늘도 우리 아이들이 정말 열심히 공부했어요 🌟\n내일은 체육복 꼭 챙겨주세요 🏃\n\n오늘도 감사합니다! 💕' },
     { id: '공식적', icon: '📄', name: '공식적 (정중)',
       preview: '학부모님께 알려드립니다.',
-      sample:  '학부모님께\n\n안녕하십니까. 오늘 있었던 학습 내용과 준비물을 안내드립니다.\n\n▪ 학습: 국어 받아쓰기 복습, 수학 문제집 47쪽\n▪ 준비물: 체육복\n\n항상 관심과 협조에 감사드립니다.\n담임 드림' },
+      sample:  '학부모님께\n\n안녕하십니까. 학습 내용과 준비물을 안내드립니다.\n\n▪ 학습: 국어 받아쓰기 복습, 수학 문제집 47쪽\n▪ 준비물: 체육복\n\n항상 감사드립니다.\n담임 드림' },
     { id: '감성적', icon: '🎨', name: '감성적 (따뜻한)',
       preview: '오늘 우리 반 이야기를 전해드려요...',
-      sample:  '안녕하세요 😊\n\n오늘 우리 반 이야기를 전해드려요.\n\n국어 시간에는 아이들이 또박또박 받아쓰기를 참 잘했어요. 수학 문제집 47쪽도 함께 풀어봤는데, 집에서 한 번 더 복습하면 더 좋을 것 같아요.\n\n내일은 체육 수업이 있으니 체육복 부탁드려요.\n\n오늘도 사랑스러운 아이들과 함께해서 행복했습니다 💙' },
+      sample:  '안녕하세요 😊\n\n오늘 우리 반 이야기를 전해드려요.\n국어 받아쓰기를 또박또박 잘 했어요.\n내일은 체육 수업이 있으니 체육복 부탁드려요.\n\n오늘도 함께해서 행복했습니다 💙' },
   ];
 
-  // ── 상태 ──────────────────────────────────────────────
+  const FREE_EXAMPLES = [
+    { label: '🎒 숙제 + 준비물', text: '숙제 확인, 내일 준비물 - 리코더, 미술도구' },
+    { label: '🛡️ 안전 당부',    text: '안전 - 횡단보도 양쪽 확인, 낯선사람, 하교길 조심' },
+    { label: '🏠 가정 협조 요청', text: '가정 - 독서 습관, 스마트폰 시간 제한, 일찍 자기' },
+    { label: '📅 공지사항',      text: '공지 - 학부모 상담 일정, 방과후 신청 마감' },
+    { label: '🎉 칭찬 + 격려',   text: '칭찬 - 오늘 발표 잘함, 청소 열심히 함, 모두 수고해요' },
+    { label: '📋 서류 제출',     text: '서류 - 가정통신문 동의서 제출 마감일 내일까지' },
+  ];
+
+  // ══════════════════════════════════════════
+  //  상태
+  // ══════════════════════════════════════════
+  const ls = k => localStorage.getItem(k);
+  const lsSet = (k, v) => localStorage.setItem(k, v);
+
+  let currentMode      = ls('alrimbot_mode')             || 'topic';
+  let selectedGrade    = ls('alrimbot_grade')            || '';
+  let selectedTemplate = ls('alrimbot_template')         || '기본';
+  let greetingLength   = ls('alrimbot_greeting_length')  || '중간';
+  let greetingPosition = ls('alrimbot_greeting_position')|| '맨 위';
+  let greetingIcon     = ls('alrimbot_greeting_icon')    || '😊';
+
   const selectedTopics = new Set();
   const selectedPills  = new Map();
 
-  let selectedGrade    = localStorage.getItem('alrimbot_grade')            || '';
-  let selectedTemplate = localStorage.getItem('alrimbot_template')         || '기본';
-  let greetingLength   = localStorage.getItem('alrimbot_greeting_length')  || '중간';
-  let greetingPosition = localStorage.getItem('alrimbot_greeting_position')|| '맨 위';
-  let greetingIcon     = localStorage.getItem('alrimbot_greeting_icon')    || '😊';
+  // ══════════════════════════════════════════
+  //  설정 동기화 (모든 UI 갱신)
+  // ══════════════════════════════════════════
+  function syncSettingsUI() {
+    // 템플릿 카드
+    document.querySelectorAll('.template-card').forEach(c =>
+      c.classList.toggle('selected', c.dataset.id === selectedTemplate)
+    );
+    // 자유 모드 컴팩트 스타일
+    document.querySelectorAll('#free-style-group .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.value === selectedTemplate)
+    );
+    // 길이 (주제/자유 모드 공통)
+    ['length-group','free-length-group'].forEach(id =>
+      document.querySelectorAll(`#${id} .toggle-btn`).forEach(b =>
+        b.classList.toggle('active', b.dataset.value === greetingLength)
+      )
+    );
+    // 위치, 아이콘
+    document.querySelectorAll('#position-group .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.value === greetingPosition)
+    );
+    document.querySelectorAll('#icon-group .toggle-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.value === greetingIcon)
+    );
+    // 학년
+    document.querySelectorAll('#grade-group .grade-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.value === selectedGrade)
+    );
+  }
 
-  // ── 학년 선택 ─────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  모드 탭
+  // ══════════════════════════════════════════
+  function initModeTabs() {
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        currentMode = tab.dataset.mode;
+        lsSet('alrimbot_mode', currentMode);
+        document.querySelectorAll('.mode-tab').forEach(t =>
+          t.classList.toggle('active', t.dataset.mode === currentMode)
+        );
+        document.getElementById('panel-topic').style.display = currentMode === 'topic' ? '' : 'none';
+        document.getElementById('panel-free').style.display  = currentMode === 'free'  ? '' : 'none';
+      });
+      tab.classList.toggle('active', tab.dataset.mode === currentMode);
+    });
+    document.getElementById('panel-topic').style.display = currentMode === 'topic' ? '' : 'none';
+    document.getElementById('panel-free').style.display  = currentMode === 'free'  ? '' : 'none';
+  }
+
+  // ══════════════════════════════════════════
+  //  학년 버튼
+  // ══════════════════════════════════════════
   function initGradeButtons() {
     document.querySelectorAll('#grade-group .grade-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.value === selectedGrade);
       btn.addEventListener('click', () => {
         selectedGrade = btn.dataset.value;
-        localStorage.setItem('alrimbot_grade', selectedGrade);
-        document.querySelectorAll('#grade-group .grade-btn').forEach(b =>
-          b.classList.toggle('active', b.dataset.value === selectedGrade)
-        );
+        lsSet('alrimbot_grade', selectedGrade);
+        syncSettingsUI();
       });
     });
   }
 
-  // ── 스타일 템플릿 렌더링 ───────────────────────────────
+  // ══════════════════════════════════════════
+  //  스타일 템플릿 (주제 모드 전체 카드)
+  // ══════════════════════════════════════════
   function initTemplates() {
     const grid = document.getElementById('template-grid');
     grid.innerHTML = TEMPLATES.map(t => `
@@ -423,20 +621,18 @@
         <div class="t-name">${t.name}</div>
         <div class="t-prev">${t.preview}</div>
         <button class="t-prevbtn" data-id="${t.id}">👁️ 미리보기</button>
-      </div>
-    `).join('');
+      </div>`).join('');
 
     grid.querySelectorAll('.template-card').forEach(card => {
-      card.addEventListener('click', (e) => {
+      card.addEventListener('click', e => {
         if (e.target.classList.contains('t-prevbtn')) return;
         selectedTemplate = card.dataset.id;
-        localStorage.setItem('alrimbot_template', selectedTemplate);
-        grid.querySelectorAll('.template-card').forEach(c => c.classList.toggle('selected', c.dataset.id === selectedTemplate));
+        lsSet('alrimbot_template', selectedTemplate);
+        syncSettingsUI();
       });
     });
-
     grid.querySelectorAll('.t-prevbtn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         e.stopPropagation();
         const t = TEMPLATES.find(t => t.id === btn.dataset.id);
         if (t) openModal(`${t.icon} ${t.name}`, t.sample);
@@ -444,21 +640,27 @@
     });
   }
 
-  // ── 인사말 설정 초기화 ─────────────────────────────────
-  function initToggleGroup(groupId, stateGetter, stateSetter, lsKey) {
-    document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.value === stateGetter());
-      btn.addEventListener('click', () => {
-        stateSetter(btn.dataset.value);
-        localStorage.setItem(lsKey, btn.dataset.value);
-        document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b =>
-          b.classList.toggle('active', b.dataset.value === stateGetter())
-        );
+  // ══════════════════════════════════════════
+  //  인사말 설정 토글 그룹들
+  // ══════════════════════════════════════════
+  function initSettingGroups() {
+    const pairs = [
+      ['length-group',   () => greetingLength,   v => { greetingLength   = v; lsSet('alrimbot_greeting_length',   v); }],
+      ['free-length-group', () => greetingLength, v => { greetingLength   = v; lsSet('alrimbot_greeting_length',   v); }],
+      ['position-group', () => greetingPosition, v => { greetingPosition = v; lsSet('alrimbot_greeting_position', v); }],
+      ['icon-group',     () => greetingIcon,      v => { greetingIcon     = v; lsSet('alrimbot_greeting_icon',     v); }],
+      ['free-style-group', () => selectedTemplate, v => { selectedTemplate = v; lsSet('alrimbot_template', v); }],
+    ];
+    pairs.forEach(([id, getter, setter]) => {
+      document.querySelectorAll(`#${id} .toggle-btn`).forEach(btn => {
+        btn.addEventListener('click', () => { setter(btn.dataset.value); syncSettingsUI(); });
       });
     });
   }
 
-  // ── 주제 버튼 ─────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  주제 버튼
+  // ══════════════════════════════════════════
   document.querySelectorAll('.topic-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const subject = btn.dataset.subject;
@@ -469,13 +671,13 @@
         selectedTopics.add(subject); selectedPills.set(subject, new Set());
         btn.classList.add('selected');
       }
-      localStorage.setItem('alrimbot_last_topics', JSON.stringify([...selectedTopics]));
+      lsSet('alrimbot_last_topics', JSON.stringify([...selectedTopics]));
       renderKeywords();
     });
   });
 
   function restoreTopicsFromStorage() {
-    const saved = localStorage.getItem('alrimbot_last_topics');
+    const saved = ls('alrimbot_last_topics');
     if (!saved) return;
     try {
       JSON.parse(saved).forEach(subject => {
@@ -487,7 +689,9 @@
     } catch (_) {}
   }
 
-  // ── 키워드 렌더링 ──────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  키워드 렌더링
+  // ══════════════════════════════════════════
   function renderKeywords() {
     const list    = document.getElementById('keyword-list');
     const section = document.getElementById('keywords-section');
@@ -540,32 +744,99 @@
     });
   }
 
-  // ── AI 생성 ───────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  자유 모드 - 예시 버튼 + 기록
+  // ══════════════════════════════════════════
+  function initFreeExamples() {
+    const container = document.getElementById('free-examples');
+    container.innerHTML = FREE_EXAMPLES.map(ex =>
+      `<button class="free-ex-btn" data-text="${ex.text.replace(/"/g,'&quot;')}">${ex.label}</button>`
+    ).join('');
+    container.querySelectorAll('.free-ex-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('free-input').value = btn.dataset.text;
+        lsSet('alrimbot_free_text', btn.dataset.text);
+        document.getElementById('free-input').focus();
+      });
+    });
+  }
+
+  function saveFreeHistory(text) {
+    if (!text.trim()) return;
+    let history = JSON.parse(ls('alrimbot_free_history') || '[]');
+    history = [text, ...history.filter(h => h !== text)].slice(0, 10);
+    lsSet('alrimbot_free_history', JSON.stringify(history));
+    renderFreeHistory();
+  }
+
+  function renderFreeHistory() {
+    const history = JSON.parse(ls('alrimbot_free_history') || '[]');
+    const wrap = document.getElementById('free-history-wrap');
+    const list = document.getElementById('free-history-list');
+    if (history.length === 0) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    list.innerHTML = history.map(text =>
+      `<button class="free-hist-pill" title="${text.replace(/"/g,'&quot;')}">${text.length > 24 ? text.slice(0,24)+'…' : text}</button>`
+    ).join('');
+    list.querySelectorAll('.free-hist-pill').forEach((pill, i) => {
+      pill.addEventListener('click', () => {
+        const text = history[i];
+        document.getElementById('free-input').value = text;
+        lsSet('alrimbot_free_text', text);
+      });
+    });
+  }
+
+  document.getElementById('free-input').addEventListener('input', function() {
+    lsSet('alrimbot_free_text', this.value);
+  });
+
+  // ══════════════════════════════════════════
+  //  주제 모드 생성
+  // ══════════════════════════════════════════
   async function generateAlrim() {
     if (selectedTopics.size === 0) { showToast('주제를 하나 이상 선택해주세요.'); return; }
+    await _callGenerate({
+      endpoint: '/api/generate',
+      payload: {
+        topics: getTopicsData(),
+        teacherName: document.getElementById('teacher-name').value.trim(),
+        className:   document.getElementById('class-name').value.trim(),
+        grade: selectedGrade, style: selectedTemplate,
+        greetingLength, greetingPosition, greetingIcon,
+      },
+      btnId: 'btn-generate-topic',
+    });
+  }
 
-    const btn = document.getElementById('btn-generate');
+  // ══════════════════════════════════════════
+  //  자유 모드 생성
+  // ══════════════════════════════════════════
+  async function generateFreeAlrim() {
+    const freeText = document.getElementById('free-input').value.trim();
+    if (!freeText) { showToast('내용을 입력해주세요.'); return; }
+    saveFreeHistory(freeText);
+    await _callGenerate({
+      endpoint: '/api/generate-free',
+      payload: {
+        freeText,
+        teacherName: document.getElementById('teacher-name').value.trim(),
+        className:   document.getElementById('class-name').value.trim(),
+        grade: selectedGrade, style: selectedTemplate,
+        greetingLength, greetingPosition, greetingIcon,
+      },
+      btnId: 'btn-generate-free',
+    });
+  }
+
+  async function _callGenerate({ endpoint, payload, btnId }) {
+    const btn = document.getElementById(btnId);
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner">⏳</span> 생성 중...';
-
     try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topics:          getTopicsData(),
-          teacherName:     document.getElementById('teacher-name').value.trim(),
-          className:       document.getElementById('class-name').value.trim(),
-          grade:           selectedGrade,
-          style:           selectedTemplate,
-          greetingLength,
-          greetingPosition,
-          greetingIcon,
-        }),
-      });
+      const res  = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
-
       const ta = document.getElementById('result-text');
       ta.value = json.text;
       ta.setAttribute('readonly', true);
@@ -579,11 +850,23 @@
     }
   }
 
+  // ══════════════════════════════════════════
+  //  결과 액션
+  // ══════════════════════════════════════════
+  function regenAlrim()  { currentMode === 'free' ? generateFreeAlrim() : generateAlrim(); }
+  function makeLonger()  { greetingLength = '길게';  lsSet('alrimbot_greeting_length', '길게');  syncSettingsUI(); regenAlrim(); }
+  function makeShorter() { greetingLength = '짧게';  lsSet('alrimbot_greeting_length', '짧게');  syncSettingsUI(); regenAlrim(); }
+  function changeTone(v) {
+    if (!v) return;
+    selectedTemplate = v; lsSet('alrimbot_template', v); syncSettingsUI();
+    document.getElementById('tone-select').value = '';
+    regenAlrim();
+  }
+
   function copyText() {
     navigator.clipboard.writeText(document.getElementById('result-text').value)
       .then(() => showToast('복사되었습니다! 📋'));
   }
-
   function toggleEdit() {
     const ta = document.getElementById('result-text');
     if (ta.hasAttribute('readonly')) { ta.removeAttribute('readonly'); ta.focus(); showToast('수정 모드'); }
@@ -595,14 +878,12 @@
     if (!generated) { showToast('저장할 내용이 없습니다.'); return; }
     try {
       const res = await fetch('/api/alrim', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           teacher_name:   document.getElementById('teacher-name').value.trim() || null,
           class_name:     document.getElementById('class-name').value.trim()   || null,
-          topics:         getTopicsData(),
-          generated_text: generated,
-          edited_text:    null,
+          topics:         currentMode === 'topic' ? getTopicsData() : [{ subject: '자유', keywords: document.getElementById('free-input').value.trim() }],
+          generated_text: generated, edited_text: null,
         }),
       });
       const json = await res.json();
@@ -612,6 +893,9 @@
     } catch (err) { showToast('저장 오류: ' + err.message); }
   }
 
+  // ══════════════════════════════════════════
+  //  저장 목록
+  // ══════════════════════════════════════════
   async function loadHistory() {
     try {
       const res  = await fetch('/api/alrim');
@@ -627,33 +911,39 @@
     } catch (_) {}
   }
 
-  // ── 모달 ──────────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  모달
+  // ══════════════════════════════════════════
   function openModal(title, body) {
     document.getElementById('modal-title').textContent = title;
     document.getElementById('modal-body').textContent  = body;
     document.getElementById('modal-overlay').classList.add('open');
   }
-  function closeModal(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
-  }
-  function closeModalDirect() {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
+  function closeModal(e)    { if (e.target === document.getElementById('modal-overlay')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('open'); }
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
+    toast.textContent = msg; toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
-  // ── 초기화 ────────────────────────────────────────────
+  // ══════════════════════════════════════════
+  //  초기화
+  // ══════════════════════════════════════════
+  initModeTabs();
   initGradeButtons();
   initTemplates();
-  initToggleGroup('length-group',   () => greetingLength,   v => { greetingLength   = v; }, 'alrimbot_greeting_length');
-  initToggleGroup('position-group', () => greetingPosition, v => { greetingPosition = v; }, 'alrimbot_greeting_position');
-  initToggleGroup('icon-group',     () => greetingIcon,     v => { greetingIcon     = v; }, 'alrimbot_greeting_icon');
+  initSettingGroups();
+  syncSettingsUI();
   restoreTopicsFromStorage();
+  renderFreeHistory();
+  initFreeExamples();
+
+  // 자유 모드 마지막 입력 복원
+  const savedFreeText = ls('alrimbot_free_text') || '';
+  if (savedFreeText) document.getElementById('free-input').value = savedFreeText;
+
   loadHistory();
 </script>
 </body>
