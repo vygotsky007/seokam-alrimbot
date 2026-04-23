@@ -4,171 +4,269 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>석암 알림봇</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --blue: #3b82f6;
-    --blue-dark: #2563eb;
-    --bg: #f0f4ff;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --muted: #64748b;
-    --pill-bg: #eff6ff;
-    --pill-active: #3b82f6;
-    --pill-active-text: #fff;
-    --radius: 14px;
-  }
-  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; }
-  .container { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #3b82f6; --blue-d: #2563eb; --blue-l: #eff6ff;
+  --mint: #10b981; --mint-l: #ecfdf5;
+  --amber: #f59e0b; --amber-l: #fffbeb;
+  --red: #ef4444;  --red-l: #fef2f2;
+  --bg: #f0f4ff; --card: #fff; --border: #e2e8f0;
+  --text: #1e293b; --muted: #64748b;
+  --radius: 14px;
+}
+body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:12px 16px 60px; }
+.container { max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
 
-  .app-header { text-align: center; padding: 18px 0 4px; }
-  .app-header h1 { font-size: 1.45rem; font-weight: 800; color: var(--blue-dark); letter-spacing: -0.5px; }
-  .app-header p { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+/* ── banners ── */
+.banner { border-radius:10px; padding:10px 14px; font-size:.82rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+.banner-special { background:linear-gradient(135deg,#fde68a,#fbbf24); color:#78350f; }
+.banner-dday    { background:linear-gradient(135deg,#bfdbfe,#93c5fd); color:#1e40af; }
+.banner-weather { background:var(--card); border:1px solid var(--border); color:var(--text); font-weight:400; }
+.banner-weather strong { font-weight:700; }
+.banner-weather .w-sugg { display:inline-flex; gap:5px; margin-left:6px; }
+.banner-weather .w-tag  { background:var(--blue-l); color:var(--blue-d); border-radius:99px; padding:2px 8px; font-size:.74rem; font-weight:600; cursor:pointer; }
+.banner-weather .w-tag:hover { background:var(--blue); color:#fff; }
+.banner-close { margin-left:auto; background:none; border:none; cursor:pointer; font-size:.9rem; opacity:.6; }
 
-  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+/* ── header ── */
+.app-header { text-align:center; padding:14px 0 2px; }
+.app-header h1 { font-size:1.4rem; font-weight:800; color:var(--blue-d); letter-spacing:-.5px; }
+.app-header p  { font-size:.8rem; color:var(--muted); margin-top:2px; }
 
-  .hero-label { font-size: 0.78rem; font-weight: 700; color: var(--blue-dark); margin-bottom: 6px; letter-spacing: .3px; }
-  .textarea-wrap { position: relative; }
-  #mainInput {
-    width: 100%; min-height: 110px; border: 2px solid var(--border); border-radius: 10px;
-    padding: 12px 38px 12px 12px; font-size: 0.95rem; font-family: inherit; color: var(--text);
-    resize: vertical; outline: none; transition: border-color .2s; line-height: 1.6;
-  }
-  #mainInput:focus { border-color: var(--blue); }
-  #clearBtn {
-    position: absolute; top: 10px; right: 10px; background: none; border: none;
-    font-size: 1.1rem; cursor: pointer; color: #aaa; line-height: 1; padding: 2px; display: none;
-  }
-  .char-count { font-size: 0.72rem; color: var(--muted); text-align: right; margin-top: 4px; }
+/* ── card ── */
+.card { background:var(--card); border-radius:var(--radius); border:1px solid var(--border); padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
 
-  #generateBtn {
-    width: 100%; padding: 14px; background: var(--blue); color: #fff; border: none;
-    border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer;
-    transition: background .2s, transform .1s;
-  }
-  #generateBtn:hover { background: var(--blue-dark); }
-  #generateBtn:active { transform: scale(.98); }
-  #generateBtn:disabled { background: #94a3b8; cursor: not-allowed; }
+/* ── hero ── */
+.hero-label { font-size:.76rem; font-weight:700; color:var(--blue-d); margin-bottom:6px; }
+.textarea-wrap { position:relative; }
+#mainInput {
+  width:100%; min-height:108px; border:2px solid var(--border); border-radius:10px;
+  padding:11px 34px 11px 11px; font-size:.93rem; font-family:inherit; color:var(--text);
+  resize:vertical; outline:none; transition:border-color .2s; line-height:1.65;
+}
+#mainInput:focus { border-color:var(--blue); }
+#clearBtn { position:absolute; top:9px; right:9px; background:none; border:none; font-size:1rem; cursor:pointer; color:#aaa; display:none; }
+.char-count { font-size:.7rem; color:var(--muted); text-align:right; margin-top:3px; }
+.info-row { display:flex; gap:8px; margin-top:9px; }
+.info-row input { flex:1; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:.82rem; outline:none; font-family:inherit; }
+.info-row input:focus { border-color:var(--blue); }
 
-  .rec-section { display: flex; flex-direction: column; gap: 12px; }
-  .rec-block-title { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 7px; }
-  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pill {
-    padding: 5px 11px; border-radius: 99px; border: 1.5px solid var(--border);
-    font-size: 0.8rem; background: var(--pill-bg); color: var(--text);
-    cursor: pointer; user-select: none; transition: all .15s;
-  }
-  .pill:hover { border-color: var(--blue); color: var(--blue); }
-  .pill.active { background: var(--pill-active); color: var(--pill-active-text); border-color: var(--pill-active); }
+/* ── quick options ── */
+.qo-card { display:flex; flex-direction:column; gap:10px; }
+.qo-row { display:flex; align-items:flex-start; gap:10px; }
+.qo-label { font-size:.72rem; font-weight:700; color:var(--muted); white-space:nowrap; padding-top:6px; min-width:46px; }
+.qo-group { display:flex; flex-wrap:wrap; gap:5px; }
+.qo-group button {
+  padding:5px 10px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
+.qo-group button:hover  { border-color:var(--blue); color:var(--blue); }
+.qo-group button.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 
-  .expand-group { display: flex; flex-direction: column; gap: 8px; }
-  .expand-header {
-    display: flex; align-items: center; gap: 6px; cursor: pointer;
-    font-size: 0.8rem; font-weight: 700; color: var(--muted); user-select: none;
-  }
-  .expand-arrow { transition: transform .2s; font-size: 0.7rem; }
-  .expand-header.open .expand-arrow { transform: rotate(90deg); }
-  .expand-body { display: none; flex-wrap: wrap; gap: 6px; padding-top: 4px; }
-  .expand-body.open { display: flex; }
+/* ── generate button ── */
+#generateBtn {
+  width:100%; padding:14px; background:var(--blue); color:#fff; border:none;
+  border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition:background .2s, transform .1s;
+}
+#generateBtn:hover    { background:var(--blue-d); }
+#generateBtn:active   { transform:scale(.98); }
+#generateBtn:disabled { background:#94a3b8; cursor:not-allowed; }
 
-  .settings-header {
-    display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none;
-  }
-  .settings-header-left { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.88rem; }
-  .settings-summary { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
-  .settings-toggle-icon { font-size: 0.75rem; color: var(--muted); transition: transform .2s; }
-  .settings-toggle-icon.open { transform: rotate(180deg); }
-  .settings-body { display: flex; flex-direction: column; gap: 14px; }
-  .settings-body.closed { display: none; }
+/* ── recommendations ── */
+.rec-section { display:flex; flex-direction:column; gap:11px; }
+.section-title { font-size:.84rem; font-weight:800; color:var(--text); }
+.divider { height:1px; background:var(--border); margin:4px 0; }
+.rec-block-title { font-size:.75rem; font-weight:700; color:var(--muted); margin-bottom:6px; }
+.pills { display:flex; flex-wrap:wrap; gap:5px; }
+.pill {
+  padding:4px 10px; border-radius:99px; border:1.5px solid var(--border);
+  font-size:.78rem; background:var(--blue-l); color:var(--text); cursor:pointer; user-select:none; transition:all .15s;
+}
+.pill:hover  { border-color:var(--blue); color:var(--blue); }
+.pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+.pill.seasonal { background:var(--amber-l); border-color:#fcd34d; }
+.pill.seasonal.active { background:var(--amber); border-color:var(--amber); color:#fff; }
+.pill.supply  { background:var(--mint-l);  border-color:#6ee7b7; }
+.pill.supply.active  { background:var(--mint);  border-color:var(--mint); color:#fff; }
 
-  .setting-row label { font-size: 0.75rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px; }
-  .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
-  .btn-group button {
-    padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: #fff; font-size: 0.8rem; cursor: pointer; color: var(--text); transition: all .15s;
-  }
-  .btn-group button:hover { border-color: var(--blue); color: var(--blue); }
-  .btn-group button.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-  .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .template-card {
-    padding: 8px 6px; border: 1.5px solid var(--border); border-radius: 8px;
-    text-align: center; cursor: pointer; font-size: 0.78rem; background: #fff; transition: all .15s;
-  }
-  .template-card:hover { border-color: var(--blue); }
-  .template-card.active { border-color: var(--blue); background: #eff6ff; color: var(--blue-dark); }
-  .template-card .tc-icon { font-size: 1.1rem; margin-bottom: 2px; }
-  .template-card .tc-label { font-weight: 700; font-size: 0.75rem; }
-  .template-card .tc-desc { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
+.expand-group { display:flex; flex-direction:column; gap:7px; }
+.expand-header { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.78rem; font-weight:700; color:var(--muted); user-select:none; }
+.expand-arrow  { font-size:.68rem; transition:transform .2s; }
+.expand-header.open .expand-arrow { transform:rotate(90deg); }
+.expand-body   { display:none; flex-wrap:wrap; gap:5px; padding-top:4px; }
+.expand-body.open { display:flex; }
 
-  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .result-header span { font-size: 0.8rem; font-weight: 700; color: var(--blue-dark); }
-  .result-actions { display: flex; gap: 6px; }
-  .result-actions button {
-    padding: 5px 10px; border-radius: 7px; border: 1.5px solid var(--border);
-    background: #fff; font-size: 0.75rem; cursor: pointer; color: var(--text); transition: all .15s;
-  }
-  .result-actions button:hover { border-color: var(--blue); color: var(--blue); }
-  #resultText {
-    width: 100%; min-height: 160px; border: 1.5px solid var(--border); border-radius: 8px;
-    padding: 12px; font-size: 0.88rem; font-family: inherit; color: var(--text);
-    resize: vertical; line-height: 1.7; outline: none;
-  }
-  #resultText:focus { border-color: var(--blue); }
-  .result-bottom { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .result-bottom button {
-    padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: #fff; font-size: 0.78rem; cursor: pointer; color: var(--text); transition: all .15s;
-  }
-  .result-bottom button:hover { border-color: var(--blue); color: var(--blue); }
-  #saveBtn { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 700; }
-  #saveBtn:hover { background: var(--blue-dark); }
+/* ── settings accordion ── */
+.settings-header { display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
+.settings-header-left { display:flex; align-items:center; gap:8px; font-weight:700; font-size:.86rem; }
+.settings-summary { font-size:.73rem; color:var(--muted); font-weight:400; }
+.settings-arrow   { font-size:.72rem; color:var(--muted); transition:transform .2s; }
+.settings-arrow.open { transform:rotate(180deg); }
+.settings-body { display:flex; flex-direction:column; gap:13px; padding-top:14px; }
+.settings-body.closed { display:none; }
+.setting-row label { font-size:.73rem; font-weight:700; color:var(--muted); display:block; margin-bottom:5px; }
+.btn-group { display:flex; flex-wrap:wrap; gap:5px; }
+.btn-group button {
+  padding:5px 11px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
+.btn-group button:hover  { border-color:var(--blue); color:var(--blue); }
+.btn-group button.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+.template-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
+.template-card {
+  padding:7px 4px; border:1.5px solid var(--border); border-radius:8px;
+  text-align:center; cursor:pointer; font-size:.75rem; background:#fff; transition:all .15s;
+}
+.template-card:hover { border-color:var(--blue); }
+.template-card.active { border-color:var(--blue); background:var(--blue-l); color:var(--blue-d); }
+.template-card .tc-icon  { font-size:1rem; margin-bottom:1px; }
+.template-card .tc-label { font-weight:700; font-size:.73rem; }
 
-  .history-list { display: flex; flex-direction: column; gap: 8px; }
-  .history-item {
-    border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
-    font-size: 0.8rem; cursor: pointer; transition: border-color .15s;
-  }
-  .history-item:hover { border-color: var(--blue); }
-  .history-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; }
-  .history-preview { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text); }
-  .no-history { font-size: 0.8rem; color: var(--muted); text-align: center; padding: 8px 0; }
+/* school/sig inputs */
+.text-input {
+  width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px;
+  font-size:.82rem; outline:none; font-family:inherit;
+}
+.text-input:focus { border-color:var(--blue); }
 
-  #toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
-    background: #1e293b; color: #fff; padding: 10px 20px; border-radius: 99px;
-    font-size: 0.85rem; transition: transform .3s; pointer-events: none; white-space: nowrap; z-index: 999;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); }
+/* sig presets */
+.sig-presets { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
+.sig-preset {
+  padding:4px 10px; border:1.5px solid var(--border); border-radius:99px;
+  font-size:.76rem; background:#fff; cursor:pointer; transition:all .15s;
+}
+.sig-preset:hover  { border-color:var(--blue); }
+.sig-preset.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 
-  #modal {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
-    align-items: center; justify-content: center; z-index: 100; padding: 20px;
-  }
-  #modal.open { display: flex; }
-  .modal-box {
-    background: #fff; border-radius: var(--radius); padding: 22px; max-width: 480px;
-    width: 100%; max-height: 80vh; overflow-y: auto;
-  }
-  .modal-box h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
-  #modalText { white-space: pre-wrap; font-size: 0.88rem; line-height: 1.7; color: var(--text); }
-  .modal-close { margin-top: 16px; width: 100%; padding: 10px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer; }
+/* D-Day manager */
+.dday-form { display:flex; gap:6px; margin-bottom:8px; }
+.dday-form input { flex:1; padding:6px 9px; border:1.5px solid var(--border); border-radius:8px; font-size:.78rem; outline:none; }
+.dday-form input:focus { border-color:var(--blue); }
+.dday-add-btn { padding:6px 12px; border:none; background:var(--blue); color:#fff; border-radius:8px; font-size:.78rem; cursor:pointer; white-space:nowrap; }
+.dday-list { display:flex; flex-direction:column; gap:5px; }
+.dday-item { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:.78rem; }
+.dday-item-name  { font-weight:600; }
+.dday-item-date  { color:var(--muted); font-size:.72rem; margin-left:8px; }
+.dday-item-del   { background:none; border:none; cursor:pointer; color:#aaa; font-size:.9rem; }
+.dday-item-del:hover { color:var(--red); }
 
-  .section-title { font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 2px; }
-  .divider { height: 1px; background: var(--border); margin: 6px 0; }
-  .settings-top-spacer { margin-top: 14px; }
+/* toggle row */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; }
+.toggle-row label { font-size:.78rem; color:var(--text); cursor:pointer; }
+.toggle { position:relative; display:inline-block; width:38px; height:22px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#cbd5e1; border-radius:99px; transition:.2s; cursor:pointer; }
+.toggle-slider::before { content:''; position:absolute; width:16px; height:16px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
+.toggle input:checked + .toggle-slider { background:var(--blue); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(16px); }
+
+/* ── result ── */
+.result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+.result-header span { font-size:.8rem; font-weight:700; color:var(--blue-d); }
+#resultText {
+  width:100%; min-height:160px; border:1.5px solid var(--border); border-radius:8px;
+  padding:11px; font-size:.87rem; font-family:inherit; color:var(--text); resize:vertical; line-height:1.7; outline:none;
+}
+#resultText:focus { border-color:var(--blue); }
+.result-btn-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
+.result-btn-row button {
+  padding:5px 11px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.76rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
+.result-btn-row button:hover  { border-color:var(--blue); color:var(--blue); }
+.result-btn-row button:disabled { opacity:.5; cursor:not-allowed; }
+.btn-primary  { background:var(--blue)  !important; color:#fff !important; border-color:var(--blue)  !important; font-weight:700; }
+.btn-mint     { background:var(--mint)  !important; color:#fff !important; border-color:var(--mint)  !important; }
+.btn-amber    { background:var(--amber) !important; color:#fff !important; border-color:var(--amber) !important; }
+.btn-divider  { width:1px; background:var(--border); margin:0 2px; }
+
+/* ── history ── */
+.history-list { display:flex; flex-direction:column; gap:7px; }
+.history-item { border:1px solid var(--border); border-radius:8px; padding:9px 11px; font-size:.78rem; cursor:pointer; transition:border-color .15s; }
+.history-item:hover { border-color:var(--blue); }
+.history-meta    { font-size:.7rem; color:var(--muted); margin-bottom:2px; }
+.history-preview { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.no-history { font-size:.78rem; color:var(--muted); text-align:center; padding:8px 0; }
+
+/* ── quote ── */
+.quote-card { text-align:center; padding:14px; }
+.quote-text   { font-size:.83rem; color:var(--text); line-height:1.6; font-style:italic; }
+.quote-author { font-size:.72rem; color:var(--muted); margin-top:5px; }
+
+/* ── toast ── */
+#toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(70px);
+  background:#1e293b; color:#fff; padding:9px 18px; border-radius:99px;
+  font-size:.83rem; transition:transform .3s; pointer-events:none; white-space:nowrap; z-index:999;
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ── modal ── */
+#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); align-items:center; justify-content:center; z-index:100; padding:20px; }
+#modal.open { display:flex; }
+.modal-box { background:#fff; border-radius:var(--radius); padding:20px; max-width:460px; width:100%; max-height:80vh; overflow-y:auto; }
+.modal-box h3 { font-size:.98rem; font-weight:700; margin-bottom:11px; }
+#modalText { white-space:pre-wrap; font-size:.86rem; line-height:1.75; }
+.modal-close { margin-top:14px; width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:.9rem; cursor:pointer; }
+
+/* ── print card (hidden, for html2canvas) ── */
+#printCard {
+  display:none; position:fixed; left:-9999px; top:0;
+  width:600px; background:#fff; padding:36px 40px; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  border:2px solid #e2e8f0;
+}
+.pc-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:2px solid var(--blue); padding-bottom:12px; }
+.pc-school  { font-size:1rem; font-weight:800; color:var(--blue-d); }
+.pc-date    { font-size:.82rem; color:var(--muted); }
+.pc-title   { font-size:1.2rem; font-weight:800; text-align:center; margin-bottom:16px; color:var(--text); }
+.pc-content { font-size:.9rem; line-height:1.8; white-space:pre-wrap; color:var(--text); }
+.pc-sig     { margin-top:20px; text-align:right; font-size:.82rem; color:var(--muted); white-space:pre-wrap; }
+.pc-footer  { margin-top:16px; text-align:center; font-size:.68rem; color:#cbd5e1; }
 </style>
 </head>
 <body>
+
+<!-- Print card (hidden, html2canvas용) -->
+<div id="printCard">
+  <div class="pc-header">
+    <div class="pc-school" id="pcSchool">석암초등학교</div>
+    <div class="pc-date"   id="pcDate"></div>
+  </div>
+  <div class="pc-title">📋 알림장</div>
+  <div class="pc-content" id="pcContent"></div>
+  <div class="pc-sig" id="pcSig"></div>
+  <div class="pc-footer">석암 알림봇 · seokam-alrimbot</div>
+</div>
+
 <div class="container">
 
-  <!-- Header -->
+  <!-- 특별한 날 배너 (JS로 조건부 표시) -->
+  <div id="specialBanner" class="banner banner-special" style="display:none;">
+    <span id="specialBannerText"></span>
+    <button class="banner-close" id="specialBannerClose">✕</button>
+  </div>
+
+  <!-- D-Day 배너 -->
+  <div id="ddayBanner" class="banner banner-dday" style="display:none;">
+    <span id="ddayBannerText"></span>
+  </div>
+
+  <!-- 날씨 배너 -->
+  <div id="weatherBanner" class="banner banner-weather" style="display:none;">
+    <span id="weatherInfo"></span>
+    <span class="w-sugg" id="weatherSugg"></span>
+    <button class="banner-close" id="weatherClose">✕</button>
+  </div>
+
+  <!-- 헤더 -->
   <div class="app-header">
     <h1>📋 석암 알림봇</h1>
     <p>AI가 알림장을 완성해 드려요</p>
   </div>
 
-  <!-- Hero input -->
+  <!-- 히어로 입력 -->
   <div class="card">
     <div class="hero-label">오늘 알림장에 담을 내용을 입력하세요</div>
     <div class="textarea-wrap">
@@ -176,51 +274,108 @@
       <button id="clearBtn" title="지우기">✕</button>
     </div>
     <div class="char-count"><span id="charCount">0</span>자</div>
-    <div style="display:flex;gap:8px;margin-top:10px;">
-      <input id="teacherName" placeholder="담임 선생님 이름 (선택)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;outline:none;">
-      <input id="className" placeholder="학급 이름 (선택)" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;outline:none;">
+    <div class="info-row">
+      <input id="teacherName" placeholder="담임 선생님 이름 (선택)">
+      <input id="className"   placeholder="학급 (선택, 예: 3학년 3반)">
     </div>
-    <button id="generateBtn" style="margin-top:12px;">✨ 알림장 생성</button>
   </div>
 
-  <!-- Recommendations -->
+  <!-- 빠른 옵션 -->
+  <div class="card qo-card">
+    <div class="qo-row">
+      <span class="qo-label">🎨 톤</span>
+      <div class="qo-group" id="toneGroup">
+        <button data-v="친근한">😊 친근</button>
+        <button data-v="공식적">📝 공식</button>
+        <button data-v="감성적">❤️ 따뜻</button>
+        <button data-v="핵심만">📋 간결</button>
+        <button data-v="활기찬">🎉 활기</button>
+        <button data-v="기본">🌱 부드러운</button>
+      </div>
+    </div>
+    <div class="qo-row">
+      <span class="qo-label">📏 길이</span>
+      <div class="qo-group" id="quickLengthGroup">
+        <button data-v="짧게">짧게</button>
+        <button data-v="중간">중간</button>
+        <button data-v="길게">길게</button>
+      </div>
+    </div>
+    <div class="qo-row">
+      <span class="qo-label">😊 이모지</span>
+      <div class="qo-group" id="emojiLevelGroup">
+        <button data-v="많이">🎉 많이</button>
+        <button data-v="보통">😊 보통</button>
+        <button data-v="없이">❌ 없이</button>
+      </div>
+    </div>
+    <div class="qo-row">
+      <span class="qo-label">🗣️ 어투</span>
+      <div class="qo-group" id="honorificGroup">
+        <button data-v="존댓말">존댓말</button>
+        <button data-v="반말">반말</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 생성 버튼 -->
+  <button id="generateBtn">✨ 알림장 생성</button>
+
+  <!-- 추천 키워드 -->
   <div class="card rec-section">
     <div class="section-title">💡 키워드 추천</div>
     <div class="divider"></div>
 
+    <!-- 준비물 자동 제안 (JS 조건부) -->
+    <div id="supplyBlock" style="display:none;">
+      <div class="rec-block-title">🎒 관련 준비물 제안</div>
+      <div id="supplyPills" class="pills"></div>
+    </div>
+
+    <!-- 시즌별 키워드 -->
+    <div id="seasonalBlock">
+      <div class="rec-block-title" id="seasonalTitle"></div>
+      <div id="seasonalPills" class="pills"></div>
+    </div>
+
+    <!-- 트렌딩 -->
     <div class="rec-block">
       <div class="rec-block-title">🔥 트렌딩 (최근 7일)</div>
       <div id="trendingPills" class="pills">
-        <span id="trendingEmpty" style="font-size:0.78rem;color:var(--muted);display:none;">아직 데이터가 없어요</span>
+        <span id="trendingEmpty" style="font-size:.76rem;color:var(--muted);display:none;">아직 데이터가 없어요</span>
       </div>
     </div>
 
-    <div class="rec-block" id="personalBlock" style="display:none;">
+    <!-- 개인 자주 쓰는 -->
+    <div id="personalBlock" style="display:none;">
       <div class="rec-block-title">⭐ 내가 자주 쓰는</div>
       <div id="personalPills" class="pills"></div>
     </div>
 
+    <!-- 상황별 -->
     <div class="rec-block">
       <div class="rec-block-title">📌 상황별 추천</div>
       <div class="expand-group" id="catGroup"></div>
     </div>
 
+    <!-- 과목별 -->
     <div class="rec-block">
       <div class="rec-block-title">📚 과목별 추천</div>
       <div class="expand-group" id="subjectGroup"></div>
     </div>
   </div>
 
-  <!-- Settings accordion -->
+  <!-- 설정 아코디언 -->
   <div class="card" id="settingsCard">
     <div class="settings-header" id="settingsToggle">
       <div class="settings-header-left">
         ⚙️ 설정
         <span class="settings-summary" id="settingsSummary"></span>
       </div>
-      <span class="settings-toggle-icon" id="settingsArrow">▲</span>
+      <span class="settings-arrow" id="settingsArrow">▲</span>
     </div>
-    <div class="settings-body settings-top-spacer" id="settingsBody">
+    <div class="settings-body" id="settingsBody">
+
       <div class="setting-row">
         <label>학년</label>
         <div class="btn-group" id="gradeGroup">
@@ -230,25 +385,21 @@
           <button data-v="초등학교">전체</button>
         </div>
       </div>
+
       <div class="setting-row">
-        <label>문체 스타일</label>
+        <label>문체 스타일 (상세)</label>
         <div class="template-grid" id="templateGrid">
-          <div class="template-card" data-v="기본"><div class="tc-icon">📝</div><div class="tc-label">기본</div><div class="tc-desc">자연스러운 문장</div></div>
-          <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div><div class="tc-desc">번호 리스트</div></div>
-          <div class="template-card" data-v="핵심만"><div class="tc-icon">⚡</div><div class="tc-label">핵심만</div><div class="tc-desc">짧고 간결</div></div>
-          <div class="template-card" data-v="친근한"><div class="tc-icon">😊</div><div class="tc-label">친근한</div><div class="tc-desc">이모지 풍부</div></div>
-          <div class="template-card" data-v="공식적"><div class="tc-icon">📜</div><div class="tc-label">공식적</div><div class="tc-desc">공문 형식</div></div>
-          <div class="template-card" data-v="감성적"><div class="tc-icon">🌸</div><div class="tc-label">감성적</div><div class="tc-desc">따뜻한 어투</div></div>
+          <div class="template-card" data-v="기본"><div class="tc-icon">📝</div><div class="tc-label">기본</div></div>
+          <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div></div>
+          <div class="template-card" data-v="핵심만"><div class="tc-icon">⚡</div><div class="tc-label">핵심만</div></div>
+          <div class="template-card" data-v="친근한"><div class="tc-icon">😊</div><div class="tc-label">친근한</div></div>
+          <div class="template-card" data-v="공식적"><div class="tc-icon">📜</div><div class="tc-label">공식적</div></div>
+          <div class="template-card" data-v="감성적"><div class="tc-icon">🌸</div><div class="tc-label">감성적</div></div>
+          <div class="template-card" data-v="활기찬"><div class="tc-icon">🎉</div><div class="tc-label">활기찬</div></div>
+          <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div></div>
         </div>
       </div>
-      <div class="setting-row">
-        <label>길이</label>
-        <div class="btn-group" id="lengthGroup">
-          <button data-v="짧게">짧게</button>
-          <button data-v="중간">중간</button>
-          <button data-v="길게">길게</button>
-        </div>
-      </div>
+
       <div class="setting-row">
         <label>인사말 위치</label>
         <div class="btn-group" id="positionGroup">
@@ -257,6 +408,7 @@
           <button data-v="둘 다">둘 다</button>
         </div>
       </div>
+
       <div class="setting-row">
         <label>인사말 아이콘</label>
         <div class="btn-group" id="iconGroup">
@@ -268,31 +420,89 @@
           <button data-v="👋">👋</button>
         </div>
       </div>
+
+      <div class="setting-row">
+        <label>학교명</label>
+        <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
+      </div>
+
+      <div class="setting-row">
+        <label>시그니처 문구</label>
+        <div class="sig-presets" id="sigPresets">
+          <button class="sig-preset" data-v="">없음</button>
+          <button class="sig-preset" data-v="사랑하는 우리 반!">사랑하는 우리 반!</button>
+          <button class="sig-preset" data-v="함께 자라는 우리">함께 자라는 우리</button>
+          <button class="sig-preset" data-v="오늘도 감사합니다">오늘도 감사합니다</button>
+        </div>
+        <input id="sigPhraseInput" class="text-input" placeholder="직접 입력 (예: 항상 응원합니다)" style="margin-top:5px;">
+      </div>
+
+      <div class="setting-row">
+        <label>서명 자동 추가</label>
+        <div class="toggle-row">
+          <label for="sigToggle">알림장 끝에 학교·반·담임 서명 자동 추가</label>
+          <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>🎯 D-Day 이벤트</label>
+        <div class="dday-form">
+          <input id="ddayName" placeholder="이벤트 이름 (예: 운동회)">
+          <input id="ddayDate" type="date">
+          <button class="dday-add-btn" id="ddayAddBtn">추가</button>
+        </div>
+        <div class="dday-list" id="ddayList"></div>
+      </div>
+
+      <div class="setting-row">
+        <label>🌤️ 자동 옵션</label>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="toggle-row">
+            <label for="weatherToggle">날씨 자동 반영</label>
+            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <label for="specialDayToggle">특별한 날 알림</label>
+            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Result -->
+  <!-- 결과 -->
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
       <span>✅ 생성된 알림장</span>
-      <div class="result-actions">
-        <button id="copyBtn">📋 복사</button>
-        <button id="previewBtn">👁 미리보기</button>
+      <div style="display:flex;gap:5px;">
+        <button onclick="copyResult()" style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">📋 복사</button>
+        <button onclick="openModal()"  style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">👁 미리보기</button>
       </div>
     </div>
     <textarea id="resultText" spellcheck="false"></textarea>
-    <div class="result-bottom">
-      <button id="regenBtn">🔄 다시 생성</button>
-      <button id="longerBtn">📏 더 길게</button>
-      <button id="shorterBtn">✂️ 더 짧게</button>
-      <button id="toneBtn">🎨 문체 바꾸기</button>
-      <button id="saveBtn">💾 저장</button>
+    <div class="result-btn-row">
+      <button id="regenBtn"  onclick="callGenerate()">🔄 다시 생성</button>
+      <button id="shorterBtn" onclick="callResize('shorter')">✂️ 짧게</button>
+      <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
+      <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
+      <div class="btn-divider"></div>
+      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()">💾 저장</button>
+      <button id="kakaoBtn" class="btn-mint"  onclick="shareKakao()">💬 카톡</button>
+      <button id="imgBtn"   class="btn-amber" onclick="saveAsImage()">📸 이미지</button>
     </div>
   </div>
 
-  <!-- Today's history -->
+  <!-- 오늘의 명언 -->
+  <div class="card quote-card" id="quoteCard">
+    <div class="quote-text"   id="quoteText"></div>
+    <div class="quote-author" id="quoteAuthor"></div>
+  </div>
+
+  <!-- 오늘 저장된 알림장 -->
   <div class="card" id="historyCard">
-    <div class="section-title" style="margin-bottom:10px;">📅 오늘 저장된 알림장</div>
+    <div class="section-title" style="margin-bottom:9px;">📅 오늘 저장된 알림장</div>
     <div class="history-list" id="historyList">
       <div class="no-history">아직 저장된 알림장이 없어요.</div>
     </div>
@@ -311,17 +521,26 @@
 </div>
 
 <script>
+/* ── localStorage 헬퍼 ── */
 const ls  = k => localStorage.getItem(k);
-const lsS = (k, v) => localStorage.setItem(k, v);
+const lsS = (k, v) => localStorage.setItem(k, String(v));
+const lsJ = k => { try { return JSON.parse(ls(k) || 'null'); } catch { return null; } };
+const lsSJ = (k, v) => lsS(k, JSON.stringify(v));
 
-let selectedGrade    = ls('alrimbot_grade')    || '초등학교 3~4학년';
-let selectedStyle    = ls('alrimbot_style')    || '기본';
-let greetingLength   = ls('alrimbot_length')   || '중간';
-let greetingPosition = ls('alrimbot_position') || '맨 위';
-let greetingIcon     = ls('alrimbot_icon')     || '없음';
-const activeKws = new Set();
+/* ── 상태 변수 ── */
+let selectedGrade    = ls('alrimbot_grade')      || '초등학교 3~4학년';
+let selectedStyle    = ls('alrimbot_style')      || '기본';
+let greetingLength   = ls('alrimbot_length')     || '중간';
+let greetingPosition = ls('alrimbot_position')   || '맨 위';
+let greetingIcon     = ls('alrimbot_icon')       || '없음';
+let emojiLevel       = ls('alrimbot_emoji_level')|| '보통';
+let honorific        = ls('alrimbot_honorific')  || '존댓말';
+let schoolName       = ls('alrimbot_school')     || '석암초등학교';
+let sigPhrase        = ls('alrimbot_sig_phrase') || '';
+let weatherData      = null;
+const activeKws      = new Set();
 
-/* rotating placeholder */
+/* ── 회전 placeholder ── */
 const PLACEHOLDERS = [
   '떠오르는 대로 입력하세요…',
   '예: 숙제 리코더 3번 연습',
@@ -332,36 +551,173 @@ const PLACEHOLDERS = [
 ];
 let phIdx = 0;
 const mainInput = document.getElementById('mainInput');
-setInterval(() => {
-  if (!mainInput.value) mainInput.placeholder = PLACEHOLDERS[phIdx++ % PLACEHOLDERS.length];
-}, 3000);
+setInterval(() => { if (!mainInput.value) mainInput.placeholder = PLACEHOLDERS[phIdx++ % PLACEHOLDERS.length]; }, 3000);
 
-/* category keywords */
+/* ── 상황별 카테고리 ── */
 const CATS = [
-  { label: '📝 숙제·과제',    kws: ['숙제 확인','일기 쓰기','독서 기록','받아쓰기 연습','수학 문제집','발표 준비','포트폴리오','탐구 보고서','조사 과제','프로젝트 제출'] },
-  { label: '🎒 준비물',       kws: ['준비물 챙기기','체육복','실내화','물통','간식','우산','색연필','가위풀','스케치북','악기'] },
-  { label: '🏥 건강·안전',    kws: ['안전 귀가','마스크 착용','손 씻기','건강 상태 확인','약 지참','충분한 수면','규칙적 식사','안전한 등하교','유행성 질환 주의','체온 체크'] },
-  { label: '📅 행사·일정',    kws: ['운동회','학예회','현장체험학습','소풍','방학식','개학식','학부모 상담','공개수업','사진 촬영','졸업식'] },
-  { label: '💌 가정통신문',   kws: ['가정통신문 제출','동의서 서명','수련활동 신청','급식 신청','방과후 신청','기초학력 검사','설문 참여','수업료 납부','교육비 지원 신청','학교생활기록부'] },
-  { label: '🌟 칭찬·격려',    kws: ['칭찬 릴레이','발표 잘함','협동심 훌륭','친절한 행동','청소 성실','수업 집중','독서 꾸준히','과제 성실','배려심 높음','성장 눈에 띔'] },
-  { label: '🍱 급식·간식',    kws: ['급식 잔반 줄이기','편식 개선','알레르기 주의','간식 지참 안내','급식 메뉴 변경','급식 시간 준수','식사 예절','물 충분히','채소 골고루','점심 도시락'] },
-  { label: '📚 도서관·독서',  kws: ['도서 반납','신간 추천','독서록 작성','독서 퀴즈','책 가져오기','도서관 이용','독서 마라톤','추천 도서 목록','책 읽기 습관','북토크'] },
-  { label: '🏃 체육·활동',    kws: ['체육복 착용','운동화 준비','줄넘기 연습','수영 수업','야외 활동','구기 종목','체력 측정','안전 주의','스트레칭','협동 경기'] },
-  { label: '🌴 방학·특별',    kws: ['방학 과제','방학 생활 계획','보충 학습','캠프 신청','방학 중 생활 지도','안전한 방학','독서 권장','규칙적 생활','개학 준비물','방학 숙제'] },
+  { label: '📝 숙제·과제',   kws: ['숙제 확인','일기 쓰기','독서 기록','받아쓰기 연습','수학 문제집','발표 준비','포트폴리오','탐구 보고서','조사 과제','프로젝트 제출'] },
+  { label: '🎒 준비물',      kws: ['준비물 챙기기','체육복','실내화','물통','간식','우산','색연필','가위풀','스케치북','악기'] },
+  { label: '🏥 건강·안전',   kws: ['안전 귀가','마스크 착용','손 씻기','건강 상태 확인','약 지참','충분한 수면','규칙적 식사','안전한 등하교','유행성 질환 주의','체온 체크'] },
+  { label: '📅 행사·일정',   kws: ['운동회','학예회','현장체험학습','소풍','방학식','개학식','학부모 상담','공개수업','사진 촬영','졸업식'] },
+  { label: '💌 가정통신문',  kws: ['가정통신문 제출','동의서 서명','수련활동 신청','급식 신청','방과후 신청','기초학력 검사','설문 참여','수업료 납부','교육비 지원','학교생활기록부'] },
+  { label: '🌟 칭찬·격려',   kws: ['칭찬 릴레이','발표 잘함','협동심 훌륭','친절한 행동','청소 성실','수업 집중','독서 꾸준히','과제 성실','배려심 높음','성장 눈에 띔'] },
+  { label: '🍱 급식·간식',   kws: ['급식 잔반 줄이기','편식 개선','알레르기 주의','간식 지참 안내','급식 메뉴 변경','식사 예절','물 충분히','채소 골고루','점심 도시락','급식 시간 준수'] },
+  { label: '📚 도서관·독서', kws: ['도서 반납','신간 추천','독서록 작성','독서 퀴즈','책 가져오기','도서관 이용','독서 마라톤','추천 도서','책 읽기 습관','북토크'] },
+  { label: '🏃 체육·활동',   kws: ['체육복 착용','운동화 준비','줄넘기 연습','수영 수업','야외 활동','구기 종목','체력 측정','안전 주의','스트레칭','협동 경기'] },
+  { label: '🌴 방학·특별',   kws: ['방학 과제','방학 생활 계획','보충 학습','캠프 신청','방학 중 생활','안전한 방학','독서 권장','규칙적 생활','개학 준비물','방학 숙제'] },
 ];
 
 const SUBJECTS = [
   { label: '🇰🇷 국어', kws: ['받아쓰기','독서감상문','시 낭송','일기 쓰기','글짓기','맞춤법 연습','국어 교과서','토론','발표','독서록'] },
-  { label: '🔢 수학', kws: ['수학 문제집','구구단','분수','도형','측정','사칙연산','통계','수학 익힘책','계산 연습','수학 오답 정리'] },
-  { label: '🌍 사회', kws: ['사회 교과서','지도 그리기','역사 공부','사회 탐구','문화재 조사','뉴스 읽기','시민 의식','환경 보호','지역 사회','우리나라 역사'] },
-  { label: '🔬 과학', kws: ['과학 실험','관찰 일지','과학 교과서','탐구 활동','생물 관찰','식물 기르기','날씨 관찰','물질 실험','우주 공부','환경 탐구'] },
-  { label: '🇺🇸 영어', kws: ['영어 단어 암기','영어 교과서','영어 듣기','영어 말하기','영어 받아쓰기','영어 독서','알파벳','영어 노래','영어 동화','영어 발표'] },
-  { label: '🎵 음악', kws: ['리코더 연습','악기 가져오기','노래 연습','합창','리듬 악기','음악 감상','악보 챙기기','가창 발표','음악 교과서','박자 연습'] },
-  { label: '🎨 미술', kws: ['미술 준비물','스케치북','색연필','물감','만들기 재료','미술 작품','크레파스','찰흙','붓과 팔레트','미술 전시'] },
-  { label: '⚽ 체육', kws: ['체육복','운동화','줄넘기','공 가져오기','야외 수업','수영 준비물','체력 측정','안전 주의','스포츠 활동','구기 종목'] },
+  { label: '🔢 수학',  kws: ['수학 문제집','구구단','분수','도형','측정','사칙연산','통계','수학 익힘책','계산 연습','오답 정리'] },
+  { label: '🌍 사회',  kws: ['사회 교과서','지도 그리기','역사 공부','문화재 조사','뉴스 읽기','시민 의식','환경 보호','지역 사회','우리나라 역사','사회 탐구'] },
+  { label: '🔬 과학',  kws: ['과학 실험','관찰 일지','탐구 활동','생물 관찰','식물 기르기','날씨 관찰','물질 실험','우주 공부','환경 탐구','과학 교과서'] },
+  { label: '🇺🇸 영어', kws: ['영어 단어 암기','영어 듣기','영어 말하기','영어 받아쓰기','영어 독서','알파벳','영어 노래','영어 동화','영어 발표','영어 교과서'] },
+  { label: '🎵 음악',  kws: ['리코더 연습','악기 가져오기','노래 연습','합창','리듬 악기','음악 감상','악보 챙기기','가창 발표','박자 연습','음악 교과서'] },
+  { label: '🎨 미술',  kws: ['미술 준비물','스케치북','색연필','물감','만들기 재료','미술 작품','크레파스','찰흙','붓과 팔레트','미술 전시'] },
+  { label: '⚽ 체육',  kws: ['체육복','운동화','줄넘기','공 가져오기','야외 수업','수영 준비물','체력 측정','안전 주의','스포츠 활동','구기 종목'] },
 ];
 
-/* build expandable pill groups */
+/* ── 준비물 자동 제안 맵 ── */
+const SUPPLY_MAP = {
+  '체육': ['체육복', '운동화', '물통'],
+  '수영': ['수영복', '수영 모자', '수건'],
+  '음악': ['리코더', '음악 교과서', '악보'],
+  '미술': ['스케치북', '색연필', '물감', '붓'],
+  '과학': ['과학 교과서', '실험 준비물'],
+  '국어': ['국어 교과서', '받아쓰기 공책'],
+  '수학': ['수학 교과서', '수학 익힘책'],
+  '영어': ['영어 교과서', '영어 단어장'],
+  '현장체험': ['도시락', '물통', '편한 신발', '여벌 옷'],
+  '소풍': ['도시락', '물통', '모자', '간식'],
+  '운동회': ['체육복', '운동화', '물통', '모자'],
+};
+
+/* ── 시즌별 키워드 ── */
+function getSeasonalInfo() {
+  const month = new Date().getMonth() + 1;
+  if ([11,12,1,2].includes(month)) return { title: '🤧 독감 시즌 키워드', kws: ['독감 예방','손 씻기','마스크 착용','기침 에티켓','건강 점검','실내 환기','면역력 관리','충분한 수면'] };
+  if ([3,4,5].includes(month))     return { title: '🌸 봄철 건강 키워드',  kws: ['수족구 주의','황사 마스크','봄 환절기','알레르기 주의','꽃가루 주의','외출 후 손 씻기'] };
+  if ([6,7,8].includes(month))     return { title: '☀️ 여름 건강 키워드',  kws: ['식중독 주의','물 충분히','폭염 조심','실내 생활','선크림 바르기','물놀이 안전'] };
+  return { title: '🍂 가을 학기 키워드', kws: ['독서 강조','학예회 준비','체력 관리','감기 예방','환절기 건강'] };
+}
+
+/* ── 특별한 날 ── */
+const SPECIAL_DAYS = {
+  '01-01': { name: '새해 첫날',   emoji: '🎊', tip: '새해 인사 알림장을 써볼까요?' },
+  '03-01': { name: '삼일절',      emoji: '🇰🇷', tip: '삼일절 관련 알림장 써볼까요?' },
+  '04-05': { name: '식목일',      emoji: '🌱', tip: '식목일 특별 알림장 어떠세요?' },
+  '05-05': { name: '어린이날',    emoji: '🎈', tip: '어린이날 특별 알림장 써볼까요?' },
+  '05-08': { name: '어버이날',    emoji: '🌹', tip: '어버이날 알림장을 특별하게 써볼까요?' },
+  '05-15': { name: '스승의 날',   emoji: '📚', tip: '스승의 날 알림장 써볼까요?' },
+  '06-06': { name: '현충일',      emoji: '🎖', tip: '현충일 관련 알림장 써볼까요?' },
+  '10-03': { name: '개천절',      emoji: '🇰🇷', tip: '개천절 알림장 써볼까요?' },
+  '10-09': { name: '한글날',      emoji: '📖', tip: '한글날 특별 알림장 어떠세요?' },
+  '12-25': { name: '크리스마스',  emoji: '🎄', tip: '크리스마스 알림장 써볼까요?' },
+};
+
+/* ── 명언 ── */
+const QUOTES = [
+  { text: '교육은 세상을 바꾸는 가장 강력한 무기다', author: '넬슨 만델라' },
+  { text: '아이들은 우리가 보내는 메시지다 — 우리가 결코 볼 수 없는 미래로', author: '닐 포스트먼' },
+  { text: '훌륭한 교사는 학생들이 볼 수 없는 것을 볼 수 있게 도와준다', author: '조지 워싱턴' },
+  { text: '배움에는 끝이 없다', author: '공자' },
+  { text: '교육의 목적은 지식이 아니라 행동이다', author: '허버트 스펜서' },
+  { text: '아이를 가르치는 것은 나무를 심는 것과 같다', author: '탈무드' },
+  { text: '가장 훌륭한 교사는 어제의 학생이었다', author: '미상' },
+  { text: '교육은 삶을 위한 준비가 아니라 삶 그 자체다', author: '존 듀이' },
+  { text: '아이의 눈높이에서 바라보는 선생님이 가장 위대하다', author: '미상' },
+  { text: '스승은 지식을 가르치고, 위대한 스승은 영감을 준다', author: '윌리엄 아서 워드' },
+  { text: '칭찬은 아이의 영혼을 춤추게 한다', author: '미상' },
+  { text: '모든 아이는 예술가다. 문제는 자라면서 어떻게 예술가로 남느냐다', author: '파블로 피카소' },
+  { text: '교육은 양동이를 채우는 것이 아니라 불을 붙이는 것이다', author: '윌리엄 버틀러 예이츠' },
+  { text: '한 권의 책이 한 사람의 인생을 바꿀 수 있다', author: '미상' },
+  { text: '오늘의 독자가 내일의 지도자다', author: '마거릿 풀러' },
+  { text: '기억은 가르침의 어머니다', author: '아이스킬로스' },
+  { text: '실수를 두려워하지 않는 아이가 가장 잘 배운다', author: '미상' },
+  { text: '교사의 열정은 학생의 용기가 된다', author: '미상' },
+  { text: '오늘 배우지 않으면 내일 가르칠 것이 없다', author: '미상' },
+  { text: '작은 친절 하나가 아이의 하루를 바꾼다', author: '미상' },
+];
+
+/* ── pill 생성 헬퍼 ── */
+function makePill(kw, extraClass = '') {
+  const el = document.createElement('button');
+  el.className = 'pill' + (extraClass ? ' ' + extraClass : '');
+  el.textContent = kw;
+  el.dataset.kw  = kw;
+  el.addEventListener('click', () => toggleKw(kw));
+  return el;
+}
+
+function escapeReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+/* ── 키워드 토글 ── */
+function toggleKw(kw) {
+  if (activeKws.has(kw)) {
+    activeKws.delete(kw);
+    mainInput.value = mainInput.value
+      .replace(new RegExp('(?:^|\\s)' + escapeReg(kw) + '(?=\\s|$)', 'g'), ' ')
+      .trim();
+  } else {
+    activeKws.add(kw);
+    mainInput.value = (mainInput.value ? mainInput.value.trimEnd() + ' ' : '') + kw;
+  }
+  updateAllPills();
+  updateCharCount();
+  lsS('alrimbot_free_text', mainInput.value);
+  updateSupplyHints();
+}
+
+function updateAllPills() {
+  document.querySelectorAll('.pill[data-kw]').forEach(el => {
+    el.classList.toggle('active', activeKws.has(el.dataset.kw));
+  });
+}
+
+/* ── 준비물 힌트 ── */
+function updateSupplyHints() {
+  const text = mainInput.value;
+  const found = new Set();
+  Object.entries(SUPPLY_MAP).forEach(([kw, supplies]) => {
+    if (text.includes(kw)) supplies.forEach(s => found.add(s));
+  });
+  const block = document.getElementById('supplyBlock');
+  const cont  = document.getElementById('supplyPills');
+  if (found.size === 0) { block.style.display = 'none'; return; }
+  block.style.display = '';
+  cont.innerHTML = '';
+  found.forEach(s => cont.appendChild(makePill(s, 'supply')));
+  updateAllPills();
+}
+
+/* ── 글자 수 & 지우기 ── */
+const charCountEl = document.getElementById('charCount');
+const clearBtn    = document.getElementById('clearBtn');
+function updateCharCount() {
+  charCountEl.textContent = mainInput.value.length;
+  clearBtn.style.display  = mainInput.value ? 'block' : 'none';
+}
+mainInput.addEventListener('input', () => {
+  updateCharCount();
+  const val = mainInput.value;
+  [...activeKws].forEach(kw => { if (!val.includes(kw)) activeKws.delete(kw); });
+  updateAllPills();
+  lsS('alrimbot_free_text', val);
+  updateSupplyHints();
+});
+clearBtn.addEventListener('click', () => {
+  mainInput.value = '';
+  activeKws.clear();
+  updateCharCount();
+  updateAllPills();
+  lsS('alrimbot_free_text', '');
+  updateSupplyHints();
+});
+const savedText = ls('alrimbot_free_text');
+if (savedText) { mainInput.value = savedText; updateCharCount(); updateSupplyHints(); }
+
+/* ── expand group 생성 ── */
 function buildExpandGroup(containerId, data) {
   const container = document.getElementById(containerId);
   data.forEach(({ label, kws }) => {
@@ -384,81 +740,194 @@ function buildExpandGroup(containerId, data) {
 buildExpandGroup('catGroup',     CATS);
 buildExpandGroup('subjectGroup', SUBJECTS);
 
-function makePill(kw, extraClass = '') {
-  const el = document.createElement('button');
-  el.className = 'pill' + (extraClass ? ' ' + extraClass : '');
-  el.textContent = kw;
-  el.dataset.kw  = kw;
-  el.addEventListener('click', () => toggleKw(kw));
-  return el;
+/* ── 시즌 키워드 ── */
+function loadSeasonalKeywords() {
+  const { title, kws } = getSeasonalInfo();
+  document.getElementById('seasonalTitle').textContent = title;
+  const cont = document.getElementById('seasonalPills');
+  cont.innerHTML = '';
+  kws.forEach(kw => cont.appendChild(makePill(kw, 'seasonal')));
+}
+loadSeasonalKeywords();
+
+/* ── 트렌딩 ── */
+async function loadTrending() {
+  try {
+    const res  = await fetch('/api/trending');
+    const json = await res.json();
+    const cont  = document.getElementById('trendingPills');
+    const empty = document.getElementById('trendingEmpty');
+    if (!json.data || json.data.length === 0) { empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    json.data.forEach(({ keyword, count }) => {
+      const el = makePill(`${keyword} ${count}`, 'trending');
+      el.dataset.kw = keyword;
+      el.addEventListener('click', e => { e.stopPropagation(); toggleKw(keyword); }, true);
+      cont.appendChild(el);
+    });
+  } catch (_) {}
+}
+loadTrending();
+
+/* ── 개인 키워드 ── */
+function loadPersonalKws() {
+  const p      = lsJ('alrimbot_personal_kw') || {};
+  const sorted = Object.entries(p).sort(([, a], [, b]) => b - a).slice(0, 10).map(([k]) => k);
+  const block  = document.getElementById('personalBlock');
+  const cont   = document.getElementById('personalPills');
+  cont.innerHTML = '';
+  if (sorted.length === 0) { block.style.display = 'none'; return; }
+  block.style.display = '';
+  sorted.forEach(kw => cont.appendChild(makePill(kw)));
+  updateAllPills();
+}
+loadPersonalKws();
+
+function trackPersonalKws(kws) {
+  const p = lsJ('alrimbot_personal_kw') || {};
+  kws.forEach(k => { p[k] = (p[k] || 0) + 1; });
+  lsSJ('alrimbot_personal_kw', p);
+  loadPersonalKws();
 }
 
-function escapeReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-
-function toggleKw(kw) {
-  if (activeKws.has(kw)) {
-    activeKws.delete(kw);
-    mainInput.value = mainInput.value
-      .replace(new RegExp('(?:^|\\s)' + escapeReg(kw) + '(?=\\s|$)', 'g'), ' ')
-      .trim();
-  } else {
-    activeKws.add(kw);
-    mainInput.value = (mainInput.value ? mainInput.value.trimEnd() + ' ' : '') + kw;
-  }
-  updateAllKwPills();
-  updateCharCount();
+function extractKeywords(text) {
+  return text.split(/[\s,，.。·\n]+/).map(t => t.trim()).filter(t => t.length >= 2 && t.length <= 20);
 }
 
-function updateAllKwPills() {
-  document.querySelectorAll('.pill[data-kw]').forEach(el => {
-    el.classList.toggle('active', activeKws.has(el.dataset.kw));
+async function sendUsage(text) {
+  const kws = extractKeywords(text);
+  trackPersonalKws(kws);
+  fetch('/api/usage', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ keywords: kws }) }).catch(() => {});
+}
+
+/* ── 날씨 ── */
+async function loadWeather() {
+  try {
+    const res  = await fetch('/api/weather');
+    weatherData = await res.json();
+    if (!weatherData.weatherLabel) return;
+
+    const banner = document.getElementById('weatherBanner');
+    const info   = document.getElementById('weatherInfo');
+    const sugg   = document.getElementById('weatherSugg');
+
+    let infoText = `<strong>${weatherData.weatherLabel}</strong>`;
+    if (weatherData.temp   !== null) infoText += ` ${Math.round(weatherData.temp)}°C`;
+    if (weatherData.pm10   !== null) infoText += ` · 미세먼지 ${weatherData.pm10}`;
+    info.innerHTML = infoText;
+
+    sugg.innerHTML = '';
+    (weatherData.suggestions || []).forEach(s => {
+      const tag = document.createElement('span');
+      tag.className = 'w-tag';
+      tag.textContent = s;
+      tag.addEventListener('click', () => toggleKw(s));
+      sugg.appendChild(tag);
+    });
+    banner.style.display = '';
+  } catch (_) {}
+}
+loadWeather();
+document.getElementById('weatherClose').addEventListener('click', () => {
+  document.getElementById('weatherBanner').style.display = 'none';
+});
+
+/* ── 특별한 날 ── */
+function checkSpecialDay() {
+  const today = new Date();
+  const mmdd  = String(today.getMonth() + 1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  const day   = SPECIAL_DAYS[mmdd];
+  if (!day) return;
+  const banner = document.getElementById('specialBanner');
+  document.getElementById('specialBannerText').textContent = `${day.emoji} 오늘은 ${day.name}! ${day.tip}`;
+  banner.style.display = '';
+  banner.style.cursor  = 'pointer';
+  banner.addEventListener('click', e => {
+    if (e.target.id === 'specialBannerClose') return;
+    mainInput.value = day.name + ' ';
+    updateCharCount();
+    mainInput.focus();
   });
 }
+if (ls('alrimbot_special_day') !== 'off') checkSpecialDay();
+document.getElementById('specialBannerClose').addEventListener('click', () => {
+  document.getElementById('specialBanner').style.display = 'none';
+});
 
-/* char count & clear */
-const charCountEl = document.getElementById('charCount');
-const clearBtn    = document.getElementById('clearBtn');
-function updateCharCount() {
-  charCountEl.textContent = mainInput.value.length;
-  clearBtn.style.display  = mainInput.value ? 'block' : 'none';
+/* ── D-Day ── */
+function loadDDay() {
+  const events = lsJ('alrimbot_dday') || [];
+  const list   = document.getElementById('ddayList');
+  list.innerHTML = '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  let nearest = null;
+
+  events.forEach((ev, i) => {
+    const d  = new Date(ev.date); d.setHours(0,0,0,0);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff >= 0 && (!nearest || diff < nearest.diff)) nearest = { ...ev, diff };
+
+    const item = document.createElement('div');
+    item.className = 'dday-item';
+    item.innerHTML = `<span><span class="dday-item-name">${ev.name}</span><span class="dday-item-date">${ev.date}${diff >= 0 ? ' (D-' + diff + ')' : ' (완료)'}</span></span>`;
+    const del = document.createElement('button');
+    del.className = 'dday-item-del';
+    del.textContent = '✕';
+    del.addEventListener('click', () => {
+      const arr = lsJ('alrimbot_dday') || [];
+      arr.splice(i, 1);
+      lsSJ('alrimbot_dday', arr);
+      loadDDay();
+    });
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+
+  const banner = document.getElementById('ddayBanner');
+  if (nearest) {
+    document.getElementById('ddayBannerText').textContent = `🎯 ${nearest.name} D-${nearest.diff}`;
+    banner.style.display = '';
+  } else {
+    banner.style.display = 'none';
+  }
 }
-mainInput.addEventListener('input', () => {
-  updateCharCount();
-  const val = mainInput.value;
-  [...activeKws].forEach(kw => { if (!val.includes(kw)) activeKws.delete(kw); });
-  updateAllKwPills();
-  lsS('alrimbot_free_text', val);
-});
-clearBtn.addEventListener('click', () => {
-  mainInput.value = '';
-  activeKws.clear();
-  updateCharCount();
-  updateAllKwPills();
-  lsS('alrimbot_free_text', '');
-});
-const savedText = ls('alrimbot_free_text');
-if (savedText) { mainInput.value = savedText; updateCharCount(); }
+loadDDay();
 
-/* settings accordion */
+document.getElementById('ddayAddBtn').addEventListener('click', () => {
+  const name = document.getElementById('ddayName').value.trim();
+  const date = document.getElementById('ddayDate').value;
+  if (!name || !date) { showToast('이름과 날짜를 모두 입력해주세요.'); return; }
+  const arr = lsJ('alrimbot_dday') || [];
+  arr.push({ name, date });
+  arr.sort((a, b) => a.date.localeCompare(b.date));
+  lsSJ('alrimbot_dday', arr);
+  document.getElementById('ddayName').value = '';
+  document.getElementById('ddayDate').value = '';
+  loadDDay();
+});
+
+/* ── 명언 ── */
+function loadQuote() {
+  const today = new Date();
+  const idx   = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % QUOTES.length;
+  const q     = QUOTES[idx];
+  document.getElementById('quoteText').textContent   = `"${q.text}"`;
+  document.getElementById('quoteAuthor').textContent = `— ${q.author}`;
+}
+loadQuote();
+
+/* ── 설정 아코디언 ── */
 const firstVisit = !ls('alrimbot_initialized');
 if (firstVisit) lsS('alrimbot_initialized', 'true');
-let settingsOpen = ls('alrimbot_settings_open') !== null
-  ? ls('alrimbot_settings_open') === 'true'
-  : firstVisit;
+let settingsOpen = ls('alrimbot_settings_open') !== null ? ls('alrimbot_settings_open') === 'true' : firstVisit;
 
 function applySettingsOpen() {
   const body  = document.getElementById('settingsBody');
   const arrow = document.getElementById('settingsArrow');
-  if (settingsOpen) {
-    body.classList.remove('closed');
-    arrow.classList.add('open');
-  } else {
-    body.classList.add('closed');
-    arrow.classList.remove('open');
-  }
+  body.classList.toggle('closed', !settingsOpen);
+  arrow.classList.toggle('open',   settingsOpen);
   updateSettingsSummary();
 }
-
 document.getElementById('settingsToggle').addEventListener('click', () => {
   settingsOpen = !settingsOpen;
   lsS('alrimbot_settings_open', settingsOpen);
@@ -466,26 +935,24 @@ document.getElementById('settingsToggle').addEventListener('click', () => {
 });
 
 function updateSettingsSummary() {
-  const gradeShort = selectedGrade.replace('초등학교 ', '').replace('초등학교', '전체');
-  document.getElementById('settingsSummary').textContent =
-    settingsOpen ? '' : `${gradeShort} · ${selectedStyle} · ${greetingLength}`;
+  const gs = selectedGrade.replace('초등학교 ', '').replace('초등학교', '전체');
+  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : `${gs} · ${selectedStyle} · ${greetingLength}`;
 }
 
-/* settings sync */
+/* ── UI 동기화 ── */
 function syncUI() {
-  document.querySelectorAll('#gradeGroup button').forEach(b =>
-    b.classList.toggle('active', b.dataset.v === selectedGrade));
-  document.querySelectorAll('#templateGrid .template-card').forEach(c =>
-    c.classList.toggle('active', c.dataset.v === selectedStyle));
-  document.querySelectorAll('#lengthGroup button').forEach(b =>
-    b.classList.toggle('active', b.dataset.v === greetingLength));
-  document.querySelectorAll('#positionGroup button').forEach(b =>
-    b.classList.toggle('active', b.dataset.v === greetingPosition));
-  document.querySelectorAll('#iconGroup button').forEach(b =>
-    b.classList.toggle('active', b.dataset.v === greetingIcon));
+  document.querySelectorAll('#gradeGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
+  document.querySelectorAll('#templateGrid .template-card').forEach(c => c.classList.toggle('active', c.dataset.v === selectedStyle));
+  document.querySelectorAll('#positionGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingPosition));
+  document.querySelectorAll('#iconGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingIcon));
+  document.querySelectorAll('#toneGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
+  document.querySelectorAll('#quickLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingLength));
+  document.querySelectorAll('#emojiLevelGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === emojiLevel));
+  document.querySelectorAll('#honorificGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === honorific));
   updateSettingsSummary();
 }
 
+// 이벤트 리스너
 document.getElementById('gradeGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   selectedGrade = v; lsS('alrimbot_grade', v); syncUI();
@@ -493,10 +960,6 @@ document.getElementById('gradeGroup').addEventListener('click', e => {
 document.getElementById('templateGrid').addEventListener('click', e => {
   const card = e.target.closest('.template-card'); if (!card) return;
   selectedStyle = card.dataset.v; lsS('alrimbot_style', selectedStyle); syncUI();
-});
-document.getElementById('lengthGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  greetingLength = v; lsS('alrimbot_length', v); syncUI();
 });
 document.getElementById('positionGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
@@ -506,11 +969,45 @@ document.getElementById('iconGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   greetingIcon = v; lsS('alrimbot_icon', v); syncUI();
 });
+document.getElementById('toneGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v; if (!v) return;
+  selectedStyle = v; lsS('alrimbot_style', v); syncUI();
+});
+document.getElementById('quickLengthGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v; if (!v) return;
+  greetingLength = v; lsS('alrimbot_length', v); syncUI();
+});
+document.getElementById('emojiLevelGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v; if (!v) return;
+  emojiLevel = v; lsS('alrimbot_emoji_level', v); syncUI();
+});
+document.getElementById('honorificGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v; if (!v) return;
+  honorific = v; lsS('alrimbot_honorific', v); syncUI();
+});
 
-syncUI();
-applySettingsOpen();
+// 학교명 입력
+const schoolInput = document.getElementById('schoolNameInput');
+schoolInput.value = schoolName;
+schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
 
-/* restore teacher/class */
+// 시그니처 문구
+const sigInput = document.getElementById('sigPhraseInput');
+sigInput.value = sigPhrase;
+sigInput.addEventListener('input', () => { sigPhrase = sigInput.value; lsS('alrimbot_sig_phrase', sigPhrase); updateSigPresets(); });
+document.getElementById('sigPresets').addEventListener('click', e => {
+  const btn = e.target.closest('.sig-preset'); if (!btn) return;
+  sigPhrase = btn.dataset.v;
+  sigInput.value = sigPhrase;
+  lsS('alrimbot_sig_phrase', sigPhrase);
+  updateSigPresets();
+});
+function updateSigPresets() {
+  document.querySelectorAll('.sig-preset').forEach(b => b.classList.toggle('active', b.dataset.v === sigPhrase));
+}
+updateSigPresets();
+
+// 담임/학급 복원
 const teacherInput = document.getElementById('teacherName');
 const classInput   = document.getElementById('className');
 teacherInput.value = ls('alrimbot_teacher') || '';
@@ -518,140 +1015,160 @@ classInput.value   = ls('alrimbot_class')   || '';
 teacherInput.addEventListener('input', () => lsS('alrimbot_teacher', teacherInput.value));
 classInput.addEventListener('input',   () => lsS('alrimbot_class',   classInput.value));
 
-/* trending */
-async function loadTrending() {
-  try {
-    const res = await fetch('/api/trending');
-    const { data } = await res.json();
-    const container = document.getElementById('trendingPills');
-    const empty     = document.getElementById('trendingEmpty');
-    if (!data || data.length === 0) { empty.style.display = ''; return; }
-    empty.style.display = 'none';
-    data.forEach(({ keyword }) => container.appendChild(makePill(keyword, 'trending')));
-  } catch (_) {}
-}
-loadTrending();
+syncUI();
+applySettingsOpen();
 
-/* personal keywords */
-function loadPersonalKws() {
-  const p      = JSON.parse(ls('alrimbot_personal_kw') || '{}');
-  const sorted = Object.entries(p).sort(([, a], [, b]) => b - a).slice(0, 10).map(([k]) => k);
-  const block  = document.getElementById('personalBlock');
-  const cont   = document.getElementById('personalPills');
-  cont.innerHTML = '';
-  if (sorted.length === 0) { block.style.display = 'none'; return; }
-  block.style.display = '';
-  sorted.forEach(kw => cont.appendChild(makePill(kw)));
-  updateAllKwPills();
-}
-loadPersonalKws();
-
-function extractKeywords(text) {
-  return text
-    .split(/[\s,，.。·\n]+/)
-    .map(t => t.trim())
-    .filter(t => t.length >= 2 && t.length <= 20);
+/* ── 서명 빌더 ── */
+function buildSignature() {
+  if (!document.getElementById('sigToggle').checked) return '';
+  const lines = [];
+  if (schoolName)            lines.push(schoolName);
+  if (classInput.value.trim()) lines.push(classInput.value.trim());
+  if (teacherInput.value.trim()) lines.push(teacherInput.value.trim() + ' 드림');
+  if (sigPhrase)             lines.push(sigPhrase);
+  return lines.length >= 2 ? lines.join('\n') : '';
 }
 
-function trackPersonalKws(kws) {
-  const p = JSON.parse(ls('alrimbot_personal_kw') || '{}');
-  kws.forEach(k => { p[k] = (p[k] || 0) + 1; });
-  lsS('alrimbot_personal_kw', JSON.stringify(p));
-  loadPersonalKws();
+/* ── 날씨 컨텍스트 ── */
+function buildWeatherContext() {
+  if (!document.getElementById('weatherToggle').checked || !weatherData) return '';
+  const parts = [];
+  if (weatherData.weatherLabel) parts.push(weatherData.weatherLabel);
+  if (weatherData.temp !== null) parts.push(Math.round(weatherData.temp) + '°C');
+  if (weatherData.pm10 !== null) parts.push('미세먼지 ' + weatherData.pm10 + 'μg');
+  return parts.join(', ');
 }
 
-async function sendUsage(text) {
-  const kws = extractKeywords(text);
-  trackPersonalKws(kws);
-  fetch('/api/usage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ keywords: kws }),
-  }).catch(() => {});
-}
-
-/* generate */
+/* ── 생성 ── */
 async function callGenerate(overrideLength) {
   const freeText = mainInput.value.trim();
   if (!freeText) { showToast('내용을 입력해주세요.'); return; }
 
   const btn = document.getElementById('generateBtn');
-  btn.disabled    = true;
-  btn.textContent = '생성 중…';
-
-  const payload = {
-    freeText,
-    teacherName:      teacherInput.value.trim(),
-    className:        classInput.value.trim(),
-    grade:            selectedGrade,
-    style:            selectedStyle,
-    greetingLength:   overrideLength || greetingLength,
-    greetingPosition: greetingPosition,
-    greetingIcon:     greetingIcon,
-  };
+  const setLoading = on => { btn.disabled = on; btn.textContent = on ? '✨ 생성 중…' : '✨ 알림장 생성'; };
+  setLoading(true);
 
   try {
     const res  = await fetch('/api/generate-free', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        freeText,
+        teacherName:      teacherInput.value.trim(),
+        className:        classInput.value.trim(),
+        grade:            selectedGrade,
+        style:            selectedStyle,
+        greetingLength:   overrideLength || greetingLength,
+        greetingPosition, greetingIcon,
+        emojiLevel,       honorific,
+        signature:        buildSignature(),
+        weatherContext:   buildWeatherContext(),
+      }),
     });
     const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error || '오류');
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
 
     document.getElementById('resultText').value = json.text;
     document.getElementById('resultCard').style.display = '';
-    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
     sendUsage(freeText);
   } catch (err) {
     showToast('오류: ' + err.message);
   } finally {
-    btn.disabled    = false;
-    btn.textContent = '✨ 알림장 생성';
+    setLoading(false);
+  }
+}
+document.getElementById('generateBtn').addEventListener('click', () => callGenerate());
+
+/* ── 길이 조정 ── */
+async function callResize(direction) {
+  const text = document.getElementById('resultText').value;
+  if (!text) return;
+  const btn = direction === 'shorter' ? document.getElementById('shorterBtn') : document.getElementById('longerBtn');
+  btn.disabled = true;
+  try {
+    const res  = await fetch('/api/resize', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ text, direction }) });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
+    document.getElementById('resultText').value = json.text;
+  } catch (err) {
+    showToast('오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
   }
 }
 
-document.getElementById('generateBtn').addEventListener('click', () => callGenerate());
-document.getElementById('regenBtn').addEventListener('click',    () => callGenerate());
-document.getElementById('longerBtn').addEventListener('click',   () => callGenerate('길게'));
-document.getElementById('shorterBtn').addEventListener('click',  () => callGenerate('짧게'));
-document.getElementById('toneBtn').addEventListener('click', () => {
-  const STYLES = ['기본', '목록형', '핵심만', '친근한', '공식적', '감성적'];
-  const idx = STYLES.indexOf(selectedStyle);
-  selectedStyle = STYLES[(idx + 1) % STYLES.length];
+/* ── 문체 순환 ── */
+const STYLE_CYCLE = ['기본','목록형','핵심만','친근한','공식적','감성적','활기찬'];
+function cycleTone() {
+  const idx = STYLE_CYCLE.indexOf(selectedStyle);
+  selectedStyle = STYLE_CYCLE[(idx + 1) % STYLE_CYCLE.length];
   lsS('alrimbot_style', selectedStyle);
   syncUI();
   callGenerate();
-});
+}
 
-/* copy */
-document.getElementById('copyBtn').addEventListener('click', () => {
+/* ── 복사 ── */
+function copyResult() {
   const text = document.getElementById('resultText').value;
   navigator.clipboard.writeText(text)
-    .then(() => showToast('클립보드에 복사했어요!'))
-    .catch(() => {
-      document.getElementById('resultText').select();
-      document.execCommand('copy');
-      showToast('복사됨');
-    });
-});
+    .then(() => showToast('복사했어요! 📋'))
+    .catch(() => { document.getElementById('resultText').select(); document.execCommand('copy'); showToast('복사됨'); });
+}
 
-/* preview modal */
-document.getElementById('previewBtn').addEventListener('click', () => {
+/* ── 미리보기 ── */
+function openModal() {
   document.getElementById('modalText').textContent = document.getElementById('resultText').value;
   document.getElementById('modal').classList.add('open');
-});
-document.getElementById('modalClose').addEventListener('click', () =>
-  document.getElementById('modal').classList.remove('open'));
-document.getElementById('modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal'))
-    document.getElementById('modal').classList.remove('open');
-});
+}
+document.getElementById('modalClose').addEventListener('click', () => document.getElementById('modal').classList.remove('open'));
+document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); });
 
-/* save */
-document.getElementById('saveBtn').addEventListener('click', async () => {
+/* ── 카카오톡 공유 ── */
+async function shareKakao() {
+  const text = document.getElementById('resultText').value;
+  if (!text) return;
+  if (navigator.share) {
+    try { await navigator.share({ title:'알림장', text }); return; } catch (_) {}
+  }
+  await navigator.clipboard.writeText(text).catch(() => {
+    document.getElementById('resultText').select(); document.execCommand('copy');
+  });
+  showToast('복사됐어요! 카카오톡에 붙여넣으세요 💬');
+}
+
+/* ── 이미지 저장 ── */
+async function saveAsImage() {
+  const text = document.getElementById('resultText').value;
+  if (!text) return;
+
+  const card = document.getElementById('printCard');
+  document.getElementById('pcSchool').textContent  = schoolName;
+  document.getElementById('pcDate').textContent    = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('pcContent').textContent = text;
+  document.getElementById('pcSig').textContent     = buildSignature();
+  card.style.display = 'block';
+
+  try {
+    const canvas = await html2canvas(card, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
+    card.style.display = 'none';
+    const link = document.createElement('a');
+    link.download = `알림장_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('이미지로 저장됐어요! 📸');
+  } catch (err) {
+    card.style.display = 'none';
+    showToast('이미지 저장 실패: ' + err.message);
+  }
+}
+
+/* ── 저장 ── */
+async function saveAlrim() {
   const generated = document.getElementById('resultText').value;
   if (!generated) return;
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
   try {
     const res  = await fetch('/api/alrim', {
       method: 'POST',
@@ -662,6 +1179,8 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
         topics:         null,
         generated_text: generated,
         edited_text:    generated,
+        settings:       { grade: selectedGrade, style: selectedStyle, greetingLength, greetingPosition, greetingIcon, emojiLevel, honorific },
+        signature:      buildSignature(),
       }),
     });
     const json = await res.json();
@@ -670,10 +1189,12 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     loadHistory();
   } catch (err) {
     showToast('저장 오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
   }
-});
+}
 
-/* history */
+/* ── 히스토리 ── */
 async function loadHistory() {
   const list = document.getElementById('historyList');
   try {
@@ -687,13 +1208,13 @@ async function loadHistory() {
     json.data.forEach(item => {
       const el      = document.createElement('div');
       el.className  = 'history-item';
-      const preview = (item.edited_text || item.generated_text || '').slice(0, 60);
+      const preview = (item.edited_text || item.generated_text || '').slice(0, 55);
       const time    = item.created_at ? item.created_at.slice(11, 16) : '';
       el.innerHTML  = `<div class="history-meta">${item.teacher_name || '선생님'} · ${item.class_name || ''} · ${time}</div><div class="history-preview">${preview}…</div>`;
       el.addEventListener('click', () => {
         document.getElementById('resultText').value = item.edited_text || item.generated_text;
         document.getElementById('resultCard').style.display = '';
-        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('resultCard').scrollIntoView({ behavior:'smooth' });
       });
       list.appendChild(el);
     });
@@ -703,7 +1224,7 @@ async function loadHistory() {
 }
 loadHistory();
 
-/* toast */
+/* ── 토스트 ── */
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
