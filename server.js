@@ -4,11 +4,28 @@ const cors = require('cors');
 const Anthropic = require('@anthropic-ai/sdk');
 const { createClient } = require('@supabase/supabase-js');
 
+// 시작 시 필수 환경변수 검증
+const REQUIRED_ENV = ['ANTHROPIC_API_KEY', 'SUPABASE_URL', 'SUPABASE_KEY'];
+const missingEnv = REQUIRED_ENV.filter(k => !process.env[k]);
+if (missingEnv.length > 0) {
+  console.error('[FATAL] 누락된 환경변수:', missingEnv.join(', '));
+  console.error('  → .env 파일을 확인하거나 Railway 환경변수를 설정해주세요.');
+  process.exit(1);
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+// 처리되지 않은 예외가 서버를 조용히 죽이지 않도록 로깅
+process.on('uncaughtException', err => {
+  console.error('[uncaughtException]', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
+});
 
 app.use(cors());
 app.use(express.json());
@@ -63,6 +80,7 @@ app.post('/api/generate', async (req, res) => {
   const maxTokens = greetingLength === '길게' ? 2048 : 1024;
 
   try {
+    console.log('[/api/generate] 요청 시작 - grade:', gradeLabel, '| style:', style, '| length:', greetingLength);
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: maxTokens,
@@ -71,10 +89,11 @@ app.post('/api/generate', async (req, res) => {
     });
 
     const text = message.content[0].text;
+    console.log('[/api/generate] 성공 - 길이:', text.length, '자');
     res.json({ text });
   } catch (err) {
-    console.error('Claude API error:', err);
-    res.status(500).json({ error: 'AI 생성 중 오류가 발생했습니다.' });
+    console.error('[/api/generate] Claude API 오류:', err.status, err.message, err.error);
+    res.status(500).json({ error: 'AI 생성 중 오류가 발생했습니다.', detail: err.message });
   }
 });
 
@@ -132,16 +151,19 @@ app.post('/api/generate-free', async (req, res) => {
   const maxTokens = greetingLength === '길게' ? 2048 : 1024;
 
   try {
+    console.log('[/api/generate-free] 요청 시작 - grade:', gradeLabel, '| style:', style, '| length:', greetingLength);
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: maxTokens,
       system,
       messages: [{ role: 'user', content: userMessage }],
     });
-    res.json({ text: message.content[0].text });
+    const text = message.content[0].text;
+    console.log('[/api/generate-free] 성공 - 길이:', text.length, '자');
+    res.json({ text });
   } catch (err) {
-    console.error('Claude API error (free):', err);
-    res.status(500).json({ error: 'AI 생성 중 오류가 발생했습니다.' });
+    console.error('[/api/generate-free] Claude API 오류:', err.status, err.message, err.error);
+    res.status(500).json({ error: 'AI 생성 중 오류가 발생했습니다.', detail: err.message });
   }
 });
 
@@ -160,8 +182,8 @@ app.post('/api/alrim', async (req, res) => {
     .single();
 
   if (error) {
-    console.error('Supabase insert error:', error);
-    return res.status(500).json({ error: '저장 중 오류가 발생했습니다.' });
+    console.error('[/api/alrim POST] Supabase 오류:', error.code, error.message);
+    return res.status(500).json({ error: '저장 중 오류가 발생했습니다.', detail: error.message });
   }
 
   res.json({ success: true, data });
@@ -178,8 +200,8 @@ app.get('/api/alrim', async (req, res) => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Supabase select error:', error);
-    return res.status(500).json({ error: '조회 중 오류가 발생했습니다.' });
+    console.error('[/api/alrim GET] Supabase 오류:', error.code, error.message);
+    return res.status(500).json({ error: '조회 중 오류가 발생했습니다.', detail: error.message });
   }
 
   res.json({ data });
@@ -224,6 +246,21 @@ app.get('/api/trending', async (req, res) => {
   res.json({ data: trending });
 });
 
+// 처리되지 않은 라우트 → JSON 404 (HTML 폴백 방지)
+app.use((req, res) => {
+  console.warn('[404]', req.method, req.url);
+  res.status(404).json({ error: `${req.method} ${req.url} 는 존재하지 않는 엔드포인트입니다.` });
+});
+
+// Express 전역 에러 핸들러 → 항상 JSON 반환
+app.use((err, req, res, _next) => {
+  console.error('[Express 에러]', req.method, req.url, err);
+  res.status(500).json({ error: '서버 오류가 발생했습니다.', detail: err.message });
+});
+
 app.listen(PORT, () => {
   console.log(`석암 알림봇 서버 실행 중: http://localhost:${PORT}`);
+  console.log('  ANTHROPIC_API_KEY:', process.env.ANTHROPIC_API_KEY ? '✅ 설정됨' : '❌ 없음');
+  console.log('  SUPABASE_URL:     ', process.env.SUPABASE_URL      ? '✅ 설정됨' : '❌ 없음');
+  console.log('  SUPABASE_KEY:     ', process.env.SUPABASE_KEY      ? '✅ 설정됨' : '❌ 없음');
 });
