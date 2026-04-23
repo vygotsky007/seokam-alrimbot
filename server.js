@@ -185,6 +185,45 @@ app.get('/api/alrim', async (req, res) => {
   res.json({ data });
 });
 
+// POST /api/usage — 키워드 사용 기록 (fire-and-forget)
+app.post('/api/usage', async (req, res) => {
+  const { keywords } = req.body;
+  if (!Array.isArray(keywords) || keywords.length === 0) {
+    return res.json({ ok: true });
+  }
+  const rows = keywords
+    .filter(k => typeof k === 'string' && k.trim().length >= 2 && k.trim().length <= 50)
+    .map(k => ({ keyword: k.trim() }));
+  if (rows.length > 0) {
+    await supabase.from('alrim_keyword_usage').insert(rows);
+  }
+  res.json({ ok: true });
+});
+
+// GET /api/trending — 최근 7일 TOP 10 트렌딩 키워드
+app.get('/api/trending', async (req, res) => {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('alrim_keyword_usage')
+    .select('keyword')
+    .gte('used_at', weekAgo)
+    .limit(5000);
+
+  if (error || !data) {
+    return res.json({ data: [] });
+  }
+
+  const counts = {};
+  data.forEach(r => { counts[r.keyword] = (counts[r.keyword] || 0) + 1; });
+  const trending = Object.entries(counts)
+    .filter(([, c]) => c >= 2)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 10)
+    .map(([keyword, count]) => ({ keyword, count }));
+
+  res.json({ data: trending });
+});
+
 app.listen(PORT, () => {
   console.log(`석암 알림봇 서버 실행 중: http://localhost:${PORT}`);
 });
