@@ -7,7 +7,6 @@
   <style>
     :root {
       --primary: #2563EB;
-      --primary-dark: #1D4ED8;
       --mint: #14B8A6;
       --bg: #F8FAFC;
       --card: #FFFFFF;
@@ -21,238 +20,199 @@
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0F172A;
-        --card: #1E293B;
-        --border: #334155;
-        --text: #F1F5F9;
-        --text-sub: #94A3B8;
-        --selected-bg: #1E3A5F;
-        --selected-border: #60A5FA;
+        --bg: #0F172A; --card: #1E293B; --border: #334155;
+        --text: #F1F5F9; --text-sub: #94A3B8;
+        --selected-bg: #1E3A5F; --selected-border: #60A5FA;
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 20px 16px 60px;
-      max-width: 640px;
-      margin: 0 auto;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; padding: 20px 16px 60px;
+      max-width: 640px; margin: 0 auto;
     }
     header { text-align: center; margin-bottom: 28px; }
     header h1 { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
-    header p { font-size: 0.9rem; color: var(--text-sub); margin-top: 4px; }
+    header p  { font-size: 0.9rem; color: var(--text-sub); margin-top: 4px; }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      margin-bottom: 16px; box-shadow: var(--shadow);
     }
     .card-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-sub);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 0.82rem; font-weight: 700; color: var(--text-sub);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;
+    }
+    .section-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); color: white;
+      font-size: 0.7rem; font-weight: 700; margin-right: 6px;
     }
 
-    /* 인사말 설정 */
-    .setting-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .setting-row:last-child { margin-bottom: 0; }
-    .setting-label { font-size: 0.82rem; color: var(--text-sub); min-width: 40px; }
+    /* ── 공통 토글 ── */
     .toggle-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .toggle-btn {
-      padding: 6px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 99px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
+      padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 99px;
+      background: var(--card); color: var(--text); font-size: 0.85rem;
+      cursor: pointer; transition: all 0.15s; user-select: none;
     }
-    .toggle-btn:hover { border-color: var(--primary); }
+    .toggle-btn:hover  { border-color: var(--primary); }
     .toggle-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
     .toggle-btn.icon-btn { padding: 6px 10px; font-size: 1.1rem; }
 
-    /* 담임 정보 */
+    /* ── 1. 담임 정보 ── */
     .info-row { display: flex; gap: 10px; }
     .info-row input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.95rem;
+      flex: 1; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.95rem;
     }
     .info-row input:focus { outline: none; border-color: var(--primary); }
 
-    /* 주제 버튼 */
-    .topics-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+    /* ── 2. 학년 선택 ── */
+    .grade-groups { display: flex; flex-direction: column; gap: 8px; }
+    .grade-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .grade-btn {
+      padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      background: var(--card); color: var(--text); font-size: 0.85rem;
+      cursor: pointer; transition: all 0.15s; user-select: none; font-weight: 600;
     }
+    .grade-btn:hover  { border-color: var(--primary); }
+    .grade-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
+    .grade-divider { width: 1px; background: var(--border); margin: 0 2px; }
+
+    /* ── 3. 스타일 템플릿 ── */
+    .template-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    @media (max-width: 420px) { .template-grid { grid-template-columns: 1fr; } }
+    .template-card {
+      border: 2px solid var(--border); border-radius: 10px; padding: 12px 10px;
+      cursor: pointer; transition: all 0.15s; background: var(--card);
+      position: relative; display: flex; flex-direction: column; gap: 4px;
+    }
+    .template-card:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(37,99,235,0.12); }
+    .template-card.selected { border-color: var(--primary); background: var(--selected-bg); }
+    .template-card.selected .t-check { display: flex; }
+    .t-check {
+      display: none; position: absolute; top: 7px; right: 7px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); color: white;
+      font-size: 0.65rem; font-weight: 700; align-items: center; justify-content: center;
+    }
+    .t-icon  { font-size: 1.3rem; }
+    .t-name  { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .t-prev  { font-size: 0.7rem; color: var(--text-sub); line-height: 1.5; white-space: pre-line; flex: 1; }
+    .t-prevbtn {
+      font-size: 0.68rem; color: var(--primary); background: none; border: none;
+      cursor: pointer; padding: 0; text-align: left; margin-top: 4px;
+    }
+    .t-prevbtn:hover { text-decoration: underline; }
+
+    /* ── 4. 인사말 설정 ── */
+    .setting-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .setting-row:last-child { margin-bottom: 0; }
+    .setting-label { font-size: 0.8rem; color: var(--text-sub); min-width: 36px; }
+
+    /* ── 5. 주제 선택 ── */
+    .topics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     @media (max-width: 480px) { .topics-grid { grid-template-columns: repeat(2, 1fr); } }
     .topic-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 12px 8px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; padding: 12px 8px; border: 2px solid var(--border); border-radius: 10px;
+      background: var(--card); color: var(--text); font-size: 0.8rem;
+      cursor: pointer; transition: all 0.15s; user-select: none;
     }
     .topic-btn .icon { font-size: 1.4rem; }
-    .topic-btn:hover { border-color: var(--primary); background: var(--selected-bg); }
+    .topic-btn:hover   { border-color: var(--primary); background: var(--selected-bg); }
     .topic-btn.selected { border-color: var(--selected-border); background: var(--selected-bg); color: var(--primary); }
 
-    /* 키워드 블록 */
+    /* ── 키워드 블록 ── */
     #keywords-section { display: none; }
     .keyword-block {
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 10px;
-      background: var(--bg);
+      padding: 14px; border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 10px; background: var(--bg);
     }
     .keyword-block:last-child { margin-bottom: 0; }
     .block-header { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
     .quick-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; margin-bottom: 6px; display: block; }
-
-    /* pill */
     .pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
     .pill {
-      padding: 4px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 99px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 0.78rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
+      padding: 4px 12px; border: 1.5px solid var(--border); border-radius: 99px;
+      background: var(--card); color: var(--text); font-size: 0.78rem;
+      cursor: pointer; transition: all 0.15s; user-select: none;
     }
-    .pill:hover { border-color: var(--primary); }
+    .pill:hover  { border-color: var(--primary); }
     .pill.active { border-color: var(--primary); background: var(--selected-bg); color: var(--primary); font-weight: 600; }
-
-    /* 직접 입력 */
     .extra-input-row input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 0.88rem;
+      width: 100%; padding: 8px 12px; border: 1px solid var(--border);
+      border-radius: 8px; background: var(--card); color: var(--text); font-size: 0.88rem;
     }
     .extra-input-row input:focus { outline: none; border-color: var(--primary); }
 
-    /* 생성 버튼 */
+    /* ── 생성 버튼 ── */
     .btn-generate {
-      width: 100%;
-      padding: 16px;
+      width: 100%; padding: 16px;
       background: linear-gradient(135deg, var(--primary), var(--mint));
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      margin-bottom: 16px;
+      color: white; border: none; border-radius: var(--radius);
+      font-size: 1.05rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s; margin-bottom: 16px;
     }
-    .btn-generate:hover { opacity: 0.9; }
+    .btn-generate:hover    { opacity: 0.9; }
     .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* 결과 */
+    /* ── 결과 ── */
     #result-section { display: none; }
     #result-text {
-      width: 100%;
-      min-height: 200px;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.95rem;
-      line-height: 1.7;
-      resize: vertical;
-      font-family: inherit;
+      width: 100%; min-height: 200px; padding: 14px;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text);
+      font-size: 0.95rem; line-height: 1.7; resize: vertical; font-family: inherit;
     }
     #result-text:focus { outline: none; border-color: var(--mint); }
     .btn-row { display: flex; gap: 8px; margin-top: 12px; }
-    .btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .btn:hover { opacity: 0.85; }
+    .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+    .btn:hover     { opacity: 0.85; }
     .btn-copy { background: var(--primary); color: white; }
     .btn-edit { background: var(--border); color: var(--text); }
     .btn-save { background: var(--mint); color: white; }
 
-    /* 저장 목록 */
+    /* ── 저장 목록 ── */
     #history-section { display: none; }
-    .history-item {
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 8px;
-      background: var(--bg);
-      font-size: 0.88rem;
+    .history-item { padding: 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: var(--bg); font-size: 0.88rem; }
+    .history-item .meta    { color: var(--text-sub); font-size: 0.8rem; margin-bottom: 6px; }
+    .history-item .preview { white-space: pre-wrap; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* ── 모달 ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 1000;
+      align-items: center; justify-content: center; padding: 20px;
     }
-    .history-item .meta { color: var(--text-sub); font-size: 0.8rem; margin-bottom: 6px; }
-    .history-item .preview {
-      white-space: pre-wrap;
-      line-height: 1.6;
-      color: var(--text);
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--card); border-radius: var(--radius);
+      padding: 24px; width: 100%; max-width: 380px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
+    .modal-body  { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: var(--text); }
+    .modal-close {
+      margin-top: 18px; width: 100%; padding: 11px;
+      background: var(--primary); color: white; border: none;
+      border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
     }
 
-    /* 토스트 */
+    /* ── 토스트 ── */
     #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(60px);
-      background: #1E293B;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 99px;
-      font-size: 0.88rem;
-      transition: transform 0.3s;
-      z-index: 999;
+      background: #1E293B; color: white; padding: 10px 20px;
+      border-radius: 99px; font-size: 0.88rem; transition: transform 0.3s; z-index: 999;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
-
     .spinner { display: inline-block; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
@@ -264,15 +224,57 @@
   <p>AI가 알림장을 대신 써드려요</p>
 </header>
 
-<!-- 인사말 설정 -->
+<!-- 1. 담임 정보 -->
 <div class="card">
-  <div class="card-title">인사말 설정</div>
+  <div class="card-title"><span class="section-num">1</span>담임 정보 (선택)</div>
+  <div class="info-row">
+    <input id="teacher-name" type="text" placeholder="선생님 이름" />
+    <input id="class-name"   type="text" placeholder="학급 (예: 3학년 2반)" />
+  </div>
+</div>
+
+<!-- 2. 학년 선택 -->
+<div class="card">
+  <div class="card-title"><span class="section-num">2</span>학년 선택</div>
+  <div class="grade-groups">
+    <div class="grade-row" id="grade-group">
+      <button class="grade-btn" data-value="1학년">1학년</button>
+      <button class="grade-btn" data-value="2학년">2학년</button>
+      <button class="grade-btn" data-value="3학년">3학년</button>
+      <button class="grade-btn" data-value="4학년">4학년</button>
+      <button class="grade-btn" data-value="5학년">5학년</button>
+      <button class="grade-btn" data-value="6학년">6학년</button>
+      <div class="grade-divider"></div>
+      <button class="grade-btn" data-value="저학년">저학년</button>
+      <button class="grade-btn" data-value="중학년">중학년</button>
+      <button class="grade-btn" data-value="고학년">고학년</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 스타일 템플릿 -->
+<div class="card">
+  <div class="card-title"><span class="section-num">3</span>스타일 템플릿</div>
+  <div class="template-grid" id="template-grid"></div>
+</div>
+
+<!-- 4. 인사말 설정 -->
+<div class="card">
+  <div class="card-title"><span class="section-num">4</span>인사말 설정</div>
   <div class="setting-row">
     <span class="setting-label">길이</span>
     <div class="toggle-group" id="length-group">
       <button class="toggle-btn" data-value="짧게">짧게</button>
       <button class="toggle-btn active" data-value="중간">중간</button>
       <button class="toggle-btn" data-value="길게">길게</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">위치</span>
+    <div class="toggle-group" id="position-group">
+      <button class="toggle-btn active" data-value="맨 위">맨 위</button>
+      <button class="toggle-btn" data-value="맨 아래">맨 아래</button>
+      <button class="toggle-btn" data-value="둘 다">둘 다</button>
     </div>
   </div>
   <div class="setting-row">
@@ -287,18 +289,9 @@
   </div>
 </div>
 
-<!-- 담임 정보 -->
+<!-- 5. 주제 선택 -->
 <div class="card">
-  <div class="card-title">담임 정보 (선택)</div>
-  <div class="info-row">
-    <input id="teacher-name" type="text" placeholder="선생님 이름" />
-    <input id="class-name" type="text" placeholder="학급 (예: 3학년 2반)" />
-  </div>
-</div>
-
-<!-- 주제 선택 -->
-<div class="card">
-  <div class="card-title">주제 선택 (여러 개 가능)</div>
+  <div class="card-title"><span class="section-num">5</span>주제 선택 (여러 개 가능)</div>
   <div class="topics-grid" id="topics-grid">
     <button class="topic-btn" data-subject="안전"><span class="icon">🛡️</span>안전</button>
     <button class="topic-btn" data-subject="학습"><span class="icon">📚</span>학습</button>
@@ -341,21 +334,25 @@
   <div id="history-list"></div>
 </div>
 
+<!-- 미리보기 모달 -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body"  id="modal-body"></div>
+    <button class="modal-close" onclick="closeModalDirect()">닫기</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-  // ── 데이터 ────────────────────────────────────────
+  // ── 데이터 ────────────────────────────────────────────
   const TOPICS = [
-    { subject: '안전',  icon: '🛡️' },
-    { subject: '학습',  icon: '📚' },
-    { subject: '준비물', icon: '🎒' },
-    { subject: '체육',  icon: '🏃' },
-    { subject: '급식',  icon: '🍱' },
-    { subject: '행사',  icon: '📅' },
-    { subject: '생활',  icon: '💬' },
-    { subject: '가정',  icon: '🏠' },
-    { subject: '칭찬',  icon: '🎉' },
-    { subject: '공지',  icon: '📢' },
+    { subject: '안전',  icon: '🛡️' }, { subject: '학습',  icon: '📚' },
+    { subject: '준비물', icon: '🎒' }, { subject: '체육',  icon: '🏃' },
+    { subject: '급식',  icon: '🍱' }, { subject: '행사',  icon: '📅' },
+    { subject: '생활',  icon: '💬' }, { subject: '가정',  icon: '🏠' },
+    { subject: '칭찬',  icon: '🎉' }, { subject: '공지',  icon: '📢' },
   ];
 
   const QUICK_KEYWORDS = {
@@ -371,66 +368,118 @@
     '공지':  ['학부모 총회','학부모 상담','공개수업','학교 홈페이지','교복 수령','도서관 이용','방과후 신청','특기적성','학생회 선거','진로 조사'],
   };
 
-  // ── 상태 ──────────────────────────────────────────
+  const TEMPLATES = [
+    { id: '기본',   icon: '📝', name: '기본 (문장형)',
+      preview: '오늘 국어 시간에는 받아쓰기를 진행했습니다.',
+      sample:  '안녕하세요 😊\n\n오늘 국어 시간에는 받아쓰기를 진행했습니다. 내일은 수학 문제집 47쪽을 풀어오세요. 체육복도 잊지 말고 챙겨주세요.\n\n오늘도 수고 많으셨습니다.' },
+    { id: '목록형', icon: '📋', name: '목록형 (번호)',
+      preview: '1. 국어 숙제\n2. 수학 문제집',
+      sample:  '안녕하세요 😊\n\n오늘 알림장입니다.\n\n1. 국어 받아쓰기 복습\n2. 수학 문제집 47쪽\n3. 내일 체육복 지참\n\n감사합니다.' },
+    { id: '핵심만', icon: '🎯', name: '핵심만 (간결)',
+      preview: '국어: 받아쓰기 / 수학: 47쪽',
+      sample:  '안녕하세요\n\n■ 학습: 국어 받아쓰기, 수학 47쪽\n■ 준비물: 체육복\n\n감사합니다.' },
+    { id: '친근한', icon: '💬', name: '친근한 (대화체)',
+      preview: '오늘도 열심히 공부한 우리 아이들 😊',
+      sample:  '안녕하세요 학부모님! 😊\n\n오늘도 우리 아이들이 정말 열심히 공부했어요 🌟 국어 받아쓰기도 잘하고, 수학도 척척! 👏\n내일은 체육복 꼭 챙겨주세요 🏃\n\n오늘도 감사합니다! 💕' },
+    { id: '공식적', icon: '📄', name: '공식적 (정중)',
+      preview: '학부모님께 알려드립니다.',
+      sample:  '학부모님께\n\n안녕하십니까. 오늘 있었던 학습 내용과 준비물을 안내드립니다.\n\n▪ 학습: 국어 받아쓰기 복습, 수학 문제집 47쪽\n▪ 준비물: 체육복\n\n항상 관심과 협조에 감사드립니다.\n담임 드림' },
+    { id: '감성적', icon: '🎨', name: '감성적 (따뜻한)',
+      preview: '오늘 우리 반 이야기를 전해드려요...',
+      sample:  '안녕하세요 😊\n\n오늘 우리 반 이야기를 전해드려요.\n\n국어 시간에는 아이들이 또박또박 받아쓰기를 참 잘했어요. 수학 문제집 47쪽도 함께 풀어봤는데, 집에서 한 번 더 복습하면 더 좋을 것 같아요.\n\n내일은 체육 수업이 있으니 체육복 부탁드려요.\n\n오늘도 사랑스러운 아이들과 함께해서 행복했습니다 💙' },
+  ];
+
+  // ── 상태 ──────────────────────────────────────────────
   const selectedTopics = new Set();
-  const selectedPills  = new Map(); // subject → Set<keyword>
+  const selectedPills  = new Map();
 
-  let greetingLength = localStorage.getItem('alrimbot_greeting_length') || '중간';
-  let greetingIcon   = localStorage.getItem('alrimbot_greeting_icon')   || '😊';
+  let selectedGrade    = localStorage.getItem('alrimbot_grade')            || '';
+  let selectedTemplate = localStorage.getItem('alrimbot_template')         || '기본';
+  let greetingLength   = localStorage.getItem('alrimbot_greeting_length')  || '중간';
+  let greetingPosition = localStorage.getItem('alrimbot_greeting_position')|| '맨 위';
+  let greetingIcon     = localStorage.getItem('alrimbot_greeting_icon')    || '😊';
 
-  // ── 인사말 설정 초기화 ─────────────────────────────
-  function initGreetingSettings() {
-    document.querySelectorAll('#length-group .toggle-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.value === greetingLength);
+  // ── 학년 선택 ─────────────────────────────────────────
+  function initGradeButtons() {
+    document.querySelectorAll('#grade-group .grade-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.value === selectedGrade);
       btn.addEventListener('click', () => {
-        greetingLength = btn.dataset.value;
-        localStorage.setItem('alrimbot_greeting_length', greetingLength);
-        document.querySelectorAll('#length-group .toggle-btn').forEach(b =>
-          b.classList.toggle('active', b.dataset.value === greetingLength)
-        );
-      });
-    });
-    document.querySelectorAll('#icon-group .toggle-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.value === greetingIcon);
-      btn.addEventListener('click', () => {
-        greetingIcon = btn.dataset.value;
-        localStorage.setItem('alrimbot_greeting_icon', greetingIcon);
-        document.querySelectorAll('#icon-group .toggle-btn').forEach(b =>
-          b.classList.toggle('active', b.dataset.value === greetingIcon)
+        selectedGrade = btn.dataset.value;
+        localStorage.setItem('alrimbot_grade', selectedGrade);
+        document.querySelectorAll('#grade-group .grade-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.value === selectedGrade)
         );
       });
     });
   }
 
-  // ── 주제 버튼 ──────────────────────────────────────
+  // ── 스타일 템플릿 렌더링 ───────────────────────────────
+  function initTemplates() {
+    const grid = document.getElementById('template-grid');
+    grid.innerHTML = TEMPLATES.map(t => `
+      <div class="template-card${t.id === selectedTemplate ? ' selected' : ''}" data-id="${t.id}">
+        <span class="t-check">✓</span>
+        <div class="t-icon">${t.icon}</div>
+        <div class="t-name">${t.name}</div>
+        <div class="t-prev">${t.preview}</div>
+        <button class="t-prevbtn" data-id="${t.id}">👁️ 미리보기</button>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.template-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('t-prevbtn')) return;
+        selectedTemplate = card.dataset.id;
+        localStorage.setItem('alrimbot_template', selectedTemplate);
+        grid.querySelectorAll('.template-card').forEach(c => c.classList.toggle('selected', c.dataset.id === selectedTemplate));
+      });
+    });
+
+    grid.querySelectorAll('.t-prevbtn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const t = TEMPLATES.find(t => t.id === btn.dataset.id);
+        if (t) openModal(`${t.icon} ${t.name}`, t.sample);
+      });
+    });
+  }
+
+  // ── 인사말 설정 초기화 ─────────────────────────────────
+  function initToggleGroup(groupId, stateGetter, stateSetter, lsKey) {
+    document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.value === stateGetter());
+      btn.addEventListener('click', () => {
+        stateSetter(btn.dataset.value);
+        localStorage.setItem(lsKey, btn.dataset.value);
+        document.querySelectorAll(`#${groupId} .toggle-btn`).forEach(b =>
+          b.classList.toggle('active', b.dataset.value === stateGetter())
+        );
+      });
+    });
+  }
+
+  // ── 주제 버튼 ─────────────────────────────────────────
   document.querySelectorAll('.topic-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const subject = btn.dataset.subject;
       if (selectedTopics.has(subject)) {
-        selectedTopics.delete(subject);
-        selectedPills.delete(subject);
+        selectedTopics.delete(subject); selectedPills.delete(subject);
         btn.classList.remove('selected');
       } else {
-        selectedTopics.add(subject);
-        selectedPills.set(subject, new Set());
+        selectedTopics.add(subject); selectedPills.set(subject, new Set());
         btn.classList.add('selected');
       }
-      saveTopicsToStorage();
+      localStorage.setItem('alrimbot_last_topics', JSON.stringify([...selectedTopics]));
       renderKeywords();
     });
   });
-
-  function saveTopicsToStorage() {
-    localStorage.setItem('alrimbot_last_topics', JSON.stringify([...selectedTopics]));
-  }
 
   function restoreTopicsFromStorage() {
     const saved = localStorage.getItem('alrimbot_last_topics');
     if (!saved) return;
     try {
       JSON.parse(saved).forEach(subject => {
-        selectedTopics.add(subject);
-        selectedPills.set(subject, new Set());
+        selectedTopics.add(subject); selectedPills.set(subject, new Set());
         const btn = document.querySelector(`.topic-btn[data-subject="${subject}"]`);
         if (btn) btn.classList.add('selected');
       });
@@ -438,33 +487,29 @@
     } catch (_) {}
   }
 
-  // ── 키워드 렌더링 ──────────────────────────────────
+  // ── 키워드 렌더링 ──────────────────────────────────────
   function renderKeywords() {
     const list    = document.getElementById('keyword-list');
     const section = document.getElementById('keywords-section');
-
     if (selectedTopics.size === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
 
-    // 기존 직접 입력값 보존
     const existingInputs = {};
     list.querySelectorAll('.keyword-block').forEach(block => {
       const inp = block.querySelector('input');
       if (inp) existingInputs[block.dataset.subject] = inp.value;
     });
-
     list.innerHTML = '';
 
     TOPICS.filter(t => selectedTopics.has(t.subject)).forEach(({ subject, icon }) => {
-      const pills   = selectedPills.get(subject) || new Set();
+      const pills    = selectedPills.get(subject) || new Set();
       const quickKws = QUICK_KEYWORDS[subject] || [];
-
-      const block = document.createElement('div');
+      const block    = document.createElement('div');
       block.className = 'keyword-block';
       block.dataset.subject = subject;
 
       const pillsHTML = quickKws.map(kw =>
-        `<button class="pill${pills.has(kw) ? ' active' : ''}" data-subject="${subject}" data-kw="${kw.replace(/"/g, '&quot;')}">${kw}</button>`
+        `<button class="pill${pills.has(kw) ? ' active' : ''}" data-subject="${subject}" data-kw="${kw.replace(/"/g,'&quot;')}">${kw}</button>`
       ).join('');
 
       block.innerHTML = `
@@ -472,35 +517,30 @@
         <span class="quick-label">자주 쓰는 키워드</span>
         <div class="pill-group">${pillsHTML}</div>
         <div class="extra-input-row">
-          <input type="text" placeholder="직접 입력 (없으면 생략)" value="${(existingInputs[subject] || '').replace(/"/g, '&quot;')}" />
-        </div>
-      `;
+          <input type="text" placeholder="직접 입력 (없으면 생략)" value="${(existingInputs[subject]||'').replace(/"/g,'&quot;')}" />
+        </div>`;
 
       block.querySelectorAll('.pill').forEach(pill => {
         pill.addEventListener('click', () => {
-          const kw      = pill.dataset.kw;
-          const pillSet = selectedPills.get(pill.dataset.subject);
+          const kw = pill.dataset.kw, pillSet = selectedPills.get(pill.dataset.subject);
           if (pillSet.has(kw)) { pillSet.delete(kw); pill.classList.remove('active'); }
           else                 { pillSet.add(kw);    pill.classList.add('active'); }
         });
       });
-
       list.appendChild(block);
     });
   }
 
-  // ── 주제 데이터 수집 ──────────────────────────────
   function getTopicsData() {
     return TOPICS.filter(t => selectedTopics.has(t.subject)).map(({ subject }) => {
       const pills = selectedPills.get(subject) || new Set();
       const block = document.querySelector(`.keyword-block[data-subject="${subject}"]`);
       const typed = block ? block.querySelector('input').value.trim() : '';
-      const allKw = [...pills, ...(typed ? [typed] : [])].join(', ');
-      return { subject, keywords: allKw };
+      return { subject, keywords: [...pills, ...(typed ? [typed] : [])].join(', ') };
     });
   }
 
-  // ── AI 생성 ───────────────────────────────────────
+  // ── AI 생성 ───────────────────────────────────────────
   async function generateAlrim() {
     if (selectedTopics.size === 0) { showToast('주제를 하나 이상 선택해주세요.'); return; }
 
@@ -513,19 +553,22 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          topics: getTopicsData(),
-          teacherName: document.getElementById('teacher-name').value.trim(),
-          className:   document.getElementById('class-name').value.trim(),
+          topics:          getTopicsData(),
+          teacherName:     document.getElementById('teacher-name').value.trim(),
+          className:       document.getElementById('class-name').value.trim(),
+          grade:           selectedGrade,
+          style:           selectedTemplate,
           greetingLength,
+          greetingPosition,
           greetingIcon,
         }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
 
-      const resultText = document.getElementById('result-text');
-      resultText.value = json.text;
-      resultText.setAttribute('readonly', true);
+      const ta = document.getElementById('result-text');
+      ta.value = json.text;
+      ta.setAttribute('readonly', true);
       document.getElementById('result-section').style.display = 'block';
       document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
     } catch (err) {
@@ -544,13 +587,12 @@
   function toggleEdit() {
     const ta = document.getElementById('result-text');
     if (ta.hasAttribute('readonly')) { ta.removeAttribute('readonly'); ta.focus(); showToast('수정 모드'); }
-    else                             { ta.setAttribute('readonly', true); showToast('수정 완료'); }
+    else { ta.setAttribute('readonly', true); showToast('수정 완료'); }
   }
 
   async function saveAlrim() {
     const generated = document.getElementById('result-text').value;
     if (!generated) { showToast('저장할 내용이 없습니다.'); return; }
-
     try {
       const res = await fetch('/api/alrim', {
         method: 'POST',
@@ -567,30 +609,35 @@
       if (!res.ok) throw new Error(json.error);
       showToast('저장되었습니다! 💾');
       loadHistory();
-    } catch (err) {
-      showToast('저장 오류: ' + err.message);
-    }
+    } catch (err) { showToast('저장 오류: ' + err.message); }
   }
 
   async function loadHistory() {
     try {
       const res  = await fetch('/api/alrim');
       const json = await res.json();
-      const list    = document.getElementById('history-list');
-      const section = document.getElementById('history-section');
-
+      const list = document.getElementById('history-list'), section = document.getElementById('history-section');
       if (!json.data || json.data.length === 0) { section.style.display = 'none'; return; }
       section.style.display = 'block';
       list.innerHTML = json.data.map(item => {
         const time  = new Date(item.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
         const label = [item.teacher_name, item.class_name].filter(Boolean).join(' · ') || '알림장';
-        return `
-          <div class="history-item">
-            <div class="meta">${time} · ${label}</div>
-            <div class="preview">${item.generated_text}</div>
-          </div>`;
+        return `<div class="history-item"><div class="meta">${time} · ${label}</div><div class="preview">${item.generated_text}</div></div>`;
       }).join('');
     } catch (_) {}
+  }
+
+  // ── 모달 ──────────────────────────────────────────────
+  function openModal(title, body) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').textContent  = body;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+  }
+  function closeModalDirect() {
+    document.getElementById('modal-overlay').classList.remove('open');
   }
 
   function showToast(msg) {
@@ -600,8 +647,12 @@
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
-  // ── 초기화 ────────────────────────────────────────
-  initGreetingSettings();
+  // ── 초기화 ────────────────────────────────────────────
+  initGradeButtons();
+  initTemplates();
+  initToggleGroup('length-group',   () => greetingLength,   v => { greetingLength   = v; }, 'alrimbot_greeting_length');
+  initToggleGroup('position-group', () => greetingPosition, v => { greetingPosition = v; }, 'alrimbot_greeting_position');
+  initToggleGroup('icon-group',     () => greetingIcon,     v => { greetingIcon     = v; }, 'alrimbot_greeting_icon');
   restoreTopicsFromStorage();
   loadHistory();
 </script>

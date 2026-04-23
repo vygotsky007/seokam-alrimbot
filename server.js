@@ -16,7 +16,7 @@ app.use(express.static('public'));
 
 // POST /api/generate — Claude API로 알림장 생성
 app.post('/api/generate', async (req, res) => {
-  const { topics, teacherName, className, greetingLength, greetingIcon } = req.body;
+  const { topics, teacherName, className, grade, style, greetingLength, greetingPosition, greetingIcon } = req.body;
 
   if (!topics || topics.length === 0) {
     return res.status(400).json({ error: '주제를 하나 이상 선택해주세요.' });
@@ -26,29 +26,46 @@ app.post('/api/generate', async (req, res) => {
     .map(t => `- [${t.subject}] ${t.keywords || ''}`)
     .join('\n');
 
-  const userMessage = `담임: ${teacherName || '선생님'} / 학급: ${className || ''}\n\n오늘 알림장 내용:\n${topicLines}`;
+  const gradeLabel = grade || '초등학교';
+  const userMessage = `담임: ${teacherName || '선생님'} / 학급: ${className || gradeLabel}\n\n오늘 알림장 내용:\n${topicLines}`;
 
+  const styleGuide = {
+    '기본':   '자연스러운 문장형으로 작성해.',
+    '목록형': '번호를 매긴 리스트 형식으로 정리해.',
+    '핵심만': '짧고 간결하게 핵심 키워드 위주로만 써.',
+    '친근한': '친근한 대화체로, 이모지를 풍부하게 사용해.',
+    '공식적': '정중한 공식 문서체로 작성해.',
+    '감성적': '따뜻하고 감성적인 어투로 작성해.',
+  };
+  const positionGuide = {
+    '맨 위':  '인사말로 시작하고 마무리는 간단하게.',
+    '맨 아래': '바로 내용으로 시작하고, 마지막에 따뜻한 인사말로 마무리해.',
+    '둘 다':  '인사말로 시작하고, 내용 전달 후 따뜻한 맺음말로 끝내.',
+  };
   const lengthGuide = {
-    '짧게': '인사말은 "안녕하세요" 한 줄만 간결하게 써.',
-    '중간': '인사말은 한두 문장으로 짧게 써.',
-    '길게': '인사말은 두세 문장으로 따뜻하게 작성해.',
+    '짧게': '전체 길이는 3줄 이내로 짧게.',
+    '중간': '전체 길이는 5~7줄 정도로.',
+    '길게': '전체 길이는 10줄 이상, 풍부하게 작성해.',
   };
   const emojiGuide = greetingIcon === '없음'
     ? '이모지는 전혀 사용하지 마.'
-    : `인사말 시작에 ${greetingIcon} 이모지를 넣고, 본문에도 이모지를 자연스럽게 사용해.`;
+    : `인사말에 ${greetingIcon} 이모지를 사용하고, 본문에도 적절히 사용해.`;
 
-  const system =
-    '초등학교 담임 선생님이 학부모님께 보내는 알림장을 작성해줘.\n' +
-    '정중하면서도 친근하게.\n' +
-    '인사 + 내용 + 맺음말 구조로 작성.\n' +
-    (lengthGuide[greetingLength] || lengthGuide['중간']) + '\n' +
-    emojiGuide + '\n' +
-    '마크다운 없이 순수 텍스트로만 출력해.';
+  const system = [
+    `${gradeLabel} 담임 선생님이 학부모님께 보내는 알림장을 작성해줘.`,
+    styleGuide[style]           || styleGuide['기본'],
+    positionGuide[greetingPosition] || positionGuide['맨 위'],
+    lengthGuide[greetingLength] || lengthGuide['중간'],
+    emojiGuide,
+    '마크다운 없이 순수 텍스트로만 출력해.',
+  ].join('\n');
+
+  const maxTokens = greetingLength === '길게' ? 2048 : 1024;
 
   try {
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: maxTokens,
       system,
       messages: [{ role: 'user', content: userMessage }],
     });
