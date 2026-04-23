@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>석암 알림봇 ✉️</title>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --mint: #14B8A6;
+      --mint-dark: #0F9186;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #1E293B;
+      --text-sub: #64748B;
+      --selected-bg: #EFF6FF;
+      --selected-border: #2563EB;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F172A;
+        --card: #1E293B;
+        --border: #334155;
+        --text: #F1F5F9;
+        --text-sub: #94A3B8;
+        --selected-bg: #1E3A5F;
+        --selected-border: #60A5FA;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px 60px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+    header p { font-size: 0.9rem; color: var(--text-sub); margin-top: 4px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* 담임 정보 */
+    .info-row {
+      display: flex;
+      gap: 10px;
+    }
+    .info-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .info-row input:focus { outline: none; border-color: var(--primary); }
+
+    /* 주제 버튼 */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 480px) {
+      .topics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .topic-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 12px 8px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .topic-btn .icon { font-size: 1.4rem; }
+    .topic-btn:hover { border-color: var(--primary); background: var(--selected-bg); }
+    .topic-btn.selected {
+      border-color: var(--selected-border);
+      background: var(--selected-bg);
+      color: var(--primary);
+    }
+
+    /* 키워드 입력 */
+    #keywords-section { display: none; }
+    .keyword-list { display: flex; flex-direction: column; gap: 8px; }
+    .keyword-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .keyword-row .subject-tag {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      min-width: 64px;
+      white-space: nowrap;
+    }
+    .keyword-row input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .keyword-row input:focus { outline: none; border-color: var(--primary); }
+
+    /* 생성 버튼 */
+    .btn-generate {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--mint));
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-bottom: 16px;
+    }
+    .btn-generate:hover { opacity: 0.9; }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 결과 영역 */
+    #result-section { display: none; }
+    #result-text {
+      width: 100%;
+      min-height: 200px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      resize: vertical;
+      font-family: inherit;
+    }
+    #result-text:focus { outline: none; border-color: var(--mint); }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-copy { background: var(--primary); color: white; }
+    .btn-edit { background: var(--border); color: var(--text); }
+    .btn-save { background: var(--mint); color: white; }
+
+    /* 저장 목록 */
+    #history-section { display: none; }
+    .history-item {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: var(--bg);
+      font-size: 0.88rem;
+    }
+    .history-item .meta {
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+    }
+    .history-item .preview {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 토스트 */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #1E293B;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 99px;
+      font-size: 0.88rem;
+      transition: transform 0.3s;
+      z-index: 999;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    .spinner { display: inline-block; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>✉️ 석암 알림봇</h1>
+  <p>AI가 알림장을 대신 써드려요</p>
+</header>
+
+<!-- 담임 정보 -->
+<div class="card">
+  <div class="card-title">담임 정보 (선택)</div>
+  <div class="info-row">
+    <input id="teacher-name" type="text" placeholder="선생님 이름" />
+    <input id="class-name" type="text" placeholder="학급 (예: 3학년 2반)" />
+  </div>
+</div>
+
+<!-- 주제 선택 -->
+<div class="card">
+  <div class="card-title">주제 선택 (여러 개 가능)</div>
+  <div class="topics-grid" id="topics-grid">
+    <button class="topic-btn" data-subject="안전"><span class="icon">🛡️</span>안전</button>
+    <button class="topic-btn" data-subject="학습"><span class="icon">📚</span>학습</button>
+    <button class="topic-btn" data-subject="준비물"><span class="icon">🎒</span>준비물</button>
+    <button class="topic-btn" data-subject="체육"><span class="icon">🏃</span>체육</button>
+    <button class="topic-btn" data-subject="급식"><span class="icon">🍱</span>급식</button>
+    <button class="topic-btn" data-subject="행사"><span class="icon">📅</span>행사</button>
+    <button class="topic-btn" data-subject="생활"><span class="icon">💬</span>생활</button>
+    <button class="topic-btn" data-subject="가정"><span class="icon">🏠</span>가정</button>
+    <button class="topic-btn" data-subject="칭찬"><span class="icon">🎉</span>칭찬</button>
+    <button class="topic-btn" data-subject="공지"><span class="icon">📢</span>공지</button>
+  </div>
+</div>
+
+<!-- 키워드 입력 -->
+<div class="card" id="keywords-section">
+  <div class="card-title">키워드 입력</div>
+  <div class="keyword-list" id="keyword-list"></div>
+</div>
+
+<!-- 생성 버튼 -->
+<button class="btn-generate" id="btn-generate" onclick="generateAlrim()">
+  ✨ AI로 알림장 생성
+</button>
+
+<!-- 결과 -->
+<div class="card" id="result-section">
+  <div class="card-title">생성된 알림장</div>
+  <textarea id="result-text" readonly></textarea>
+  <div class="btn-row">
+    <button class="btn btn-copy" onclick="copyText()">📋 복사</button>
+    <button class="btn btn-edit" onclick="toggleEdit()">✏️ 수정</button>
+    <button class="btn btn-save" onclick="saveAlrim()">💾 저장</button>
+  </div>
+</div>
+
+<!-- 오늘 목록 -->
+<div class="card" id="history-section">
+  <div class="card-title">오늘 저장된 알림장</div>
+  <div id="history-list"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const selectedTopics = new Set();
+
+  // 주제 버튼 클릭
+  document.querySelectorAll('.topic-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const subject = btn.dataset.subject;
+      if (selectedTopics.has(subject)) {
+        selectedTopics.delete(subject);
+        btn.classList.remove('selected');
+      } else {
+        selectedTopics.add(subject);
+        btn.classList.add('selected');
+      }
+      renderKeywords();
+    });
+  });
+
+  function renderKeywords() {
+    const list = document.getElementById('keyword-list');
+    const section = document.getElementById('keywords-section');
+
+    if (selectedTopics.size === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    // 기존 입력값 보존
+    const existing = {};
+    list.querySelectorAll('.keyword-row').forEach(row => {
+      existing[row.dataset.subject] = row.querySelector('input').value;
+    });
+
+    list.innerHTML = '';
+    selectedTopics.forEach(subject => {
+      const row = document.createElement('div');
+      row.className = 'keyword-row';
+      row.dataset.subject = subject;
+      row.innerHTML = `
+        <span class="subject-tag">${subject}</span>
+        <input type="text" placeholder="키워드 입력 (없으면 생략)" value="${existing[subject] || ''}" />
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function getTopicsData() {
+    const data = [];
+    document.querySelectorAll('.keyword-row').forEach(row => {
+      data.push({
+        subject: row.dataset.subject,
+        keywords: row.querySelector('input').value.trim(),
+      });
+    });
+    return data;
+  }
+
+  async function generateAlrim() {
+    if (selectedTopics.size === 0) {
+      showToast('주제를 하나 이상 선택해주세요.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-generate');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner">⏳</span> 생성 중...';
+
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topics: getTopicsData(),
+          teacherName: document.getElementById('teacher-name').value.trim(),
+          className: document.getElementById('class-name').value.trim(),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+
+      const resultText = document.getElementById('result-text');
+      resultText.value = json.text;
+      resultText.setAttribute('readonly', true);
+      document.getElementById('result-section').style.display = 'block';
+      document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+      showToast('오류: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '✨ AI로 알림장 생성';
+    }
+  }
+
+  function copyText() {
+    const text = document.getElementById('result-text').value;
+    navigator.clipboard.writeText(text).then(() => showToast('복사되었습니다! 📋'));
+  }
+
+  function toggleEdit() {
+    const ta = document.getElementById('result-text');
+    const isReadOnly = ta.hasAttribute('readonly');
+    if (isReadOnly) {
+      ta.removeAttribute('readonly');
+      ta.focus();
+      showToast('수정 모드');
+    } else {
+      ta.setAttribute('readonly', true);
+      showToast('수정 완료');
+    }
+  }
+
+  async function saveAlrim() {
+    const generated = document.getElementById('result-text').value;
+    if (!generated) { showToast('저장할 내용이 없습니다.'); return; }
+
+    try {
+      const res = await fetch('/api/alrim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacher_name: document.getElementById('teacher-name').value.trim() || null,
+          class_name: document.getElementById('class-name').value.trim() || null,
+          topics: getTopicsData(),
+          generated_text: generated,
+          edited_text: null,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      showToast('저장되었습니다! 💾');
+      loadHistory();
+    } catch (err) {
+      showToast('저장 오류: ' + err.message);
+    }
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch('/api/alrim');
+      const json = await res.json();
+      const list = document.getElementById('history-list');
+      const section = document.getElementById('history-section');
+
+      if (!json.data || json.data.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      list.innerHTML = json.data.map(item => {
+        const time = new Date(item.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+        const label = [item.teacher_name, item.class_name].filter(Boolean).join(' · ') || '알림장';
+        return `
+          <div class="history-item">
+            <div class="meta">${time} · ${label}</div>
+            <div class="preview">${item.generated_text}</div>
+          </div>
+        `;
+      }).join('');
+    } catch (_) {}
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  // 페이지 로드 시 오늘 목록
+  loadHistory();
+</script>
+</body>
+</html>

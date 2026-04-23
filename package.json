@@ -1,0 +1,19 @@
+{
+  "name": "seokam-alrimbot",
+  "version": "1.0.0",
+  "description": "석암초 담임 알림장 AI 생성 봇",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "@anthropic-ai/sdk": "^0.36.3",
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
