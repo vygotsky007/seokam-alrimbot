@@ -224,6 +224,36 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .pc-content { font-size:.9rem; line-height:1.8; white-space:pre-wrap; color:var(--text); }
 .pc-sig     { margin-top:20px; text-align:right; font-size:.82rem; color:var(--muted); white-space:pre-wrap; }
 .pc-footer  { margin-top:16px; text-align:center; font-size:.68rem; color:#cbd5e1; }
+.pc-trans-wrap  { margin-top:18px; border-top:1.5px solid #e2e8f0; padding-top:14px; }
+.pc-trans-label { font-size:.74rem; font-weight:700; color:#64748b; margin-bottom:6px; }
+.pc-trans-body  { font-size:.86rem; line-height:1.8; white-space:pre-wrap; color:#1e293b; }
+
+/* ── 번역 ── */
+.translate-wrap { position:relative; display:inline-block; }
+.translate-menu {
+  position:absolute; bottom:calc(100% + 7px); right:0; background:#fff;
+  border:1.5px solid var(--border); border-radius:10px;
+  box-shadow:0 4px 18px rgba(0,0,0,.13); z-index:60; min-width:200px; padding:5px;
+}
+.translate-menu button {
+  display:block; width:100%; padding:7px 12px; text-align:left; border:none;
+  background:none; border-radius:7px; font-size:.8rem; cursor:pointer; color:var(--text); transition:background .15s;
+}
+.translate-menu button:hover { background:var(--blue-l); color:var(--blue-d); }
+.trans-card { border:1.5px solid var(--border); border-radius:10px; overflow:hidden; animation:fadeIn .22s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+.trans-card-header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--blue-l); }
+.trans-card-lang { font-size:.79rem; font-weight:700; color:var(--blue-d); }
+.trans-card-actions { display:flex; gap:4px; align-items:center; }
+.trans-card-actions button { padding:3px 8px; border:1.5px solid var(--blue); border-radius:6px; background:#fff; font-size:.71rem; cursor:pointer; color:var(--blue-d); transition:all .15s; }
+.trans-card-actions button:hover { background:var(--blue); color:#fff; }
+.trans-card-del { border:none !important; background:none !important; color:#bbb !important; padding:2px 5px !important; }
+.trans-card-del:hover { color:var(--red) !important; background:none !important; }
+.trans-card-body { padding:11px 13px; font-size:.85rem; line-height:1.75; color:var(--text); white-space:pre-wrap; }
+.trans-card-loading { padding:14px; font-size:.8rem; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:8px; }
+.spinner { width:15px; height:15px; border:2px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#translatePanel { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -237,6 +267,10 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
   <div class="pc-title">📋 알림장</div>
   <div class="pc-content" id="pcContent"></div>
   <div class="pc-sig" id="pcSig"></div>
+  <div id="pcTransWrap" class="pc-trans-wrap" style="display:none;">
+    <div class="pc-trans-label" id="pcTransLabel"></div>
+    <div class="pc-trans-body"  id="pcTransBody"></div>
+  </div>
   <div class="pc-footer">석암 알림봇 · seokam-alrimbot</div>
 </div>
 
@@ -483,15 +517,30 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
     </div>
     <textarea id="resultText" spellcheck="false"></textarea>
     <div class="result-btn-row">
-      <button id="regenBtn"  onclick="callGenerate()">🔄 다시 생성</button>
+      <button id="regenBtn"   onclick="callGenerate()">🔄 다시 생성</button>
       <button id="shorterBtn" onclick="callResize('shorter')">✂️ 짧게</button>
       <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
       <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
       <div class="btn-divider"></div>
-      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()">💾 저장</button>
-      <button id="kakaoBtn" class="btn-mint"  onclick="shareKakao()">💬 카톡</button>
-      <button id="imgBtn"   class="btn-amber" onclick="saveAsImage()">📸 이미지</button>
+      <button id="saveBtn"  class="btn-primary" onclick="saveAlrim()">💾 저장</button>
+      <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
+      <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
+      <div class="translate-wrap">
+        <button id="translateBtn">🌍 번역 ▼</button>
+        <div id="translateMenu" class="translate-menu" style="display:none;">
+          <button data-lang="en" data-native="English">🇬🇧 English (영어)</button>
+          <button data-lang="zh" data-native="中文">🇨🇳 中文 (중국어)</button>
+          <button data-lang="vi" data-native="Tiếng Việt">🇻🇳 Tiếng Việt (베트남어)</button>
+          <button data-lang="ru" data-native="Русский">🇷🇺 Русский (러시아어)</button>
+          <button data-lang="uz" data-native="Oʻzbek">🇺🇿 Oʻzbek (우즈베크어)</button>
+          <button data-lang="mn" data-native="Монгол">🇲🇳 Монгол (몽골어)</button>
+          <button data-lang="th" data-native="ภาษาไทย">🇹🇭 ภาษาไทย (태국어)</button>
+          <button data-lang="tl" data-native="Filipino">🇵🇭 Filipino (필리핀어)</button>
+          <button data-lang="ja" data-native="日本語">🇯🇵 日本語 (일본어)</button>
+        </div>
+      </div>
     </div>
+    <div id="translatePanel"></div>
   </div>
 
   <!-- 오늘의 명언 -->
@@ -1068,6 +1117,9 @@ async function callGenerate(overrideLength) {
     const json = await res.json();
     if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
 
+    // 새 생성 시 이전 번역 초기화
+    document.getElementById('translatePanel').innerHTML = '';
+    translateCache.clear();
     document.getElementById('resultText').value = json.text;
     document.getElementById('resultCard').style.display = '';
     document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -1138,7 +1190,7 @@ async function shareKakao() {
 }
 
 /* ── 이미지 저장 ── */
-async function saveAsImage() {
+async function saveAsImage(transLang, transInfo, transText) {
   const text = document.getElementById('resultText').value;
   if (!text) return;
 
@@ -1147,18 +1199,30 @@ async function saveAsImage() {
   document.getElementById('pcDate').textContent    = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('pcContent').textContent = text;
   document.getElementById('pcSig').textContent     = buildSignature();
-  card.style.display = 'block';
 
+  // 번역문 포함 여부
+  const transWrap = document.getElementById('pcTransWrap');
+  if (transLang && transText) {
+    document.getElementById('pcTransLabel').textContent = `${transInfo.flag} ${transInfo.native} (${transInfo.name})`;
+    document.getElementById('pcTransBody').textContent  = transText;
+    transWrap.style.display = '';
+  } else {
+    transWrap.style.display = 'none';
+  }
+
+  card.style.display = 'block';
   try {
     const canvas = await html2canvas(card, { scale:2, useCORS:true, backgroundColor:'#ffffff' });
     card.style.display = 'none';
+    transWrap.style.display = 'none';
     const link = document.createElement('a');
-    link.download = `알림장_${new Date().toISOString().slice(0,10)}.png`;
+    link.download = `알림장_${new Date().toISOString().slice(0,10)}${transLang ? '_'+transLang : ''}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     showToast('이미지로 저장됐어요! 📸');
   } catch (err) {
     card.style.display = 'none';
+    transWrap.style.display = 'none';
     showToast('이미지 저장 실패: ' + err.message);
   }
 }
@@ -1223,6 +1287,141 @@ async function loadHistory() {
   }
 }
 loadHistory();
+
+/* ── 번역 ── */
+const LANGUAGES = {
+  'en': { name:'영어',      native:'English',      flag:'🇬🇧' },
+  'zh': { name:'중국어',    native:'中文',          flag:'🇨🇳' },
+  'vi': { name:'베트남어',  native:'Tiếng Việt',   flag:'🇻🇳' },
+  'ru': { name:'러시아어',  native:'Русский',       flag:'🇷🇺' },
+  'uz': { name:'우즈베크어',native:'Oʻzbek',        flag:'🇺🇿' },
+  'mn': { name:'몽골어',    native:'Монгол',        flag:'🇲🇳' },
+  'th': { name:'태국어',    native:'ภาษาไทย',      flag:'🇹🇭' },
+  'tl': { name:'필리핀어',  native:'Filipino',      flag:'🇵🇭' },
+  'ja': { name:'일본어',    native:'日本語',        flag:'🇯🇵' },
+};
+
+const translateCache = new Map();
+
+// 번역 드롭다운 토글
+document.getElementById('translateBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const menu = document.getElementById('translateMenu');
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : '';
+});
+document.addEventListener('click', () => {
+  const menu = document.getElementById('translateMenu');
+  if (menu) menu.style.display = 'none';
+});
+document.getElementById('translateMenu').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-lang]');
+  if (!btn) return;
+  translateTo(btn.dataset.lang, btn.dataset.native);
+});
+
+async function translateTo(lang, native) {
+  document.getElementById('translateMenu').style.display = 'none';
+  const text = document.getElementById('resultText').value;
+  if (!text) { showToast('번역할 알림장이 없어요.'); return; }
+
+  const info = LANGUAGES[lang];
+  const cacheKey = `${lang}::${text}`;
+
+  if (translateCache.has(cacheKey)) {
+    renderTransCard(lang, info, translateCache.get(cacheKey));
+    return;
+  }
+
+  renderTransLoading(lang, info);
+
+  try {
+    const res  = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, targetLang: lang, targetLangName: native || info.native }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
+    translateCache.set(cacheKey, json.translated);
+    renderTransCard(lang, info, json.translated);
+  } catch (err) {
+    removeTransCard(lang);
+    showToast('번역 실패: ' + err.message);
+  }
+}
+
+function renderTransLoading(lang, info) {
+  removeTransCard(lang);
+  const panel = document.getElementById('translatePanel');
+  const card  = document.createElement('div');
+  card.className    = 'trans-card';
+  card.dataset.lang = lang;
+  card.innerHTML    = `<div class="trans-card-header"><span class="trans-card-lang">${info.flag} ${info.native}</span></div><div class="trans-card-loading"><div class="spinner"></div>번역 중…</div>`;
+  panel.appendChild(card);
+}
+
+function renderTransCard(lang, info, translated) {
+  removeTransCard(lang);
+  const panel = document.getElementById('translatePanel');
+
+  const card = document.createElement('div');
+  card.className    = 'trans-card';
+  card.dataset.lang = lang;
+
+  // header
+  const header = document.createElement('div');
+  header.className = 'trans-card-header';
+
+  const langSpan = document.createElement('span');
+  langSpan.className   = 'trans-card-lang';
+  langSpan.textContent = `${info.flag} ${info.native} (${info.name})`;
+
+  const actions = document.createElement('div');
+  actions.className = 'trans-card-actions';
+
+  const copyBtn = document.createElement('button');
+  copyBtn.textContent = '📋 복사';
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(translated)
+      .then(() => showToast(`${info.flag} 복사됐어요!`))
+      .catch(() => showToast('복사 실패'));
+  });
+
+  const shareBtn = document.createElement('button');
+  shareBtn.textContent = '💬 공유';
+  shareBtn.addEventListener('click', async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: '알림장', text: translated }); return; } catch (_) {}
+    }
+    await navigator.clipboard.writeText(translated).catch(() => {});
+    showToast(`${info.flag} 복사됐어요! 카카오톡에 붙여넣으세요`);
+  });
+
+  const imgBtn = document.createElement('button');
+  imgBtn.textContent = '📸 이미지';
+  imgBtn.addEventListener('click', () => saveAsImage(lang, info, translated));
+
+  const delBtn = document.createElement('button');
+  delBtn.className   = 'trans-card-del';
+  delBtn.textContent = '✕';
+  delBtn.addEventListener('click', () => removeTransCard(lang));
+
+  actions.append(copyBtn, shareBtn, imgBtn, delBtn);
+  header.append(langSpan, actions);
+
+  const body = document.createElement('div');
+  body.className   = 'trans-card-body';
+  body.id          = `trans-body-${lang}`;
+  body.textContent = translated;
+
+  card.append(header, body);
+  panel.appendChild(card);
+}
+
+function removeTransCard(lang) {
+  document.querySelector(`.trans-card[data-lang="${lang}"]`)?.remove();
+}
 
 /* ── 토스트 ── */
 let toastTimer;

@@ -318,6 +318,38 @@ app.get('/api/trending', async (req, res) => {
   res.json({ data: trending });
 });
 
+// ── POST /api/translate ───────────────────────────────────────────────────────
+app.post('/api/translate', async (req, res) => {
+  const { text, targetLang, targetLangName } = req.body;
+  if (!text)         return res.status(400).json({ error: '번역할 텍스트가 없습니다.' });
+  if (!targetLang)   return res.status(400).json({ error: '대상 언어가 없습니다.' });
+
+  const langLabel = targetLangName || targetLang;
+  const system = [
+    `당신은 학교 알림장을 번역하는 전문 번역가입니다.`,
+    `한국어 알림장을 ${langLabel}로 자연스럽게 번역해주세요.`,
+    `다문화 가정 학부모가 이해하기 쉽게, 문화적 맥락도 고려해서 번역합니다.`,
+    `번역문만 출력하고 다른 설명·주석은 하지 마세요.`,
+    `마크다운 없이 순수 텍스트로만 출력해.`,
+  ].join('\n');
+
+  try {
+    console.log('[/api/translate] 시작 - lang:', targetLang);
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      system,
+      messages: [{ role: 'user', content: `다음 알림장을 ${langLabel}로 번역해주세요:\n\n${text}` }],
+    });
+    const translated = msg.content[0].text;
+    console.log('[/api/translate] 성공 - lang:', targetLang, '길이:', translated.length);
+    res.json({ translated });
+  } catch (err) {
+    console.error('[/api/translate] 오류:', err.status, err.message);
+    res.status(500).json({ error: '번역 중 오류가 발생했습니다.', detail: err.message });
+  }
+});
+
 // ── 404 / 전역 에러 핸들러 ────────────────────────────────────────────────────
 app.use((req, res) => {
   console.warn('[404]', req.method, req.url);
