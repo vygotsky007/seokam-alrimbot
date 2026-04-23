@@ -16,7 +16,7 @@ app.use(express.static('public'));
 
 // POST /api/generate — Claude API로 알림장 생성
 app.post('/api/generate', async (req, res) => {
-  const { topics, teacherName, className } = req.body;
+  const { topics, teacherName, className, greetingLength, greetingIcon } = req.body;
 
   if (!topics || topics.length === 0) {
     return res.status(400).json({ error: '주제를 하나 이상 선택해주세요.' });
@@ -28,15 +28,28 @@ app.post('/api/generate', async (req, res) => {
 
   const userMessage = `담임: ${teacherName || '선생님'} / 학급: ${className || ''}\n\n오늘 알림장 내용:\n${topicLines}`;
 
+  const lengthGuide = {
+    '짧게': '인사말은 "안녕하세요" 한 줄만 간결하게 써.',
+    '중간': '인사말은 한두 문장으로 짧게 써.',
+    '길게': '인사말은 두세 문장으로 따뜻하게 작성해.',
+  };
+  const emojiGuide = greetingIcon === '없음'
+    ? '이모지는 전혀 사용하지 마.'
+    : `인사말 시작에 ${greetingIcon} 이모지를 넣고, 본문에도 이모지를 자연스럽게 사용해.`;
+
+  const system =
+    '초등학교 담임 선생님이 학부모님께 보내는 알림장을 작성해줘.\n' +
+    '정중하면서도 친근하게.\n' +
+    '인사 + 내용 + 맺음말 구조로 작성.\n' +
+    (lengthGuide[greetingLength] || lengthGuide['중간']) + '\n' +
+    emojiGuide + '\n' +
+    '마크다운 없이 순수 텍스트로만 출력해.';
+
   try {
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
-      system:
-        '초등학교 담임 선생님이 학부모님께 보내는 알림장을 작성해줘.\n' +
-        '정중하면서도 친근하게. 이모지 적절히 사용.\n' +
-        '인사 + 내용 + 맺음말 구조로 작성.\n' +
-        '마크다운 없이 순수 텍스트로만 출력해.',
+      system,
       messages: [{ role: 'user', content: userMessage }],
     });
 
