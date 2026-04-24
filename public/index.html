@@ -2036,15 +2036,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col { position: sticky; top: 28px; max-height: calc(100vh - 56px); overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
   .side-col::-webkit-scrollbar { width: 6px; }
   .side-col::-webkit-scrollbar-thumb { background: var(--border); border: none; }
-
-  /* main-grid 아래 카드들도 메인 컬럼과 같은 너비 + 왼쪽 정렬 */
-  #settingsCard,
-  #quoteCard,
-  #historyCard {
-    max-width: calc((100% - 24px) * 3 / 5);
-    margin-left: 0;
-    margin-right: auto;
-  }
 }
 
 </style>
@@ -2215,6 +2206,64 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <div id="translatePanel"></div>
   </div>
 
+  <div class="card" id="settingsCard">
+    <div class="settings-header" id="settingsToggle">
+      <div class="settings-header-left">
+        ⚙️ 설정
+        <span class="settings-summary" id="settingsSummary"></span>
+      </div>
+      <span class="settings-arrow" id="settingsArrow">▲</span>
+    </div>
+    <div class="settings-body" id="settingsBody">
+
+      <div class="setting-row">
+        <label>🏫 학교명</label>
+        <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
+      </div>
+
+      <div class="setting-row">
+        <label>✏️ 시그니처 문구 (선택)</label>
+        <input id="sigPhraseInput" class="text-input" placeholder="예: 오늘도 감사합니다">
+      </div>
+
+      <div class="setting-row">
+        <label>⚙️ 자동 옵션</label>
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <label for="sigToggle">🖋️ 서명 자동 추가</label>
+            <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <label for="weatherToggle">🌤️ 날씨 자동 반영</label>
+            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <label for="specialDayToggle">🎉 특별한 날 알림</label>
+            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label>🎯 D-Day 이벤트</label>
+        <button class="dday-open-btn" id="ddayOpenBtn">📋 이벤트 관리 (<span id="ddayCount">0</span>개)</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card quote-card" id="quoteCard">
+    <div class="quote-text"   id="quoteText"></div>
+    <div class="quote-author" id="quoteAuthor"></div>
+  </div>
+
+  <div class="card" id="historyCard">
+    <div class="section-title" style="margin-bottom:9px;">📅 오늘 저장된 알림장</div>
+    <div class="history-list" id="historyList">
+      <div class="no-history">아직 저장된 알림장이 없어요.</div>
+    </div>
+  </div>
+
   </div><!-- /.main-col -->
 
   <aside class="side-col">
@@ -2273,64 +2322,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   </aside>
   </div><!-- /.main-grid -->
-
-  <div class="card" id="settingsCard">
-    <div class="settings-header" id="settingsToggle">
-      <div class="settings-header-left">
-        ⚙️ 설정
-        <span class="settings-summary" id="settingsSummary"></span>
-      </div>
-      <span class="settings-arrow" id="settingsArrow">▲</span>
-    </div>
-    <div class="settings-body" id="settingsBody">
-
-      <div class="setting-row">
-        <label>🏫 학교명</label>
-        <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
-      </div>
-
-      <div class="setting-row">
-        <label>✏️ 시그니처 문구 (선택)</label>
-        <input id="sigPhraseInput" class="text-input" placeholder="예: 오늘도 감사합니다">
-      </div>
-
-      <div class="setting-row">
-        <label>⚙️ 자동 옵션</label>
-        <div class="toggle-list">
-          <div class="toggle-row">
-            <label for="sigToggle">🖋️ 서명 자동 추가</label>
-            <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
-          </div>
-          <div class="toggle-row">
-            <label for="weatherToggle">🌤️ 날씨 자동 반영</label>
-            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-          <div class="toggle-row">
-            <label for="specialDayToggle">🎉 특별한 날 알림</label>
-            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <label>🎯 D-Day 이벤트</label>
-        <button class="dday-open-btn" id="ddayOpenBtn">📋 이벤트 관리 (<span id="ddayCount">0</span>개)</button>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="card quote-card" id="quoteCard">
-    <div class="quote-text"   id="quoteText"></div>
-    <div class="quote-author" id="quoteAuthor"></div>
-  </div>
-
-  <div class="card" id="historyCard">
-    <div class="section-title" style="margin-bottom:9px;">📅 오늘 저장된 알림장</div>
-    <div class="history-list" id="historyList">
-      <div class="no-history">아직 저장된 알림장이 없어요.</div>
-    </div>
-  </div>
 
 </div>
 
