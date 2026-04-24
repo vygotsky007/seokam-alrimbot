@@ -1286,9 +1286,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .main-col,
 .side-col { display: contents; }
 
-/* 빠른 설정 카드: 기본은 숨김 (모바일에서는 하단 설정 아코디언만 사용) */
-.quick-settings { display: none; }
-
 /* 1024px+ : 60:40 투 컬럼 */
 @media (min-width: 1024px) {
   body { padding: 24px 24px 80px; }
@@ -1314,42 +1311,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col .rec-block-title { font-size: .74rem; margin-bottom: 8px; }
   .side-col .pill { padding: 5px 10px; font-size: .74rem; }
 
-  /* 빠른 설정 카드 */
-  .quick-settings {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 20px;
-  }
-  .quick-settings .card-title {
-    font-size: .88rem;
-    font-weight: 800;
-    color: var(--navy);
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .quick-settings .toggle-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-s);
-  }
-  .quick-settings .detailed-settings-link {
-    font-size: .78rem;
-    color: var(--blue-d);
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    padding-top: 4px;
-    transition: color var(--t-fast);
-  }
-  .quick-settings .detailed-settings-link:hover {
-    color: var(--blue);
-    text-decoration: underline;
-  }
 }
 </style>
 </head>
@@ -1412,14 +1373,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <div class="card qo-card">
     <div class="qo-row">
-      <span class="qo-label">📋 문체</span>
-      <div class="qo-group" id="toneGroup">
+      <span class="qo-label">📝 문체</span>
+      <div class="qo-group" id="templateGroup">
         <button data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)">📋 개조식</button>
-        <button data-v="기본">🌱 부드러운</button>
+        <button data-v="기본">📝 기본</button>
+        <button data-v="목록형">📋 목록형</button>
+        <button data-v="핵심만">⚡ 핵심만</button>
         <button data-v="친근한">😊 친근</button>
-        <button data-v="공식적">📝 공식</button>
-        <button data-v="감성적">❤️ 따뜻</button>
-        <button data-v="핵심만">⚡ 간결</button>
+        <button data-v="공식적">📜 공식</button>
+        <button data-v="감성적">🌸 감성</button>
         <button data-v="활기찬">🎉 활기</button>
       </div>
     </div>
@@ -1432,54 +1394,23 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       </div>
     </div>
     <div class="qo-row">
-      <span class="qo-label">😊 이모지</span>
-      <div class="qo-group" id="emojiLevelGroup">
-        <button data-v="많이">🎉 많이</button>
-        <button data-v="보통">😊 보통</button>
-        <button data-v="없이">❌ 없이</button>
-      </div>
-    </div>
-    <div class="qo-row">
       <span class="qo-label">🗣️ 어투</span>
       <div class="qo-group" id="honorificGroup">
         <button data-v="존댓말">존댓말</button>
         <button data-v="반말">반말</button>
       </div>
     </div>
+    <div class="qo-row">
+      <span class="qo-label">📍 인사말</span>
+      <div class="qo-group" id="positionGroup">
+        <button data-v="맨 위">맨 위</button>
+        <button data-v="맨 아래">맨 아래</button>
+        <button data-v="둘 다">둘 다</button>
+      </div>
+    </div>
   </div>
 
   <button id="generateBtn">✨ 알림장 생성</button>
-
-  <div class="card quick-settings" id="quickSettingsCard">
-    <div class="card-title">⚡ 빠른 설정</div>
-
-    <div class="setting-row">
-      <label>📋 문체</label>
-      <div class="btn-group" id="quickStyleGroup">
-        <button data-v="개조식">개조식</button>
-        <button data-v="기본">기본</button>
-        <button data-v="친근한">친근</button>
-        <button data-v="공식적">공식</button>
-      </div>
-    </div>
-
-    <div class="toggle-list">
-      <div class="toggle-row">
-        <label for="quickSigToggle">✍️ 서명 자동 추가</label>
-        <label class="toggle"><input type="checkbox" id="quickSigToggle"><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <label for="quickWeatherToggle">🌤️ 날씨 자동 반영</label>
-        <label class="toggle"><input type="checkbox" id="quickWeatherToggle"><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <label for="quickSpecialDayToggle">📅 특별한 날 알림</label>
-        <label class="toggle"><input type="checkbox" id="quickSpecialDayToggle"><span class="toggle-slider"></span></label>
-      </div>
-    </div>
-
-    <a href="#settingsCard" class="detailed-settings-link" id="openDetailedSettings">🔧 자세한 설정 열기</a>
-  </div>
 
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
@@ -1585,51 +1516,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <div class="settings-body" id="settingsBody">
 
       <div class="setting-row">
-        <label>학년</label>
-        <div class="btn-group" id="gradeGroup">
-          <button data-v="초등학교 1~2학년">1~2학년</button>
-          <button data-v="초등학교 3~4학년">3~4학년</button>
-          <button data-v="초등학교 5~6학년">5~6학년</button>
-          <button data-v="초등학교">전체</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <label>문체 스타일 (상세)</label>
-        <div class="template-grid" id="templateGrid">
-          <div class="template-card" data-v="기본"><div class="tc-icon">📝</div><div class="tc-label">기본</div></div>
-          <div class="template-card" data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)"><div class="tc-icon">📋</div><div class="tc-label">개조식</div></div>
-          <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div></div>
-          <div class="template-card" data-v="핵심만"><div class="tc-icon">⚡</div><div class="tc-label">핵심만</div></div>
-          <div class="template-card" data-v="친근한"><div class="tc-icon">😊</div><div class="tc-label">친근한</div></div>
-          <div class="template-card" data-v="공식적"><div class="tc-icon">📜</div><div class="tc-label">공식적</div></div>
-          <div class="template-card" data-v="감성적"><div class="tc-icon">🌸</div><div class="tc-label">감성적</div></div>
-          <div class="template-card" data-v="활기찬"><div class="tc-icon">🎉</div><div class="tc-label">활기찬</div></div>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <label>인사말 위치</label>
-        <div class="btn-group" id="positionGroup">
-          <button data-v="맨 위">맨 위</button>
-          <button data-v="맨 아래">맨 아래</button>
-          <button data-v="둘 다">둘 다</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <label>인사말 아이콘</label>
-        <div class="btn-group" id="iconGroup">
-          <button data-v="없음">없음</button>
-          <button data-v="🌸">🌸</button>
-          <button data-v="😊">😊</button>
-          <button data-v="📢">📢</button>
-          <button data-v="🌟">🌟</button>
-          <button data-v="👋">👋</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
         <label>학교명</label>
         <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
       </div>
@@ -1730,12 +1616,10 @@ const lsS = (k, v) => localStorage.setItem(k, String(v));
 const lsJ = k => { try { return JSON.parse(ls(k) || 'null'); } catch { return null; } };
 const lsSJ = (k, v) => lsS(k, JSON.stringify(v));
 
-let selectedGrade    = ls('alrimbot_grade')      || '초등학교 3~4학년';
+const selectedGrade  = '초등학교';
 let selectedStyle    = ls('alrimbot_style')      || '개조식';
 let greetingLength   = ls('alrimbot_length')     || '중간';
 let greetingPosition = ls('alrimbot_position')   || '맨 위';
-let greetingIcon     = ls('alrimbot_icon')       || '없음';
-let emojiLevel       = ls('alrimbot_emoji_level')|| '보통';
 let honorific        = ls('alrimbot_honorific')  || '존댓말';
 let schoolName       = ls('alrimbot_school')     || '석암초등학교';
 let sigPhrase        = ls('alrimbot_sig_phrase') || '';
@@ -2153,49 +2037,28 @@ document.getElementById('settingsToggle').addEventListener('click', () => {
 });
 
 function updateSettingsSummary() {
-  const gs = selectedGrade.replace('초등학교 ', '').replace('초등학교', '전체');
-  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : gs + ' · ' + selectedStyle + ' · ' + greetingLength;
+  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : selectedStyle + ' · ' + greetingLength;
 }
 
 function syncUI() {
-  document.querySelectorAll('#gradeGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
-  document.querySelectorAll('#templateGrid .template-card').forEach(c => c.classList.toggle('active', c.dataset.v === selectedStyle));
+  document.querySelectorAll('#templateGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
   document.querySelectorAll('#positionGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingPosition));
-  document.querySelectorAll('#iconGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingIcon));
-  document.querySelectorAll('#toneGroup button, #quickStyleGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
   document.querySelectorAll('#quickLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingLength));
-  document.querySelectorAll('#emojiLevelGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === emojiLevel));
   document.querySelectorAll('#honorificGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === honorific));
   updateSettingsSummary();
 }
 
-document.getElementById('gradeGroup').addEventListener('click', e => {
+document.getElementById('templateGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
-  selectedGrade = v; lsS('alrimbot_grade', v); syncUI();
-});
-document.getElementById('templateGrid').addEventListener('click', e => {
-  const card = e.target.closest('.template-card'); if (!card) return;
-  selectedStyle = card.dataset.v; lsS('alrimbot_style', selectedStyle); syncUI();
+  selectedStyle = v; lsS('alrimbot_style', v); syncUI();
 });
 document.getElementById('positionGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   greetingPosition = v; lsS('alrimbot_position', v); syncUI();
 });
-document.getElementById('iconGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  greetingIcon = v; lsS('alrimbot_icon', v); syncUI();
-});
-document.getElementById('toneGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  selectedStyle = v; lsS('alrimbot_style', v); syncUI();
-});
 document.getElementById('quickLengthGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   greetingLength = v; lsS('alrimbot_length', v); syncUI();
-});
-document.getElementById('emojiLevelGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  emojiLevel = v; lsS('alrimbot_emoji_level', v); syncUI();
 });
 document.getElementById('honorificGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
@@ -2205,44 +2068,6 @@ document.getElementById('honorificGroup').addEventListener('click', e => {
 const schoolInput = document.getElementById('schoolNameInput');
 schoolInput.value = schoolName;
 schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
-
-/* ── 빠른 설정 카드 ↔ 상세 설정 동기화 ── */
-(function initQuickSettings() {
-  const styleQ   = document.getElementById('quickStyleGroup');
-  const sigQ     = document.getElementById('quickSigToggle');
-  const weatherQ = document.getElementById('quickWeatherToggle');
-  const specialQ = document.getElementById('quickSpecialDayToggle');
-  const sigM     = document.getElementById('sigToggle');
-  const weatherM = document.getElementById('weatherToggle');
-  const specialM = document.getElementById('specialDayToggle');
-
-  // 문체: 빠른 선택 → selectedStyle + syncUI가 templateGrid/toneGroup/quickStyleGroup 모두 하이라이트
-  styleQ.addEventListener('click', e => {
-    const v = e.target.dataset.v; if (!v) return;
-    selectedStyle = v;
-    lsS('alrimbot_style', v);
-    syncUI();
-  });
-
-  // 토글 3개: 양방향 미러링
-  function mirror(a, b) {
-    a.checked = b.checked;
-    a.addEventListener('change', () => { b.checked = a.checked; });
-    b.addEventListener('change', () => { a.checked = b.checked; });
-  }
-  mirror(sigQ,     sigM);
-  mirror(weatherQ, weatherM);
-  mirror(specialQ, specialM);
-
-  // "자세한 설정 열기" 링크: 아코디언 펼치고 스크롤
-  document.getElementById('openDetailedSettings').addEventListener('click', (e) => {
-    e.preventDefault();
-    if (typeof settingsOpen !== 'undefined' && !settingsOpen) {
-      document.getElementById('settingsToggle').click();
-    }
-    document.getElementById('settingsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-})();
 
 const sigInput = document.getElementById('sigPhraseInput');
 sigInput.value = sigPhrase;
@@ -2307,8 +2132,8 @@ async function callGenerate(overrideLength) {
         grade:            selectedGrade,
         style:            selectedStyle,
         greetingLength:   overrideLength || greetingLength,
-        greetingPosition, greetingIcon,
-        emojiLevel,       honorific,
+        greetingPosition,
+        honorific,
         signature:        buildSignature(),
         weatherContext:   buildWeatherContext(),
       }),
@@ -2435,7 +2260,7 @@ async function saveAlrim() {
         topics:         null,
         generated_text: generated,
         edited_text:    generated,
-        settings:       { grade: selectedGrade, style: selectedStyle, greetingLength, greetingPosition, greetingIcon, emojiLevel, honorific },
+        settings:       { grade: selectedGrade, style: selectedStyle, greetingLength, greetingPosition, honorific },
         signature:      buildSignature(),
       }),
     });

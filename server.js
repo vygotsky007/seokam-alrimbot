@@ -80,8 +80,8 @@ const LENGTH_GUIDE = {
 function buildEmojiGuide(emojiLevel, greetingIcon) {
   if (emojiLevel === '없이') return '이모지는 전혀 사용하지 마.';
   if (emojiLevel === '많이') return '이모지를 매우 풍부하게, 거의 모든 문장에 사용해.';
-  if (!greetingIcon || greetingIcon === '없음') return '이모지는 전혀 사용하지 마.';
-  return `인사말에 ${greetingIcon} 이모지를 사용하고, 본문에도 적절히 사용해.`;
+  if (greetingIcon && greetingIcon !== '없음') return `인사말에 ${greetingIcon} 이모지를 사용하고, 본문에도 적절히 사용해.`;
+  return '';
 }
 
 function buildHonorificGuide(honorific) {
