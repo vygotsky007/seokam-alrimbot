@@ -18,6 +18,8 @@
 }
 body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:12px 16px 60px; }
 .container { max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+
+/* ── banners ── */
 .banner { border-radius:10px; padding:10px 14px; font-size:.82rem; font-weight:700; display:flex; align-items:center; gap:8px; }
 .banner-special { background:linear-gradient(135deg,#fde68a,#fbbf24); color:#78350f; }
 .banner-dday    { background:linear-gradient(135deg,#bfdbfe,#93c5fd); color:#1e40af; }
@@ -27,56 +29,76 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .banner-weather .w-tag  { background:var(--blue-l); color:var(--blue-d); border-radius:99px; padding:2px 8px; font-size:.74rem; font-weight:600; cursor:pointer; }
 .banner-weather .w-tag:hover { background:var(--blue); color:#fff; }
 .banner-close { margin-left:auto; background:none; border:none; cursor:pointer; font-size:.9rem; opacity:.6; }
-.app-header { text-align:center; padding:14px 0 2px; position:relative; }
+
+/* ── header ── */
+.app-header { text-align:center; padding:14px 0 2px; }
 .app-header h1 { font-size:1.4rem; font-weight:800; color:var(--blue-d); letter-spacing:-.5px; }
 .app-header p  { font-size:.8rem; color:var(--muted); margin-top:2px; }
-.app-header .app-slogan {
-  display:inline-block; margin-top:6px; padding:4px 12px;
-  background:linear-gradient(135deg, #fef3c7, #fde68a);
-  color:#78350f; font-size:.72rem; font-weight:700;
-  border-radius:99px; letter-spacing:-.3px;
-}
-.app-header .h-btn { position:absolute; top:14px; right:0; padding:6px 12px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:.78rem; cursor:pointer; font-weight:700; color:var(--text); transition:all .15s; }
-.app-header .h-btn:hover { border-color:var(--blue); color:var(--blue); }
+
+/* ── card ── */
 .card { background:var(--card); border-radius:var(--radius); border:1px solid var(--border); padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+
+/* ── hero ── */
 .hero-label { font-size:.76rem; font-weight:700; color:var(--blue-d); margin-bottom:6px; }
 .textarea-wrap { position:relative; }
-#mainInput { width:100%; min-height:108px; border:2px solid var(--border); border-radius:10px; padding:11px 34px 11px 11px; font-size:.93rem; font-family:inherit; color:var(--text); resize:vertical; outline:none; transition:border-color .2s; line-height:1.65; }
+#mainInput {
+  width:100%; min-height:108px; border:2px solid var(--border); border-radius:10px;
+  padding:11px 34px 11px 11px; font-size:.93rem; font-family:inherit; color:var(--text);
+  resize:vertical; outline:none; transition:border-color .2s; line-height:1.65;
+}
 #mainInput:focus { border-color:var(--blue); }
 #clearBtn { position:absolute; top:9px; right:9px; background:none; border:none; font-size:1rem; cursor:pointer; color:#aaa; display:none; }
 .char-count { font-size:.7rem; color:var(--muted); text-align:right; margin-top:3px; }
 .info-row { display:flex; gap:8px; margin-top:9px; }
 .info-row input { flex:1; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:.82rem; outline:none; font-family:inherit; }
 .info-row input:focus { border-color:var(--blue); }
+
+/* ── quick options ── */
 .qo-card { display:flex; flex-direction:column; gap:10px; }
 .qo-row { display:flex; align-items:flex-start; gap:10px; }
 .qo-label { font-size:.72rem; font-weight:700; color:var(--muted); white-space:nowrap; padding-top:6px; min-width:46px; }
 .qo-group { display:flex; flex-wrap:wrap; gap:5px; }
-.qo-group button { padding:5px 10px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s; }
+.qo-group button {
+  padding:5px 10px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
 .qo-group button:hover  { border-color:var(--blue); color:var(--blue); }
 .qo-group button.active { background:var(--blue); color:#fff; border-color:var(--blue); }
-#generateBtn { width:100%; padding:14px; background:var(--blue); color:#fff; border:none; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition:background .2s, transform .1s; }
+
+/* ── generate button ── */
+#generateBtn {
+  width:100%; padding:14px; background:var(--blue); color:#fff; border:none;
+  border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition:background .2s, transform .1s;
+}
 #generateBtn:hover    { background:var(--blue-d); }
 #generateBtn:active   { transform:scale(.98); }
 #generateBtn:disabled { background:#94a3b8; cursor:not-allowed; }
+
+/* ── recommendations ── */
 .rec-section { display:flex; flex-direction:column; gap:11px; }
 .section-title { font-size:.84rem; font-weight:800; color:var(--text); }
 .divider { height:1px; background:var(--border); margin:4px 0; }
 .rec-block-title { font-size:.75rem; font-weight:700; color:var(--muted); margin-bottom:6px; }
 .pills { display:flex; flex-wrap:wrap; gap:5px; }
-.pill { padding:4px 10px; border-radius:99px; border:1.5px solid var(--border); font-size:.78rem; background:var(--blue-l); color:var(--text); cursor:pointer; user-select:none; transition:all .15s; }
+.pill {
+  padding:4px 10px; border-radius:99px; border:1.5px solid var(--border);
+  font-size:.78rem; background:var(--blue-l); color:var(--text); cursor:pointer; user-select:none; transition:all .15s;
+}
 .pill:hover  { border-color:var(--blue); color:var(--blue); }
 .pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 .pill.seasonal { background:var(--amber-l); border-color:#fcd34d; }
 .pill.seasonal.active { background:var(--amber); border-color:var(--amber); color:#fff; }
 .pill.supply  { background:var(--mint-l);  border-color:#6ee7b7; }
 .pill.supply.active  { background:var(--mint);  border-color:var(--mint); color:#fff; }
+
 .expand-group { display:flex; flex-direction:column; gap:7px; }
 .expand-header { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.78rem; font-weight:700; color:var(--muted); user-select:none; }
 .expand-arrow  { font-size:.68rem; transition:transform .2s; }
 .expand-header.open .expand-arrow { transform:rotate(90deg); }
 .expand-body   { display:none; flex-wrap:wrap; gap:5px; padding-top:4px; }
 .expand-body.open { display:flex; }
+
+/* ── settings accordion ── */
 .settings-header { display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
 .settings-header-left { display:flex; align-items:center; gap:8px; font-weight:700; font-size:.86rem; }
 .settings-summary { font-size:.73rem; color:var(--muted); font-weight:400; }
@@ -86,21 +108,39 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .settings-body.closed { display:none; }
 .setting-row label { font-size:.73rem; font-weight:700; color:var(--muted); display:block; margin-bottom:5px; }
 .btn-group { display:flex; flex-wrap:wrap; gap:5px; }
-.btn-group button { padding:5px 11px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s; }
+.btn-group button {
+  padding:5px 11px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.78rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
 .btn-group button:hover  { border-color:var(--blue); color:var(--blue); }
 .btn-group button.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 .template-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
-.template-card { padding:7px 4px; border:1.5px solid var(--border); border-radius:8px; text-align:center; cursor:pointer; font-size:.75rem; background:#fff; transition:all .15s; }
+.template-card {
+  padding:7px 4px; border:1.5px solid var(--border); border-radius:8px;
+  text-align:center; cursor:pointer; font-size:.75rem; background:#fff; transition:all .15s;
+}
 .template-card:hover { border-color:var(--blue); }
 .template-card.active { border-color:var(--blue); background:var(--blue-l); color:var(--blue-d); }
 .template-card .tc-icon  { font-size:1rem; margin-bottom:1px; }
 .template-card .tc-label { font-weight:700; font-size:.73rem; }
-.text-input { width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:.82rem; outline:none; font-family:inherit; }
+
+/* school/sig inputs */
+.text-input {
+  width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px;
+  font-size:.82rem; outline:none; font-family:inherit;
+}
 .text-input:focus { border-color:var(--blue); }
+
+/* sig presets */
 .sig-presets { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
-.sig-preset { padding:4px 10px; border:1.5px solid var(--border); border-radius:99px; font-size:.76rem; background:#fff; cursor:pointer; transition:all .15s; }
+.sig-preset {
+  padding:4px 10px; border:1.5px solid var(--border); border-radius:99px;
+  font-size:.76rem; background:#fff; cursor:pointer; transition:all .15s;
+}
 .sig-preset:hover  { border-color:var(--blue); }
 .sig-preset.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+
+/* D-Day manager */
 .dday-form { display:flex; gap:6px; margin-bottom:8px; }
 .dday-form input { flex:1; padding:6px 9px; border:1.5px solid var(--border); border-radius:8px; font-size:.78rem; outline:none; }
 .dday-form input:focus { border-color:var(--blue); }
@@ -111,6 +151,8 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .dday-item-date  { color:var(--muted); font-size:.72rem; margin-left:8px; }
 .dday-item-del   { background:none; border:none; cursor:pointer; color:#aaa; font-size:.9rem; }
 .dday-item-del:hover { color:var(--red); }
+
+/* toggle row */
 .toggle-row { display:flex; align-items:center; justify-content:space-between; }
 .toggle-row label { font-size:.78rem; color:var(--text); cursor:pointer; }
 .toggle { position:relative; display:inline-block; width:38px; height:22px; }
@@ -119,24 +161,36 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .toggle-slider::before { content:''; position:absolute; width:16px; height:16px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
 .toggle input:checked + .toggle-slider { background:var(--blue); }
 .toggle input:checked + .toggle-slider::before { transform:translateX(16px); }
+
+/* ── result ── */
 .result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
 .result-header span { font-size:.8rem; font-weight:700; color:var(--blue-d); }
-#resultText { width:100%; min-height:160px; border:1.5px solid var(--border); border-radius:8px; padding:11px; font-size:.87rem; font-family:inherit; color:var(--text); resize:vertical; line-height:1.7; outline:none; }
+#resultText {
+  width:100%; min-height:160px; border:1.5px solid var(--border); border-radius:8px;
+  padding:11px; font-size:.87rem; font-family:inherit; color:var(--text); resize:vertical; line-height:1.7; outline:none;
+}
 #resultText:focus { border-color:var(--blue); }
 .result-btn-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
-.result-btn-row button { padding:5px 11px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:.76rem; cursor:pointer; color:var(--text); transition:all .15s; }
+.result-btn-row button {
+  padding:5px 11px; border-radius:8px; border:1.5px solid var(--border);
+  background:#fff; font-size:.76rem; cursor:pointer; color:var(--text); transition:all .15s;
+}
 .result-btn-row button:hover  { border-color:var(--blue); color:var(--blue); }
 .result-btn-row button:disabled { opacity:.5; cursor:not-allowed; }
 .btn-primary  { background:var(--blue)  !important; color:#fff !important; border-color:var(--blue)  !important; font-weight:700; }
 .btn-mint     { background:var(--mint)  !important; color:#fff !important; border-color:var(--mint)  !important; }
 .btn-amber    { background:var(--amber) !important; color:#fff !important; border-color:var(--amber) !important; }
 .btn-divider  { width:1px; background:var(--border); margin:0 2px; }
+
+/* ── history ── */
 .history-list { display:flex; flex-direction:column; gap:7px; }
 .history-item { border:1px solid var(--border); border-radius:8px; padding:9px 11px; font-size:.78rem; cursor:pointer; transition:border-color .15s; }
 .history-item:hover { border-color:var(--blue); }
 .history-meta    { font-size:.7rem; color:var(--muted); margin-bottom:2px; }
 .history-preview { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .no-history { font-size:.78rem; color:var(--muted); text-align:center; padding:8px 0; }
+
+/* ── 히스토리 모달 ── */
 .h-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; overflow:hidden; }
 .h-modal.open { display:flex; align-items:flex-end; justify-content:center; }
 @media (min-width:480px) { .h-modal.open { align-items:center; } }
@@ -165,18 +219,39 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .h-empty { text-align:center; padding:30px 16px; color:var(--muted); font-size:.82rem; line-height:1.8; }
 .h-load-more { width:calc(100% - 28px); margin:0 14px 10px; padding:9px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:.8rem; cursor:pointer; color:var(--blue); font-weight:700; flex-shrink:0; }
 .h-load-more:hover { background:var(--blue-l); }
+
+/* ── quote ── */
 .quote-card { text-align:center; padding:14px; }
 .quote-text   { font-size:.83rem; color:var(--text); line-height:1.6; font-style:italic; }
 .quote-author { font-size:.72rem; color:var(--muted); margin-top:5px; }
-#toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(70px); background:#1e293b; color:#fff; padding:9px 18px; border-radius:99px; font-size:.83rem; transition:transform .3s; pointer-events:none; white-space:nowrap; z-index:999; }
+
+/* ── toast ── */
+#toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(70px);
+  background:#1e293b; color:#fff; padding:9px 18px; border-radius:99px;
+  font-size:.83rem; transition:transform .3s; pointer-events:none; white-space:nowrap; z-index:999;
+}
 #toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ── modal ── */
 #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); align-items:center; justify-content:center; z-index:100; padding:20px; }
 #modal.open { display:flex; }
 .modal-box { background:#fff; border-radius:var(--radius); padding:20px; max-width:460px; width:100%; max-height:80vh; overflow-y:auto; }
 .modal-box h3 { font-size:.98rem; font-weight:700; margin-bottom:11px; }
 #modalText { white-space:pre-wrap; font-size:.86rem; line-height:1.75; }
 .modal-close { margin-top:14px; width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:.9rem; cursor:pointer; }
-#printCard { display:none; position:fixed; left:-9999px; top:0; width:600px; background:#fff; padding:36px 40px; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; border:2px solid #e2e8f0; }
+
+/* ── app-header 히스토리 버튼 ── */
+.app-header { position:relative; }
+.app-header .h-btn { position:absolute; top:14px; right:0; padding:6px 12px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:.78rem; cursor:pointer; font-weight:700; color:var(--text); transition:all .15s; }
+.app-header .h-btn:hover { border-color:var(--blue); color:var(--blue); }
+
+/* ── print card (hidden, for html2canvas) ── */
+#printCard {
+  display:none; position:fixed; left:-9999px; top:0;
+  width:600px; background:#fff; padding:36px 40px; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  border:2px solid #e2e8f0;
+}
 .pc-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:2px solid var(--blue); padding-bottom:12px; }
 .pc-school  { font-size:1rem; font-weight:800; color:var(--blue-d); }
 .pc-date    { font-size:.82rem; color:var(--muted); }
@@ -188,49 +263,26 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 .pc-trans-label { font-size:.74rem; font-weight:700; color:#64748b; margin-bottom:6px; }
 .pc-trans-body  { font-size:.86rem; line-height:1.8; white-space:pre-wrap; color:#1e293b; }
 
-/* ── 번역 (항상 펼쳐진 그리드) ── */
-.translate-panel-open {
-  margin-top:12px; padding:14px; background:linear-gradient(135deg, #eff6ff, #dbeafe);
-  border:1.5px solid #bfdbfe; border-radius:12px;
+/* ── 번역 ── */
+.translate-wrap { position:relative; display:inline-block; }
+.translate-menu {
+  position:absolute; bottom:calc(100% + 7px); right:0; background:#fff;
+  border:1.5px solid var(--border); border-radius:10px;
+  box-shadow:0 4px 18px rgba(0,0,0,.13); z-index:60; min-width:200px; padding:5px;
+}.trans-check {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 12px; font-size:.8rem; cursor:pointer;
+  border-radius:7px; transition:background .15s; user-select:none;
 }
-.translate-panel-title {
-  font-size:.88rem; font-weight:800; color:var(--blue-d); margin-bottom:10px;
-  display:flex; align-items:center; gap:6px;
+.trans-check:hover { background:var(--blue-l); }
+.trans-check input[type="checkbox"] {
+  width:16px; height:16px; cursor:pointer; accent-color:var(--blue);
 }
-.translate-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:10px;
+.translate-menu button {
+  display:block; width:100%; padding:7px 12px; text-align:left; border:none;
+  background:none; border-radius:7px; font-size:.8rem; cursor:pointer; color:var(--text); transition:background .15s;
 }
-@media (max-width:520px) { .translate-grid { grid-template-columns:repeat(2, 1fr); } }
-.trans-check {
-  display:flex; align-items:center; gap:7px; padding:8px 10px; font-size:.8rem;
-  cursor:pointer; border-radius:8px; transition:all .15s; user-select:none;
-  background:#fff; border:1.5px solid var(--border); font-weight:500;
-}
-.trans-check:hover { border-color:var(--blue); background:var(--blue-l); }
-.trans-check.checked { border-color:var(--blue); background:var(--blue); color:#fff; font-weight:700; }
-.trans-check input[type="checkbox"] { width:15px; height:15px; cursor:pointer; accent-color:var(--blue); flex-shrink:0; }
-.trans-check.checked input[type="checkbox"] { accent-color:#fff; }
-#translateAllBtn {
-  width:100%; padding:10px; background:var(--blue); color:#fff; border:none;
-  border-radius:8px; font-size:.88rem; font-weight:700; cursor:pointer; transition:background .2s;
-}
-#translateAllBtn:hover { background:var(--blue-d); }
-#translateAllBtn:disabled { background:#94a3b8; cursor:not-allowed; }
-
-/* 번역 결과 영역 */
-.trans-results-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:10px 14px; background:var(--blue-l); border:1.5px solid #bfdbfe;
-  border-radius:10px; margin-top:12px;
-}
-.trans-results-title { font-size:.85rem; font-weight:800; color:var(--blue-d); }
-.trans-results-actions { display:flex; gap:6px; }
-.trans-results-actions button {
-  padding:5px 11px; border:1.5px solid var(--blue); border-radius:7px; background:#fff;
-  font-size:.74rem; cursor:pointer; color:var(--blue-d); font-weight:700; transition:all .15s;
-}
-.trans-results-actions button:hover { background:var(--blue); color:#fff; }
-
+.translate-menu button:hover { background:var(--blue-l); color:var(--blue-d); }
 .trans-card { border:1.5px solid var(--border); border-radius:10px; overflow:hidden; animation:fadeIn .22s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
 .trans-card-header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--blue-l); }
@@ -249,6 +301,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 </head>
 <body>
 
+<!-- Print card (hidden, html2canvas용) -->
 <div id="printCard">
   <div class="pc-header">
     <div class="pc-school" id="pcSchool">석암초등학교</div>
@@ -266,28 +319,32 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 
 <div class="container">
 
+  <!-- 특별한 날 배너 (JS로 조건부 표시) -->
   <div id="specialBanner" class="banner banner-special" style="display:none;">
     <span id="specialBannerText"></span>
     <button class="banner-close" id="specialBannerClose">✕</button>
   </div>
 
+  <!-- D-Day 배너 -->
   <div id="ddayBanner" class="banner banner-dday" style="display:none;">
     <span id="ddayBannerText"></span>
   </div>
 
+  <!-- 날씨 배너 -->
   <div id="weatherBanner" class="banner banner-weather" style="display:none;">
     <span id="weatherInfo"></span>
     <span class="w-sugg" id="weatherSugg"></span>
     <button class="banner-close" id="weatherClose">✕</button>
   </div>
 
+  <!-- 헤더 -->
   <div class="app-header">
     <h1>📋 석암 알림봇</h1>
     <p>AI가 알림장을 완성해 드려요</p>
-    <p class="app-slogan">✍️ 적자생존 — 우리는 적어야 살아요. 매일 기록해요.</p>
     <button class="h-btn" id="historyModalBtn">📚 히스토리</button>
   </div>
 
+  <!-- 히어로 입력 -->
   <div class="card">
     <div class="hero-label">오늘 알림장에 담을 내용을 입력하세요</div>
     <div class="textarea-wrap">
@@ -301,6 +358,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
     </div>
   </div>
 
+  <!-- 빠른 옵션 -->
   <div class="card qo-card">
     <div class="qo-row">
       <span class="qo-label">🎨 톤</span>
@@ -338,22 +396,27 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
     </div>
   </div>
 
+  <!-- 생성 버튼 -->
   <button id="generateBtn">✨ 알림장 생성</button>
 
+  <!-- 추천 키워드 -->
   <div class="card rec-section">
     <div class="section-title">💡 키워드 추천</div>
     <div class="divider"></div>
 
+    <!-- 준비물 자동 제안 (JS 조건부) -->
     <div id="supplyBlock" style="display:none;">
       <div class="rec-block-title">🎒 관련 준비물 제안</div>
       <div id="supplyPills" class="pills"></div>
     </div>
 
+    <!-- 시즌별 키워드 -->
     <div id="seasonalBlock">
       <div class="rec-block-title" id="seasonalTitle"></div>
       <div id="seasonalPills" class="pills"></div>
     </div>
 
+    <!-- 트렌딩 -->
     <div class="rec-block">
       <div class="rec-block-title">🔥 트렌딩 (최근 7일)</div>
       <div id="trendingPills" class="pills">
@@ -361,22 +424,26 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
       </div>
     </div>
 
+    <!-- 개인 자주 쓰는 -->
     <div id="personalBlock" style="display:none;">
       <div class="rec-block-title">⭐ 내가 자주 쓰는</div>
       <div id="personalPills" class="pills"></div>
     </div>
 
+    <!-- 상황별 -->
     <div class="rec-block">
       <div class="rec-block-title">📌 상황별 추천</div>
       <div class="expand-group" id="catGroup"></div>
     </div>
 
+    <!-- 과목별 -->
     <div class="rec-block">
       <div class="rec-block-title">📚 과목별 추천</div>
       <div class="expand-group" id="subjectGroup"></div>
     </div>
   </div>
 
+  <!-- 설정 아코디언 -->
   <div class="card" id="settingsCard">
     <div class="settings-header" id="settingsToggle">
       <div class="settings-header-left">
@@ -483,6 +550,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
     </div>
   </div>
 
+  <!-- 결과 -->
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
       <span>✅ 생성된 알림장</span>
@@ -501,42 +569,36 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
       <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
       <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
       <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
+      <div class="translate-wrap">
+  <button id="translateBtn">🌍 번역 ▼</button>
+  <div id="translateMenu" class="translate-menu" style="display:none;">
+    <div style="padding:8px 10px; border-bottom:1px solid var(--border); font-size:.74rem; font-weight:700; color:var(--muted);">
+      번역할 언어를 선택하세요
     </div>
-
-    <!-- 번역 패널 (항상 펼쳐진 상태) -->
-    <div class="translate-panel-open">
-      <div class="translate-panel-title">🌐 다국어 번역 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(번역할 언어를 체크하세요)</span></div>
-      <div class="translate-grid" id="translateGrid">
-        <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
-      </div>
-      <button id="translateAllBtn">✨ 선택한 <span id="translateCount">0</span>개 언어 번역하기</button>
+    <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 English (영어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 中文 (중국어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 Tiếng Việt (베트남어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 Русский (러시아어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 Oʻzbek (우즈베크어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 Монгол (몽골어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 ภาษาไทย (태국어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 Filipino (필리핀어)</label>
+    <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 日本語 (일본어)</label>
+    <div style="padding:8px 10px; border-top:1px solid var(--border); display:flex; gap:5px;">
+      <button id="translateAllBtn" style="flex:1; padding:7px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-size:.78rem; font-weight:700; cursor:pointer;">
+        ✨ 선택한 <span id="translateCount">0</span>개 번역하기
+      </button>
     </div>
-
-    <!-- 번역 결과 헤더 (결과 있을 때만 보임) -->
-    <div id="transResultsHeader" class="trans-results-header" style="display:none;">
-      <span class="trans-results-title">🌐 번역 결과 <span id="transResultsCount">0</span>개</span>
-      <div class="trans-results-actions">
-        <button id="copyAllTransBtn">📋 전체 복사</button>
-        <button id="clearAllTransBtn">❌ 모두 닫기</button>
-      </div>
-    </div>
-
-    <div id="translatePanel"></div>
   </div>
+</div>
 
+  <!-- 오늘의 명언 -->
   <div class="card quote-card" id="quoteCard">
     <div class="quote-text"   id="quoteText"></div>
     <div class="quote-author" id="quoteAuthor"></div>
   </div>
 
+  <!-- 오늘 저장된 알림장 -->
   <div class="card" id="historyCard">
     <div class="section-title" style="margin-bottom:9px;">📅 오늘 저장된 알림장</div>
     <div class="history-list" id="historyList">
@@ -546,6 +608,7 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 
 </div>
 
+<!-- 히스토리 모달 -->
 <div id="historyModal" class="h-modal">
   <div class="h-box">
     <div class="h-head">
@@ -577,11 +640,13 @@ body { font-family: 'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background
 </div>
 
 <script>
+/* ── localStorage 헬퍼 ── */
 const ls  = k => localStorage.getItem(k);
 const lsS = (k, v) => localStorage.setItem(k, String(v));
 const lsJ = k => { try { return JSON.parse(ls(k) || 'null'); } catch { return null; } };
 const lsSJ = (k, v) => lsS(k, JSON.stringify(v));
 
+/* ── 상태 변수 ── */
 let selectedGrade    = ls('alrimbot_grade')      || '초등학교 3~4학년';
 let selectedStyle    = ls('alrimbot_style')      || '기본';
 let greetingLength   = ls('alrimbot_length')     || '중간';
@@ -594,6 +659,7 @@ let sigPhrase        = ls('alrimbot_sig_phrase') || '';
 let weatherData      = null;
 const activeKws      = new Set();
 
+/* ── 회전 placeholder ── */
 const PLACEHOLDERS = [
   '떠오르는 대로 입력하세요…',
   '예: 숙제 리코더 3번 연습',
@@ -606,13 +672,18 @@ let phIdx = 0;
 const mainInput = document.getElementById('mainInput');
 setInterval(() => { if (!mainInput.value) mainInput.placeholder = PLACEHOLDERS[phIdx++ % PLACEHOLDERS.length]; }, 3000);
 
+/* ── 상황별 카테고리 ── */
 const CATS = [
-  { label: '🎒 준비물 (챙겨오는 것)',   kws: ['체육복 챙기기','실내화 챙기기','물통 준비','우산 챙기기','간식 준비','스케치북 가져오기','악기 가져오기','교과서 챙기기'] },
-  { label: '📚 숙제·과제 (해오는 것)',  kws: ['일기 쓰기','독서록 작성','받아쓰기 연습','수학 문제집 풀기','발표 준비','조사 과제 해오기','단원평가 공부','독서 30분'] },
-  { label: '📅 행사·일정 (알리는 것)',  kws: ['운동회 안내','학예회 준비','현장체험학습 안내','소풍 안내','학부모 상담 주간','공개수업 참관','방학식 안내','개학식 안내'] },
-  { label: '⚠️ 안전·건강 (당부하는 것)',kws: ['안전한 귀가','손 씻기 강조','마스크 착용','교통안전 주의','감기 예방','물놀이 안전','식중독 주의','독감 예방'] },
-  { label: '📋 제출·신청 (제출하는 것)',kws: ['동의서 제출','설문 참여','신청서 작성','수업료 납부','급식 신청','방과후 신청','교육비 지원 신청','수련활동 신청'] },
-  { label: '🏠 가정생활지도 (가정에서)', kws: ['일찍 자기','책가방 스스로 챙기기','방 청소하기','숙제 점검하기','스마트폰 사용 줄이기','규칙적인 식사','아침 인사 잘하기','책 읽는 습관'] },
+  { label: '📝 숙제·과제',   kws: ['숙제 확인','일기 쓰기','독서 기록','받아쓰기 연습','수학 문제집','발표 준비','포트폴리오','탐구 보고서','조사 과제','프로젝트 제출'] },
+  { label: '🎒 준비물',      kws: ['준비물 챙기기','체육복','실내화','물통','간식','우산','색연필','가위풀','스케치북','악기'] },
+  { label: '🏥 건강·안전',   kws: ['안전 귀가','마스크 착용','손 씻기','건강 상태 확인','약 지참','충분한 수면','규칙적 식사','안전한 등하교','유행성 질환 주의','체온 체크'] },
+  { label: '📅 행사·일정',   kws: ['운동회','학예회','현장체험학습','소풍','방학식','개학식','학부모 상담','공개수업','사진 촬영','졸업식'] },
+  { label: '💌 가정통신문',  kws: ['가정통신문 제출','동의서 서명','수련활동 신청','급식 신청','방과후 신청','기초학력 검사','설문 참여','수업료 납부','교육비 지원','학교생활기록부'] },
+  { label: '🌟 칭찬·격려',   kws: ['칭찬 릴레이','발표 잘함','협동심 훌륭','친절한 행동','청소 성실','수업 집중','독서 꾸준히','과제 성실','배려심 높음','성장 눈에 띔'] },
+  { label: '🍱 급식·간식',   kws: ['급식 잔반 줄이기','편식 개선','알레르기 주의','간식 지참 안내','급식 메뉴 변경','식사 예절','물 충분히','채소 골고루','점심 도시락','급식 시간 준수'] },
+  { label: '📚 도서관·독서', kws: ['도서 반납','신간 추천','독서록 작성','독서 퀴즈','책 가져오기','도서관 이용','독서 마라톤','추천 도서','책 읽기 습관','북토크'] },
+  { label: '🏃 체육·활동',   kws: ['체육복 착용','운동화 준비','줄넘기 연습','수영 수업','야외 활동','구기 종목','체력 측정','안전 주의','스트레칭','협동 경기'] },
+  { label: '🌴 방학·특별',   kws: ['방학 과제','방학 생활 계획','보충 학습','캠프 신청','방학 중 생활','안전한 방학','독서 권장','규칙적 생활','개학 준비물','방학 숙제'] },
 ];
 
 const SUBJECTS = [
@@ -626,6 +697,7 @@ const SUBJECTS = [
   { label: '⚽ 체육',  kws: ['체육복','운동화','줄넘기','공 가져오기','야외 수업','수영 준비물','체력 측정','안전 주의','스포츠 활동','구기 종목'] },
 ];
 
+/* ── 준비물 자동 제안 맵 ── */
 const SUPPLY_MAP = {
   '체육': ['체육복', '운동화', '물통'],
   '수영': ['수영복', '수영 모자', '수건'],
@@ -640,6 +712,7 @@ const SUPPLY_MAP = {
   '운동회': ['체육복', '운동화', '물통', '모자'],
 };
 
+/* ── 시즌별 키워드 ── */
 function getSeasonalInfo() {
   const month = new Date().getMonth() + 1;
   if ([11,12,1,2].includes(month)) return { title: '🤧 독감 시즌 키워드', kws: ['독감 예방','손 씻기','마스크 착용','기침 에티켓','건강 점검','실내 환기','면역력 관리','충분한 수면'] };
@@ -648,6 +721,7 @@ function getSeasonalInfo() {
   return { title: '🍂 가을 학기 키워드', kws: ['독서 강조','학예회 준비','체력 관리','감기 예방','환절기 건강'] };
 }
 
+/* ── 특별한 날 ── */
 const SPECIAL_DAYS = {
   '01-01': { name: '새해 첫날',   emoji: '🎊', tip: '새해 인사 알림장을 써볼까요?' },
   '03-01': { name: '삼일절',      emoji: '🇰🇷', tip: '삼일절 관련 알림장 써볼까요?' },
@@ -661,6 +735,7 @@ const SPECIAL_DAYS = {
   '12-25': { name: '크리스마스',  emoji: '🎄', tip: '크리스마스 알림장 써볼까요?' },
 };
 
+/* ── 명언 ── */
 const QUOTES = [
   { text: '교육은 세상을 바꾸는 가장 강력한 무기다', author: '넬슨 만델라' },
   { text: '아이들은 우리가 보내는 메시지다 — 우리가 결코 볼 수 없는 미래로', author: '닐 포스트먼' },
@@ -684,6 +759,7 @@ const QUOTES = [
   { text: '작은 친절 하나가 아이의 하루를 바꾼다', author: '미상' },
 ];
 
+/* ── pill 생성 헬퍼 ── */
 function makePill(kw, extraClass = '') {
   const el = document.createElement('button');
   el.className = 'pill' + (extraClass ? ' ' + extraClass : '');
@@ -695,6 +771,7 @@ function makePill(kw, extraClass = '') {
 
 function escapeReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+/* ── 키워드 토글 ── */
 function toggleKw(kw) {
   if (activeKws.has(kw)) {
     activeKws.delete(kw);
@@ -717,6 +794,7 @@ function updateAllPills() {
   });
 }
 
+/* ── 준비물 힌트 ── */
 function updateSupplyHints() {
   const text = mainInput.value;
   const found = new Set();
@@ -732,6 +810,7 @@ function updateSupplyHints() {
   updateAllPills();
 }
 
+/* ── 글자 수 & 지우기 ── */
 const charCountEl = document.getElementById('charCount');
 const clearBtn    = document.getElementById('clearBtn');
 function updateCharCount() {
@@ -757,13 +836,14 @@ clearBtn.addEventListener('click', () => {
 const savedText = ls('alrimbot_free_text');
 if (savedText) { mainInput.value = savedText; updateCharCount(); updateSupplyHints(); }
 
+/* ── expand group 생성 ── */
 function buildExpandGroup(containerId, data) {
   const container = document.getElementById(containerId);
   data.forEach(({ label, kws }) => {
     const wrapper = document.createElement('div');
     const header  = document.createElement('div');
     header.className = 'expand-header';
-    header.innerHTML = '<span class="expand-arrow">▶</span><span>' + label + '</span>';
+    header.innerHTML = `<span class="expand-arrow">▶</span><span>${label}</span>`;
     const body = document.createElement('div');
     body.className = 'expand-body';
     kws.forEach(kw => body.appendChild(makePill(kw)));
@@ -779,6 +859,7 @@ function buildExpandGroup(containerId, data) {
 buildExpandGroup('catGroup',     CATS);
 buildExpandGroup('subjectGroup', SUBJECTS);
 
+/* ── 시즌 키워드 ── */
 function loadSeasonalKeywords() {
   const { title, kws } = getSeasonalInfo();
   document.getElementById('seasonalTitle').textContent = title;
@@ -788,25 +869,7 @@ function loadSeasonalKeywords() {
 }
 loadSeasonalKeywords();
 
-// 트렌딩 키워드를 카테고리별로 자동 분류
-function classifyKeyword(keyword) {
-  // 키워드 → 카테고리 매핑 규칙
-  const rules = [
-    { cat: '🎒 준비물', patterns: ['체육복','실내화','운동화','물통','우산','간식','스케치북','색연필','악기','교과서','준비물','챙기','도시락','수영복','모자','가방'] },
-    { cat: '📚 숙제·과제', patterns: ['숙제','일기','독서록','받아쓰기','문제집','발표','과제','공부','단원평가','익힘책','포트폴리오','글짓기','문법','연습'] },
-    { cat: '📅 행사·일정', patterns: ['운동회','학예회','체험','소풍','방학','개학','상담','공개수업','졸업','입학','캠프','수련','안내','일교차','행사'] },
-    { cat: '⚠️ 안전·건강', patterns: ['안전','건강','손씻기','마스크','귀가','예방','감기','독감','질병','체온','위생','보건','병원','사고','주의','조심','알레르기','면역'] },
-    { cat: '📋 제출·신청', patterns: ['제출','신청','동의서','설문','납부','서류','통신문','지원','심사','접수','확인서'] },
-    { cat: '🏠 가정생활지도', patterns: ['일찍','일찍자기','생활습관','스마트폰','방청소','인사','습관','가정','부모','취침','아침','저녁','식사','편식'] },
-    { cat: '🌤️ 날씨·계절', patterns: ['날씨','비','눈','바람','추위','더위','꽃가루','황사','미세먼지','장마','폭염','한파','봄','여름','가을','겨울','환절기'] },
-  ];
-
-  for (const { cat, patterns } of rules) {
-    if (patterns.some(p => keyword.includes(p))) return cat;
-  }
-  return '📝 기타';
-}
-
+/* ── 트렌딩 ── */
 async function loadTrending() {
   try {
     const res  = await fetch('/api/trending');
@@ -815,38 +878,17 @@ async function loadTrending() {
     const empty = document.getElementById('trendingEmpty');
     if (!json.data || json.data.length === 0) { empty.style.display = ''; return; }
     empty.style.display = 'none';
-    cont.innerHTML = '';
-
-    // 카테고리별로 분류
-    const grouped = {};
     json.data.forEach(({ keyword, count }) => {
-      const cat = classifyKeyword(keyword);
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push({ keyword, count });
-    });
-
-    // 카테고리 순서대로 표시 (기타는 맨 뒤)
-    const catOrder = ['🎒 준비물','📚 숙제·과제','📅 행사·일정','⚠️ 안전·건강','📋 제출·신청','🏠 가정생활지도','🌤️ 날씨·계절','📝 기타'];
-    catOrder.forEach(cat => {
-      if (!grouped[cat]) return;
-      // 카테고리 제목
-      const catTitle = document.createElement('div');
-      catTitle.style.cssText = 'font-size:.68rem; font-weight:700; color:var(--muted); margin:5px 0 3px; width:100%;';
-      catTitle.textContent = cat + ' (' + grouped[cat].length + ')';
-      cont.appendChild(catTitle);
-
-      // 키워드 pills
-      grouped[cat].forEach(({ keyword, count }) => {
-        const el = makePill(keyword + ' ' + count, 'trending');
-        el.dataset.kw = keyword;
-        el.addEventListener('click', e => { e.stopPropagation(); toggleKw(keyword); }, true);
-        cont.appendChild(el);
-      });
+      const el = makePill(`${keyword} ${count}`, 'trending');
+      el.dataset.kw = keyword;
+      el.addEventListener('click', e => { e.stopPropagation(); toggleKw(keyword); }, true);
+      cont.appendChild(el);
     });
   } catch (_) {}
 }
 loadTrending();
 
+/* ── 개인 키워드 ── */
 function loadPersonalKws() {
   const p      = lsJ('alrimbot_personal_kw') || {};
   const sorted = Object.entries(p).sort(([, a], [, b]) => b - a).slice(0, 10).map(([k]) => k);
@@ -877,18 +919,22 @@ async function sendUsage(text) {
   fetch('/api/usage', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ keywords: kws }) }).catch(() => {});
 }
 
+/* ── 날씨 ── */
 async function loadWeather() {
   try {
     const res  = await fetch('/api/weather');
     weatherData = await res.json();
     if (!weatherData.weatherLabel) return;
+
     const banner = document.getElementById('weatherBanner');
     const info   = document.getElementById('weatherInfo');
     const sugg   = document.getElementById('weatherSugg');
-    let infoText = '<strong>' + weatherData.weatherLabel + '</strong>';
-    if (weatherData.temp   !== null) infoText += ' ' + Math.round(weatherData.temp) + '°C';
-    if (weatherData.pm10   !== null) infoText += ' · 미세먼지 ' + weatherData.pm10;
+
+    let infoText = `<strong>${weatherData.weatherLabel}</strong>`;
+    if (weatherData.temp   !== null) infoText += ` ${Math.round(weatherData.temp)}°C`;
+    if (weatherData.pm10   !== null) infoText += ` · 미세먼지 ${weatherData.pm10}`;
     info.innerHTML = infoText;
+
     sugg.innerHTML = '';
     (weatherData.suggestions || []).forEach(s => {
       const tag = document.createElement('span');
@@ -905,13 +951,14 @@ document.getElementById('weatherClose').addEventListener('click', () => {
   document.getElementById('weatherBanner').style.display = 'none';
 });
 
+/* ── 특별한 날 ── */
 function checkSpecialDay() {
   const today = new Date();
   const mmdd  = String(today.getMonth() + 1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
   const day   = SPECIAL_DAYS[mmdd];
   if (!day) return;
   const banner = document.getElementById('specialBanner');
-  document.getElementById('specialBannerText').textContent = day.emoji + ' 오늘은 ' + day.name + '! ' + day.tip;
+  document.getElementById('specialBannerText').textContent = `${day.emoji} 오늘은 ${day.name}! ${day.tip}`;
   banner.style.display = '';
   banner.style.cursor  = 'pointer';
   banner.addEventListener('click', e => {
@@ -926,6 +973,7 @@ document.getElementById('specialBannerClose').addEventListener('click', () => {
   document.getElementById('specialBanner').style.display = 'none';
 });
 
+/* ── D-Day ── */
 function loadDDay() {
   const events = lsJ('alrimbot_dday') || [];
   const list   = document.getElementById('ddayList');
@@ -940,7 +988,7 @@ function loadDDay() {
 
     const item = document.createElement('div');
     item.className = 'dday-item';
-    item.innerHTML = '<span><span class="dday-item-name">' + ev.name + '</span><span class="dday-item-date">' + ev.date + (diff >= 0 ? ' (D-' + diff + ')' : ' (완료)') + '</span></span>';
+    item.innerHTML = `<span><span class="dday-item-name">${ev.name}</span><span class="dday-item-date">${ev.date}${diff >= 0 ? ' (D-' + diff + ')' : ' (완료)'}</span></span>`;
     const del = document.createElement('button');
     del.className = 'dday-item-del';
     del.textContent = '✕';
@@ -956,7 +1004,7 @@ function loadDDay() {
 
   const banner = document.getElementById('ddayBanner');
   if (nearest) {
-    document.getElementById('ddayBannerText').textContent = '🎯 ' + nearest.name + ' D-' + nearest.diff;
+    document.getElementById('ddayBannerText').textContent = `🎯 ${nearest.name} D-${nearest.diff}`;
     banner.style.display = '';
   } else {
     banner.style.display = 'none';
@@ -977,15 +1025,17 @@ document.getElementById('ddayAddBtn').addEventListener('click', () => {
   loadDDay();
 });
 
+/* ── 명언 ── */
 function loadQuote() {
   const today = new Date();
   const idx   = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % QUOTES.length;
   const q     = QUOTES[idx];
-  document.getElementById('quoteText').textContent   = '"' + q.text + '"';
-  document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+  document.getElementById('quoteText').textContent   = `"${q.text}"`;
+  document.getElementById('quoteAuthor').textContent = `— ${q.author}`;
 }
 loadQuote();
 
+/* ── 설정 아코디언 ── */
 const firstVisit = !ls('alrimbot_initialized');
 if (firstVisit) lsS('alrimbot_initialized', 'true');
 let settingsOpen = ls('alrimbot_settings_open') !== null ? ls('alrimbot_settings_open') === 'true' : firstVisit;
@@ -1005,9 +1055,10 @@ document.getElementById('settingsToggle').addEventListener('click', () => {
 
 function updateSettingsSummary() {
   const gs = selectedGrade.replace('초등학교 ', '').replace('초등학교', '전체');
-  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : gs + ' · ' + selectedStyle + ' · ' + greetingLength;
+  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : `${gs} · ${selectedStyle} · ${greetingLength}`;
 }
 
+/* ── UI 동기화 ── */
 function syncUI() {
   document.querySelectorAll('#gradeGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
   document.querySelectorAll('#templateGrid .template-card').forEach(c => c.classList.toggle('active', c.dataset.v === selectedStyle));
@@ -1020,6 +1071,7 @@ function syncUI() {
   updateSettingsSummary();
 }
 
+// 이벤트 리스너
 document.getElementById('gradeGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   selectedGrade = v; lsS('alrimbot_grade', v); syncUI();
@@ -1053,10 +1105,12 @@ document.getElementById('honorificGroup').addEventListener('click', e => {
   honorific = v; lsS('alrimbot_honorific', v); syncUI();
 });
 
+// 학교명 입력
 const schoolInput = document.getElementById('schoolNameInput');
 schoolInput.value = schoolName;
 schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
 
+// 시그니처 문구
 const sigInput = document.getElementById('sigPhraseInput');
 sigInput.value = sigPhrase;
 sigInput.addEventListener('input', () => { sigPhrase = sigInput.value; lsS('alrimbot_sig_phrase', sigPhrase); updateSigPresets(); });
@@ -1072,6 +1126,7 @@ function updateSigPresets() {
 }
 updateSigPresets();
 
+// 담임/학급 복원
 const teacherInput = document.getElementById('teacherName');
 const classInput   = document.getElementById('className');
 teacherInput.value = ls('alrimbot_teacher') || '';
@@ -1082,6 +1137,7 @@ classInput.addEventListener('input',   () => lsS('alrimbot_class',   classInput.
 syncUI();
 applySettingsOpen();
 
+/* ── 서명 빌더 ── */
 function buildSignature() {
   if (!document.getElementById('sigToggle').checked) return '';
   const lines = [];
@@ -1092,6 +1148,7 @@ function buildSignature() {
   return lines.length >= 2 ? lines.join('\n') : '';
 }
 
+/* ── 날씨 컨텍스트 ── */
 function buildWeatherContext() {
   if (!document.getElementById('weatherToggle').checked || !weatherData) return '';
   const parts = [];
@@ -1101,6 +1158,7 @@ function buildWeatherContext() {
   return parts.join(', ');
 }
 
+/* ── 생성 ── */
 async function callGenerate(overrideLength) {
   const freeText = mainInput.value.trim();
   if (!freeText) { showToast('내용을 입력해주세요.'); return; }
@@ -1127,12 +1185,11 @@ async function callGenerate(overrideLength) {
       }),
     });
     const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
 
+    // 새 생성 시 이전 번역 초기화
     document.getElementById('translatePanel').innerHTML = '';
     translateCache.clear();
-    transResults.clear();
-    updateTransResultsHeader();
     document.getElementById('resultText').value = json.text;
     document.getElementById('resultCard').style.display = '';
     document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -1145,6 +1202,7 @@ async function callGenerate(overrideLength) {
 }
 document.getElementById('generateBtn').addEventListener('click', () => callGenerate());
 
+/* ── 길이 조정 ── */
 async function callResize(direction) {
   const text = document.getElementById('resultText').value;
   if (!text) return;
@@ -1153,7 +1211,7 @@ async function callResize(direction) {
   try {
     const res  = await fetch('/api/resize', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ text, direction }) });
     const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
     document.getElementById('resultText').value = json.text;
   } catch (err) {
     showToast('오류: ' + err.message);
@@ -1162,6 +1220,7 @@ async function callResize(direction) {
   }
 }
 
+/* ── 문체 순환 ── */
 const STYLE_CYCLE = ['기본','목록형','핵심만','친근한','공식적','감성적','활기찬'];
 function cycleTone() {
   const idx = STYLE_CYCLE.indexOf(selectedStyle);
@@ -1171,6 +1230,7 @@ function cycleTone() {
   callGenerate();
 }
 
+/* ── 복사 ── */
 function copyResult() {
   const text = document.getElementById('resultText').value;
   navigator.clipboard.writeText(text)
@@ -1178,6 +1238,7 @@ function copyResult() {
     .catch(() => { document.getElementById('resultText').select(); document.execCommand('copy'); showToast('복사됨'); });
 }
 
+/* ── 미리보기 ── */
 function openModal() {
   document.getElementById('modalText').textContent = document.getElementById('resultText').value;
   document.getElementById('modal').classList.add('open');
@@ -1185,6 +1246,7 @@ function openModal() {
 document.getElementById('modalClose').addEventListener('click', () => document.getElementById('modal').classList.remove('open'));
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); });
 
+/* ── 카카오톡 공유 ── */
 async function shareKakao() {
   const text = document.getElementById('resultText').value;
   if (!text) return;
@@ -1197,6 +1259,7 @@ async function shareKakao() {
   showToast('복사됐어요! 카카오톡에 붙여넣으세요 💬');
 }
 
+/* ── 이미지 저장 ── */
 async function saveAsImage(transLang, transInfo, transText) {
   const text = document.getElementById('resultText').value;
   if (!text) return;
@@ -1207,9 +1270,10 @@ async function saveAsImage(transLang, transInfo, transText) {
   document.getElementById('pcContent').textContent = text;
   document.getElementById('pcSig').textContent     = buildSignature();
 
+  // 번역문 포함 여부
   const transWrap = document.getElementById('pcTransWrap');
   if (transLang && transText) {
-    document.getElementById('pcTransLabel').textContent = transInfo.flag + ' ' + transInfo.native + ' (' + transInfo.name + ')';
+    document.getElementById('pcTransLabel').textContent = `${transInfo.flag} ${transInfo.native} (${transInfo.name})`;
     document.getElementById('pcTransBody').textContent  = transText;
     transWrap.style.display = '';
   } else {
@@ -1222,7 +1286,7 @@ async function saveAsImage(transLang, transInfo, transText) {
     card.style.display = 'none';
     transWrap.style.display = 'none';
     const link = document.createElement('a');
-    link.download = '알림장_' + new Date().toISOString().slice(0,10) + (transLang ? '_' + transLang : '') + '.png';
+    link.download = `알림장_${new Date().toISOString().slice(0,10)}${transLang ? '_'+transLang : ''}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     showToast('이미지로 저장됐어요! 📸');
@@ -1233,6 +1297,7 @@ async function saveAsImage(transLang, transInfo, transText) {
   }
 }
 
+/* ── 저장 ── */
 async function saveAlrim() {
   const generated = document.getElementById('resultText').value;
   if (!generated) return;
@@ -1263,6 +1328,7 @@ async function saveAlrim() {
   }
 }
 
+/* ── 히스토리 ── */
 async function loadHistory() {
   const list = document.getElementById('historyList');
   try {
@@ -1278,7 +1344,7 @@ async function loadHistory() {
       el.className  = 'history-item';
       const preview = (item.edited_text || item.generated_text || '').slice(0, 55);
       const time    = item.created_at ? item.created_at.slice(11, 16) : '';
-      el.innerHTML  = '<div class="history-meta">' + (item.teacher_name || '선생님') + ' · ' + (item.class_name || '') + ' · ' + time + '</div><div class="history-preview">' + preview + '…</div>';
+      el.innerHTML  = `<div class="history-meta">${item.teacher_name || '선생님'} · ${item.class_name || ''} · ${time}</div><div class="history-preview">${preview}…</div>`;
       el.addEventListener('click', () => {
         document.getElementById('resultText').value = item.edited_text || item.generated_text;
         document.getElementById('resultCard').style.display = '';
@@ -1292,7 +1358,7 @@ async function loadHistory() {
 }
 loadHistory();
 
-/* ── 번역 (체크박스 멀티선택) ── */
+/* ── 번역 ── */
 const LANGUAGES = {
   'en': { name:'영어',      native:'English',      flag:'🇬🇧' },
   'zh': { name:'중국어',    native:'中文',          flag:'🇨🇳' },
@@ -1306,113 +1372,80 @@ const LANGUAGES = {
 };
 
 const translateCache = new Map();
-const transResults = new Map(); // 현재 표시 중인 번역 결과 저장
 
-document.getElementById('translateGrid').addEventListener('change', e => {
+// 번역 드롭다운 토글
+document.getElementById('translateBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const menu = document.getElementById('translateMenu');
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : '';
+});
+document.addEventListener('click', () => {
+  const menu = document.getElementById('translateMenu');
+  if (menu) menu.style.display = 'none';
+});
+// 체크박스 변경 시 카운트 업데이트
+document.getElementById('translateMenu').addEventListener('change', e => {
   if (e.target.matches('input[type="checkbox"][data-lang]')) {
-    // 체크된 라벨 스타일 변경
-    const label = e.target.closest('.trans-check');
-    label.classList.toggle('checked', e.target.checked);
-    // 카운트 업데이트
-    const count = document.querySelectorAll('#translateGrid input[type="checkbox"]:checked').length;
+    const count = document.querySelectorAll('#translateMenu input[type="checkbox"]:checked').length;
     document.getElementById('translateCount').textContent = count;
   }
 });
+document.getElementById('translateMenu').addEventListener('click', e => { e.stopPropagation(); });
 
+// 선택한 여러 언어 동시 번역
 document.getElementById('translateAllBtn').addEventListener('click', async () => {
-  const checked = document.querySelectorAll('#translateGrid input[type="checkbox"]:checked');
+  const checked = document.querySelectorAll('#translateMenu input[type="checkbox"]:checked');
   if (checked.length === 0) { showToast('번역할 언어를 선택해주세요'); return; }
 
   const text = document.getElementById('resultText').value;
   if (!text) { showToast('번역할 알림장이 없어요.'); return; }
 
-  const btn = document.getElementById('translateAllBtn');
-  btn.disabled = true;
+  // 메뉴 닫기
+  document.getElementById('translateMenu').style.display = 'none';
 
+  // 각 언어별로 로딩 카드 표시
   const langs = Array.from(checked).map(c => ({ lang: c.dataset.lang, native: c.dataset.native }));
   langs.forEach(({ lang }) => {
     const info = LANGUAGES[lang];
     renderTransLoading(lang, info);
   });
-  updateTransResultsHeader();
 
+  // 병렬 번역
   await Promise.all(langs.map(async ({ lang, native }) => {
     const info = LANGUAGES[lang];
-    const cacheKey = lang + '::' + text;
+    const cacheKey = `${lang}::${text}`;
     if (translateCache.has(cacheKey)) {
-      renderTransCard(lang, info, translateCache.get(cacheKey));
-      return;
-    }
-    try {
-      const res = await fetch('/api/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, targetLang: lang, targetLangName: native || info.native }),
-      });
-      const json = await res.json();
-      if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
-      translateCache.set(cacheKey, json.translated);
-      renderTransCard(lang, info, json.translated);
-    } catch (err) {
-      removeTransCard(lang);
-      showToast(info.flag + ' 번역 실패: ' + err.message);
-    }
-  }));
+      renderTransCard(lang, info,
 
-  // 체크박스 초기화
-  checked.forEach(c => {
-    c.checked = false;
-    c.closest('.trans-check').classList.remove('checked');
-  });
-  document.getElementById('translateCount').textContent = '0';
-  updateTransResultsHeader();
-  showToast('✅ ' + langs.length + '개 언어 번역 완료!');
-  btn.disabled = false;
-});
+async function translateTo(lang, native) {
+  document.getElementById('translateMenu').style.display = 'none';
+  const text = document.getElementById('resultText').value;
+  if (!text) { showToast('번역할 알림장이 없어요.'); return; }
 
-// 전체 복사 버튼
-document.getElementById('copyAllTransBtn').addEventListener('click', () => {
-  if (transResults.size === 0) { showToast('복사할 번역이 없어요'); return; }
+  const info = LANGUAGES[lang];
+  const cacheKey = `${lang}::${text}`;
 
-  const originalText = document.getElementById('resultText').value;
-  const parts = [];
+  if (translateCache.has(cacheKey)) {
+    renderTransCard(lang, info, translateCache.get(cacheKey));
+    return;
+  }
 
-  // 원문 먼저
-  parts.push('🇰🇷 한국어 (원문)');
-  parts.push(originalText);
-  parts.push('');
+  renderTransLoading(lang, info);
 
-  // 번역문들
-  transResults.forEach((translated, lang) => {
-    const info = LANGUAGES[lang];
-    parts.push(info.flag + ' ' + info.native + ' (' + info.name + ')');
-    parts.push(translated);
-    parts.push('');
-  });
-
-  const combined = parts.join('\n').trim();
-  navigator.clipboard.writeText(combined)
-    .then(() => showToast('📋 원문 + ' + transResults.size + '개 번역 전체 복사 완료!'))
-    .catch(() => showToast('복사 실패'));
-});
-
-// 모두 닫기 버튼
-document.getElementById('clearAllTransBtn').addEventListener('click', () => {
-  if (transResults.size === 0) return;
-  if (!confirm('모든 번역 결과를 닫을까요?')) return;
-  document.getElementById('translatePanel').innerHTML = '';
-  transResults.clear();
-  updateTransResultsHeader();
-});
-
-function updateTransResultsHeader() {
-  const count = transResults.size + document.querySelectorAll('.trans-card-loading').length;
-  const header = document.getElementById('transResultsHeader');
-  if (count > 0) {
-    header.style.display = '';
-    document.getElementById('transResultsCount').textContent = count;
-  } else {
-    header.style.display = 'none';
+  try {
+    const res  = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, targetLang: lang, targetLangName: native || info.native }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
+    translateCache.set(cacheKey, json.translated);
+    renderTransCard(lang, info, json.translated);
+  } catch (err) {
+    removeTransCard(lang);
+    showToast('번역 실패: ' + err.message);
   }
 }
 
@@ -1422,25 +1455,25 @@ function renderTransLoading(lang, info) {
   const card  = document.createElement('div');
   card.className    = 'trans-card';
   card.dataset.lang = lang;
-  card.innerHTML    = '<div class="trans-card-header"><span class="trans-card-lang">' + info.flag + ' ' + info.native + '</span></div><div class="trans-card-loading"><div class="spinner"></div>번역 중…</div>';
+  card.innerHTML    = `<div class="trans-card-header"><span class="trans-card-lang">${info.flag} ${info.native}</span></div><div class="trans-card-loading"><div class="spinner"></div>번역 중…</div>`;
   panel.appendChild(card);
 }
 
 function renderTransCard(lang, info, translated) {
   removeTransCard(lang);
-  transResults.set(lang, translated);
   const panel = document.getElementById('translatePanel');
 
   const card = document.createElement('div');
   card.className    = 'trans-card';
   card.dataset.lang = lang;
 
+  // header
   const header = document.createElement('div');
   header.className = 'trans-card-header';
 
   const langSpan = document.createElement('span');
   langSpan.className   = 'trans-card-lang';
-  langSpan.textContent = info.flag + ' ' + info.native + ' (' + info.name + ')';
+  langSpan.textContent = `${info.flag} ${info.native} (${info.name})`;
 
   const actions = document.createElement('div');
   actions.className = 'trans-card-actions';
@@ -1449,7 +1482,7 @@ function renderTransCard(lang, info, translated) {
   copyBtn.textContent = '📋 복사';
   copyBtn.addEventListener('click', () => {
     navigator.clipboard.writeText(translated)
-      .then(() => showToast(info.flag + ' 복사됐어요!'))
+      .then(() => showToast(`${info.flag} 복사됐어요!`))
       .catch(() => showToast('복사 실패'));
   });
 
@@ -1460,7 +1493,7 @@ function renderTransCard(lang, info, translated) {
       try { await navigator.share({ title: '알림장', text: translated }); return; } catch (_) {}
     }
     await navigator.clipboard.writeText(translated).catch(() => {});
-    showToast(info.flag + ' 복사됐어요! 카카오톡에 붙여넣으세요');
+    showToast(`${info.flag} 복사됐어요! 카카오톡에 붙여넣으세요`);
   });
 
   const imgBtn = document.createElement('button');
@@ -1477,19 +1510,15 @@ function renderTransCard(lang, info, translated) {
 
   const body = document.createElement('div');
   body.className   = 'trans-card-body';
-  body.id          = 'trans-body-' + lang;
+  body.id          = `trans-body-${lang}`;
   body.textContent = translated;
 
   card.append(header, body);
   panel.appendChild(card);
-  updateTransResultsHeader();
 }
 
 function removeTransCard(lang) {
-  const el = document.querySelector('.trans-card[data-lang="' + lang + '"]');
-  if (el) el.remove();
-  transResults.delete(lang);
-  updateTransResultsHeader();
+  document.querySelector(`.trans-card[data-lang="${lang}"]`)?.remove();
 }
 
 /* ── 히스토리 모달 ── */
@@ -1574,7 +1603,7 @@ function buildHistoryCard(item) {
 
   const meta = document.createElement('div');
   meta.className = 'h-card-meta';
-  meta.innerHTML = '<span class="h-card-date">' + dateStr + '</span>' + (who ? '<span>·</span><span>' + who + '</span>' : '') + '<span style="margin-left:auto">' + timeStr + '</span>';
+  meta.innerHTML = `<span class="h-card-date">${dateStr}</span>${who ? '<span>·</span><span>' + who + '</span>' : ''}<span style="margin-left:auto">${timeStr}</span>`;
 
   const preview = document.createElement('div');
   preview.className   = 'h-card-preview';
@@ -1660,6 +1689,7 @@ document.querySelectorAll('.h-tab').forEach(tab => {
   });
 });
 
+/* ── 토스트 ── */
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
