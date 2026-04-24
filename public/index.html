@@ -1287,7 +1287,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .side-col { display: contents; }
 
 /* 빠른 설정 카드: 기본은 숨김 (모바일에서는 하단 설정 아코디언만 사용) */
-.quick-settings-card { display: none; }
+.quick-settings { display: none; }
 
 /* 1024px+ : 60:40 투 컬럼 */
 @media (min-width: 1024px) {
@@ -1315,13 +1315,13 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col .pill { padding: 5px 10px; font-size: .74rem; }
 
   /* 빠른 설정 카드 */
-  .quick-settings-card {
+  .quick-settings {
     display: flex;
     flex-direction: column;
     gap: 14px;
     padding: 20px;
   }
-  .qs-title {
+  .quick-settings .card-title {
     font-size: .88rem;
     font-weight: 800;
     color: var(--navy);
@@ -1330,21 +1330,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     align-items: center;
     gap: 6px;
   }
-  .qs-row { display: flex; flex-direction: column; gap: 8px; }
-  .qs-label {
-    font-size: .76rem;
-    font-weight: 700;
-    color: var(--muted);
-    letter-spacing: -0.015em;
-  }
-  .qs-toggles {
+  .quick-settings .toggle-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     padding-top: 12px;
     border-top: 1px solid var(--border-s);
   }
-  .qs-more {
+  .quick-settings .detailed-settings-link {
     font-size: .78rem;
     color: var(--blue-d);
     font-weight: 600;
@@ -1353,7 +1346,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     padding-top: 4px;
     transition: color var(--t-fast);
   }
-  .qs-more:hover { color: var(--blue); text-decoration: underline; }
+  .quick-settings .detailed-settings-link:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
 }
 </style>
 </head>
@@ -1454,40 +1450,35 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <button id="generateBtn">✨ 알림장 생성</button>
 
-  <div class="card quick-settings-card" id="quickSettingsCard">
-    <div class="qs-title">⚡ 빠른 설정</div>
+  <div class="card quick-settings" id="quickSettingsCard">
+    <div class="card-title">⚡ 빠른 설정</div>
 
-    <div class="qs-row">
-      <label class="qs-label">학년</label>
-      <div class="btn-group" id="gradeGroupQuick">
-        <button data-v="초등학교 1~2학년">1~2학년</button>
-        <button data-v="초등학교 3~4학년">3~4학년</button>
-        <button data-v="초등학교 5~6학년">5~6학년</button>
-        <button data-v="초등학교">전체</button>
+    <div class="setting-row">
+      <label>📋 문체</label>
+      <div class="btn-group" id="quickStyleGroup">
+        <button data-v="개조식">개조식</button>
+        <button data-v="기본">기본</button>
+        <button data-v="친근한">친근</button>
+        <button data-v="공식적">공식</button>
       </div>
     </div>
 
-    <div class="qs-row">
-      <label class="qs-label">학교명</label>
-      <input id="schoolNameInputQuick" class="text-input" placeholder="석암초등학교">
-    </div>
-
-    <div class="qs-toggles">
+    <div class="toggle-list">
       <div class="toggle-row">
-        <label for="sigToggleQuick">서명 자동 추가</label>
-        <label class="toggle"><input type="checkbox" id="sigToggleQuick"><span class="toggle-slider"></span></label>
+        <label for="quickSigToggle">✍️ 서명 자동 추가</label>
+        <label class="toggle"><input type="checkbox" id="quickSigToggle"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <label for="weatherToggleQuick">날씨 자동 반영</label>
-        <label class="toggle"><input type="checkbox" id="weatherToggleQuick"><span class="toggle-slider"></span></label>
+        <label for="quickWeatherToggle">🌤️ 날씨 자동 반영</label>
+        <label class="toggle"><input type="checkbox" id="quickWeatherToggle"><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <label for="specialDayToggleQuick">특별한 날 알림</label>
-        <label class="toggle"><input type="checkbox" id="specialDayToggleQuick"><span class="toggle-slider"></span></label>
+        <label for="quickSpecialDayToggle">📅 특별한 날 알림</label>
+        <label class="toggle"><input type="checkbox" id="quickSpecialDayToggle"><span class="toggle-slider"></span></label>
       </div>
     </div>
 
-    <a href="#settingsCard" class="qs-more" id="qsMoreLink">🔧 더 자세한 설정</a>
+    <a href="#settingsCard" class="detailed-settings-link" id="openDetailedSettings">🔧 자세한 설정 열기</a>
   </div>
 
   <div class="card" id="resultCard" style="display:none;">
@@ -2167,11 +2158,11 @@ function updateSettingsSummary() {
 }
 
 function syncUI() {
-  document.querySelectorAll('#gradeGroup button, #gradeGroupQuick button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
+  document.querySelectorAll('#gradeGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
   document.querySelectorAll('#templateGrid .template-card').forEach(c => c.classList.toggle('active', c.dataset.v === selectedStyle));
   document.querySelectorAll('#positionGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingPosition));
   document.querySelectorAll('#iconGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingIcon));
-  document.querySelectorAll('#toneGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
+  document.querySelectorAll('#toneGroup button, #quickStyleGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
   document.querySelectorAll('#quickLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingLength));
   document.querySelectorAll('#emojiLevelGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === emojiLevel));
   document.querySelectorAll('#honorificGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === honorific));
@@ -2213,38 +2204,24 @@ document.getElementById('honorificGroup').addEventListener('click', e => {
 
 const schoolInput = document.getElementById('schoolNameInput');
 schoolInput.value = schoolName;
-schoolInput.addEventListener('input', () => {
-  schoolName = schoolInput.value.trim() || '석암초등학교';
-  lsS('alrimbot_school', schoolName);
-  const qi = document.getElementById('schoolNameInputQuick');
-  if (qi && qi.value !== schoolInput.value) qi.value = schoolInput.value;
-});
+schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
 
 /* ── 빠른 설정 카드 ↔ 상세 설정 동기화 ── */
 (function initQuickSettings() {
-  const gradeQ   = document.getElementById('gradeGroupQuick');
-  const schoolQ  = document.getElementById('schoolNameInputQuick');
-  const sigQ     = document.getElementById('sigToggleQuick');
-  const weatherQ = document.getElementById('weatherToggleQuick');
-  const specialQ = document.getElementById('specialDayToggleQuick');
+  const styleQ   = document.getElementById('quickStyleGroup');
+  const sigQ     = document.getElementById('quickSigToggle');
+  const weatherQ = document.getElementById('quickWeatherToggle');
+  const specialQ = document.getElementById('quickSpecialDayToggle');
   const sigM     = document.getElementById('sigToggle');
   const weatherM = document.getElementById('weatherToggle');
   const specialM = document.getElementById('specialDayToggle');
 
-  // 학년: 빠른 설정에서 바꾸면 selectedGrade 업데이트 + syncUI가 양쪽 버튼 모두 하이라이트
-  gradeQ.addEventListener('click', e => {
+  // 문체: 빠른 선택 → selectedStyle + syncUI가 templateGrid/toneGroup/quickStyleGroup 모두 하이라이트
+  styleQ.addEventListener('click', e => {
     const v = e.target.dataset.v; if (!v) return;
-    selectedGrade = v;
-    lsS('alrimbot_grade', v);
+    selectedStyle = v;
+    lsS('alrimbot_style', v);
     syncUI();
-  });
-
-  // 학교명: 양방향 미러링
-  schoolQ.value = schoolName;
-  schoolQ.addEventListener('input', () => {
-    schoolName = schoolQ.value.trim() || '석암초등학교';
-    lsS('alrimbot_school', schoolName);
-    if (schoolInput.value !== schoolQ.value) schoolInput.value = schoolQ.value;
   });
 
   // 토글 3개: 양방향 미러링
@@ -2257,8 +2234,8 @@ schoolInput.addEventListener('input', () => {
   mirror(weatherQ, weatherM);
   mirror(specialQ, specialM);
 
-  // "더 자세한 설정" 링크: 아코디언 펼치고 스크롤
-  document.getElementById('qsMoreLink').addEventListener('click', (e) => {
+  // "자세한 설정 열기" 링크: 아코디언 펼치고 스크롤
+  document.getElementById('openDetailedSettings').addEventListener('click', (e) => {
     e.preventDefault();
     if (typeof settingsOpen !== 'undefined' && !settingsOpen) {
       document.getElementById('settingsToggle').click();
