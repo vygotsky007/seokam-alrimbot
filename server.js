@@ -183,16 +183,25 @@ app.post('/api/generate-free', async (req, res) => {
     // 핵심 키워드 추출 (백그라운드 — 실패해도 응답에 지장 없음)
     let extractedKeywords = [];
     try {
-      const kwPrompt = `다음 알림장에서 핵심 키워드(명사, 활동명) 5개만 쉼표로 구분해서 추출해주세요. 일반명사 제외, 구체적인 것만.\n\n알림장: "${text}"\n\n예시 형식: 숲 체험, 환경 교육, 나무 심기, 체험학습, 자연 관찰`;
+      const kwPrompt = [
+        '다음 알림장에서 핵심 키워드(명사, 활동명)를 최대 5개 추출해서 쉼표로만 구분해서 답해주세요.',
+        '- 짧은 단어(2-10자) 선호',
+        '- 구체적이고 의미있는 것만',
+        '- 불용어("감사합니다", "안녕하세요" 등) 제외',
+        '',
+        `알림장: "${text}"`,
+        '',
+        '답변은 키워드만 쉼표로 구분. 예: 체육대회, 반티 착용, 급식 시간',
+      ].join('\n');
       const kwRes = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
+        max_tokens: 150,
         messages: [{ role: 'user', content: kwPrompt }],
       });
       extractedKeywords = kwRes.content[0].text
-        .split(',')
+        .split(/[,，\n]/)
         .map(k => k.trim())
-        .filter(k => k.length >= 2 && k.length <= 15)
+        .filter(k => k.length >= 2 && k.length <= 15 && !/^[가-힣]{1}$/.test(k))
         .slice(0, 5);
       console.log('[/api/generate-free] 추출 키워드:', extractedKeywords.join(' | '));
     } catch (kwErr) {
