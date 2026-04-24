@@ -778,6 +778,12 @@ body {
     grid-template-rows: none;
     grid-template-columns: 1fr;
   }
+  .text-input { max-width: 100%; }
+  .dday-form-modal { flex-direction: column; }
+  .dday-form-modal input,
+  .dday-form-modal .dday-add-btn { width: 100%; }
+  .setting-row label { font-size: 0.75rem; }
+  .toggle-row > label { font-size: 0.76rem; }
 }
 
 /* ── 설정 ── */
@@ -895,44 +901,71 @@ body {
 .text-input::placeholder { color: #94A3B8; }
 .text-input:hover { border-color: #CBD5E1; }
 .text-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-
-.sig-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.sig-preset {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-full);
-  font-size: .78rem;
-  background: #fff;
-  cursor: pointer;
-  transition: all var(--t);
-  color: var(--navy);
-  font-family: inherit;
-  font-weight: 500;
-}
-.sig-preset:hover { border-color: #CBD5E1; background: var(--soft); }
-.sig-preset.active {
-  background: var(--navy);
-  color: #fff;
-  border-color: var(--navy);
-  font-weight: 600;
-}
+.text-input { max-width: 280px; }
 
 /* ── D-Day ── */
-.dday-form { display: flex; gap: 6px; margin-bottom: 10px; }
-.dday-form input {
-  flex: 1;
-  padding: 8px 11px;
+.dday-open-btn {
+  padding: 6px 12px;
+  background: #fff;
   border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  font-size: .8rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 600;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.dday-open-btn:hover { border-color: var(--blue); color: var(--blue); }
+.dday-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.dday-modal-box {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+}
+.dday-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.dday-modal-header h3 { font-size: 1rem; font-weight: 700; }
+.dday-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+.dday-modal-body { padding: 16px 20px 20px; }
+.dday-form-modal {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.dday-form-modal input {
+  flex: 1;
+  min-width: 120px;
+  padding: 7px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.8rem;
   outline: none;
   font-family: inherit;
-  background: #fff;
-  color: var(--text);
-  transition: all var(--t);
 }
-.dday-form input:hover { border-color: #CBD5E1; }
-.dday-form input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+.dday-form-modal input:focus { border-color: var(--blue); }
 .dday-add-btn {
   padding: 8px 16px;
   border: none;
@@ -966,6 +999,7 @@ body {
 .dday-item-del:hover { color: var(--red); }
 
 /* ── 토글 ── */
+.toggle-list { display: flex; flex-direction: column; gap: 10px; }
 .toggle-row { display: flex; align-items: center; justify-content: space-between; }
 .toggle-row > label { font-size: .84rem; color: var(--navy); cursor: pointer; font-weight: 500; }
 .toggle { position: relative; display: inline-block; width: 40px; height: 23px; flex-shrink: 0; }
@@ -1627,7 +1661,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
-.pill:focus-visible, .h-tab:focus-visible, .sig-preset:focus-visible { outline-offset: 1px; }
+.pill:focus-visible, .h-tab:focus-visible { outline-offset: 1px; }
 
 /* ── 작은 화면 ── */
 @media (max-width: 480px) {
@@ -1907,51 +1941,36 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <div class="settings-body" id="settingsBody">
 
       <div class="setting-row">
-        <label>학교명</label>
+        <label>🏫 학교명</label>
         <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
       </div>
 
       <div class="setting-row">
-        <label>시그니처 문구</label>
-        <div class="sig-presets" id="sigPresets">
-          <button class="sig-preset" data-v="">없음</button>
-          <button class="sig-preset" data-v="사랑하는 우리 반!">사랑하는 우리 반!</button>
-          <button class="sig-preset" data-v="함께 자라는 우리">함께 자라는 우리</button>
-          <button class="sig-preset" data-v="오늘도 감사합니다">오늘도 감사합니다</button>
-        </div>
-        <input id="sigPhraseInput" class="text-input" placeholder="직접 입력 (예: 항상 응원합니다)" style="margin-top:5px;">
+        <label>✏️ 시그니처 문구 (선택)</label>
+        <input id="sigPhraseInput" class="text-input" placeholder="예: 오늘도 감사합니다">
       </div>
 
       <div class="setting-row">
-        <label>서명 자동 추가</label>
-        <div class="toggle-row">
-          <label for="sigToggle">알림장 끝에 학교·반·담임 서명 자동 추가</label>
-          <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
+        <label>⚙️ 자동 옵션</label>
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <label for="sigToggle">🖋️ 서명 자동 추가</label>
+            <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <label for="weatherToggle">🌤️ 날씨 자동 반영</label>
+            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <label for="specialDayToggle">🎉 특별한 날 알림</label>
+            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
+          </div>
         </div>
       </div>
 
       <div class="setting-row">
         <label>🎯 D-Day 이벤트</label>
-        <div class="dday-form">
-          <input id="ddayName" placeholder="이벤트 이름 (예: 운동회)">
-          <input id="ddayDate" type="date">
-          <button class="dday-add-btn" id="ddayAddBtn">추가</button>
-        </div>
-        <div class="dday-list" id="ddayList"></div>
-      </div>
-
-      <div class="setting-row">
-        <label>🌤️ 자동 옵션</label>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div class="toggle-row">
-            <label for="weatherToggle">날씨 자동 반영</label>
-            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-          <div class="toggle-row">
-            <label for="specialDayToggle">특별한 날 알림</label>
-            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-        </div>
+        <button class="dday-open-btn" id="ddayOpenBtn">📋 이벤트 관리 (<span id="ddayCount">0</span>개)</button>
       </div>
 
     </div>
@@ -1998,6 +2017,23 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <h3>알림장 미리보기</h3>
     <div id="modalText"></div>
     <button class="modal-close" id="modalClose">닫기</button>
+  </div>
+</div>
+
+<div id="ddayModal" class="dday-modal" style="display:none;">
+  <div class="dday-modal-box">
+    <div class="dday-modal-header">
+      <h3>🎯 D-Day 이벤트 관리</h3>
+      <button class="dday-modal-close" id="ddayModalClose">✕</button>
+    </div>
+    <div class="dday-modal-body">
+      <div class="dday-form-modal">
+        <input id="ddayName" placeholder="이벤트 이름 (예: 운동회)">
+        <input id="ddayDate" type="date">
+        <button class="dday-add-btn" id="ddayAddBtn">추가</button>
+      </div>
+      <div class="dday-list" id="ddayList"></div>
+    </div>
   </div>
 </div>
 
@@ -2528,8 +2564,23 @@ function loadDDay() {
   } else {
     banner.style.display = 'none';
   }
+  updateDDayCount();
+}
+function updateDDayCount() {
+  const el = document.getElementById('ddayCount');
+  if (el) el.textContent = (lsJ('alrimbot_dday') || []).length;
 }
 loadDDay();
+
+document.getElementById('ddayOpenBtn').addEventListener('click', () => {
+  document.getElementById('ddayModal').style.display = 'flex';
+});
+document.getElementById('ddayModalClose').addEventListener('click', () => {
+  document.getElementById('ddayModal').style.display = 'none';
+});
+document.getElementById('ddayModal').addEventListener('click', e => {
+  if (e.target.id === 'ddayModal') document.getElementById('ddayModal').style.display = 'none';
+});
 
 document.getElementById('ddayAddBtn').addEventListener('click', () => {
   const name = document.getElementById('ddayName').value.trim();
@@ -2595,18 +2646,7 @@ schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.tri
 
 const sigInput = document.getElementById('sigPhraseInput');
 sigInput.value = sigPhrase;
-sigInput.addEventListener('input', () => { sigPhrase = sigInput.value; lsS('alrimbot_sig_phrase', sigPhrase); updateSigPresets(); });
-document.getElementById('sigPresets').addEventListener('click', e => {
-  const btn = e.target.closest('.sig-preset'); if (!btn) return;
-  sigPhrase = btn.dataset.v;
-  sigInput.value = sigPhrase;
-  lsS('alrimbot_sig_phrase', sigPhrase);
-  updateSigPresets();
-});
-function updateSigPresets() {
-  document.querySelectorAll('.sig-preset').forEach(b => b.classList.toggle('active', b.dataset.v === sigPhrase));
-}
-updateSigPresets();
+sigInput.addEventListener('input', () => { sigPhrase = sigInput.value; lsS('alrimbot_sig_phrase', sigPhrase); });
 
 const teacherInput = document.getElementById('teacherName');
 const classInput   = document.getElementById('className');
