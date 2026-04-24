@@ -1279,6 +1279,38 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .app-header h1 { font-size: 1.4rem; }
   .template-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── 투 컬럼 레이아웃 ── */
+/* 모바일/태블릿: 컬럼 래퍼를 투명하게 만들어 기존 싱글 컬럼 흐름 유지 */
+.main-grid,
+.main-col,
+.side-col { display: contents; }
+
+/* 1024px+ : 60:40 투 컬럼 */
+@media (min-width: 1024px) {
+  body { padding: 24px 24px 80px; }
+  .container { max-width: 1200px; }
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 22px;
+    align-items: start;
+  }
+  .main-col,
+  .side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+  /* 사이드바: 밀도 ↑ */
+  .side-col { gap: 16px; }
+  .side-col .card { padding: 18px; }
+  .side-col .rec-section { gap: 14px; }
+  .side-col .section-title { font-size: .88rem; }
+  .side-col .rec-block-title { font-size: .74rem; margin-bottom: 8px; }
+  .side-col .pill { padding: 5px 10px; font-size: .74rem; }
+}
 </style>
 </head>
 <body>
@@ -1321,6 +1353,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <p class="app-slogan">✍️ 적자생존 — 우리는 적어야 살아요. 매일 기록해요.</p>
     <button class="h-btn" id="historyModalBtn">📚 히스토리</button>
   </div>
+
+  <div class="main-grid">
+  <div class="main-col">
 
   <div class="card">
     <div class="hero-label">오늘 알림장에 담을 내용을 입력하세요</div>
@@ -1374,6 +1409,59 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <button id="generateBtn">✨ 알림장 생성</button>
 
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="result-header">
+      <span>✅ 생성된 알림장</span>
+      <div style="display:flex;gap:5px;">
+        <button onclick="copyResult()" style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">📋 복사</button>
+        <button onclick="openModal()"  style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">👁 미리보기</button>
+      </div>
+    </div>
+    <textarea id="resultText" spellcheck="false"></textarea>
+    <div class="result-btn-row">
+      <button id="regenBtn"   onclick="callGenerate()">🔄 다시 생성</button>
+      <button id="shorterBtn" onclick="callResize('shorter')">✂️ 짧게</button>
+      <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
+      <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
+      <div class="btn-divider"></div>
+      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
+      <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
+      <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
+    </div>
+
+    <!-- 번역 패널 (항상 펼쳐진 상태) -->
+    <div class="translate-panel-open">
+      <div class="translate-panel-title">🌐 다국어 번역 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(번역할 언어를 체크하세요)</span></div>
+      <div class="translate-grid" id="translateGrid">
+        <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
+        <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
+      </div>
+      <button id="translateAllBtn">✨ 선택한 <span id="translateCount">0</span>개 언어 번역하기</button>
+    </div>
+
+    <!-- 번역 결과 헤더 (결과 있을 때만 보임) -->
+    <div id="transResultsHeader" class="trans-results-header" style="display:none;">
+      <span class="trans-results-title">🌐 번역 결과 <span id="transResultsCount">0</span>개</span>
+      <div class="trans-results-actions">
+        <button id="copyAllTransBtn">📋 전체 복사</button>
+        <button id="clearAllTransBtn">❌ 모두 닫기</button>
+      </div>
+    </div>
+
+    <div id="translatePanel"></div>
+  </div>
+
+  </div><!-- /.main-col -->
+
+  <aside class="side-col">
+
   <div class="card rec-section">
     <div class="section-title">💡 키워드 추천</div>
     <div class="divider"></div>
@@ -1410,6 +1498,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <div class="expand-group" id="subjectGroup"></div>
     </div>
   </div>
+
+  </aside>
+  </div><!-- /.main-grid -->
 
   <div class="card" id="settingsCard">
     <div class="settings-header" id="settingsToggle">
@@ -1515,55 +1606,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       </div>
 
     </div>
-  </div>
-
-  <div class="card" id="resultCard" style="display:none;">
-    <div class="result-header">
-      <span>✅ 생성된 알림장</span>
-      <div style="display:flex;gap:5px;">
-        <button onclick="copyResult()" style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">📋 복사</button>
-        <button onclick="openModal()"  style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">👁 미리보기</button>
-      </div>
-    </div>
-    <textarea id="resultText" spellcheck="false"></textarea>
-    <div class="result-btn-row">
-      <button id="regenBtn"   onclick="callGenerate()">🔄 다시 생성</button>
-      <button id="shorterBtn" onclick="callResize('shorter')">✂️ 짧게</button>
-      <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
-      <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
-      <div class="btn-divider"></div>
-      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
-      <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
-      <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
-    </div>
-
-    <!-- 번역 패널 (항상 펼쳐진 상태) -->
-    <div class="translate-panel-open">
-      <div class="translate-panel-title">🌐 다국어 번역 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(번역할 언어를 체크하세요)</span></div>
-      <div class="translate-grid" id="translateGrid">
-        <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
-      </div>
-      <button id="translateAllBtn">✨ 선택한 <span id="translateCount">0</span>개 언어 번역하기</button>
-    </div>
-
-    <!-- 번역 결과 헤더 (결과 있을 때만 보임) -->
-    <div id="transResultsHeader" class="trans-results-header" style="display:none;">
-      <span class="trans-results-title">🌐 번역 결과 <span id="transResultsCount">0</span>개</span>
-      <div class="trans-results-actions">
-        <button id="copyAllTransBtn">📋 전체 복사</button>
-        <button id="clearAllTransBtn">❌ 모두 닫기</button>
-      </div>
-    </div>
-
-    <div id="translatePanel"></div>
   </div>
 
   <div class="card quote-card" id="quoteCard">
