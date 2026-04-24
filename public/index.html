@@ -423,6 +423,66 @@ body {
 }
 .expand-body.open { display: flex; }
 
+/* ── 가정생활지도 특별 블록 ── */
+.home-guidance-block {
+  background: linear-gradient(135deg, #fef3c7, #fed7aa);
+  border-left: 4px solid #f97316;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+.home-title {
+  color: #78350f !important;
+  font-weight: 800 !important;
+  font-size: 0.85rem !important;
+}
+.daily-recommend { margin-top: 10px; }
+.daily-recommend-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 7px;
+}
+.reshuffle-btn {
+  margin-top: 10px;
+  padding: 6px 14px;
+  border: 1.5px solid #f97316;
+  background: #fff;
+  color: #c2410c;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.reshuffle-btn:hover {
+  background: #f97316;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+.pill.home-daily {
+  background: linear-gradient(135deg, #fed7aa, #fdba74) !important;
+  border-color: #f97316 !important;
+  color: #78350f !important;
+  font-weight: 600;
+}
+.home-categories {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(249, 115, 22, 0.25);
+}
+.home-main-expand {
+  color: #78350f !important;
+  font-weight: 700 !important;
+}
+.expand-header.sub {
+  padding-left: 12px;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
 /* ── 설정 ── */
 .settings-header {
   display: flex;
@@ -1476,6 +1536,24 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <div id="personalPills" class="pills"></div>
     </div>
 
+    <div class="rec-block home-guidance-block">
+      <div class="rec-block-title home-title">🏠 오늘의 가정생활지도 <span style="font-size:.68rem; font-weight:500; color:#92400e;">매일 다른 지도로 기록하는 습관을!</span></div>
+
+      <div class="daily-recommend">
+        <div class="daily-recommend-label">🌟 오늘 추천 3가지</div>
+        <div class="pills" id="dailyHomePills"></div>
+        <button class="reshuffle-btn" id="reshuffleHome">🎲 다른 추천 보기</button>
+      </div>
+
+      <div class="home-categories">
+        <div class="expand-header home-main-expand" id="expandAllHome">
+          <span class="expand-arrow">▶</span>
+          <span>📂 카테고리별 전체 보기 (9개 영역, 60+ 키워드)</span>
+        </div>
+        <div class="expand-body" id="homeCategoriesBody"></div>
+      </div>
+    </div>
+
     <div class="rec-block">
       <div class="rec-block-title">📌 상황별 추천</div>
       <div class="expand-group" id="catGroup"></div>
@@ -1623,14 +1701,59 @@ let phIdx = 0;
 const mainInput = document.getElementById('mainInput');
 setInterval(() => { if (!mainInput.value) mainInput.placeholder = PLACEHOLDERS[phIdx++ % PLACEHOLDERS.length]; }, 3000);
 
+const HOME_GUIDANCE = {
+  '🔒 안전교육': [
+    '교통안전 지도', '낯선 사람 조심', '횡단보도 건너기',
+    '엘리베이터 주의', '계단 오르내리기', '자전거 헬멧 착용',
+    '놀이터 안전', '물놀이 안전'
+  ],
+  '👫 친구·관계': [
+    '친구와 사이좋게', '나누는 마음', '배려하기',
+    '다투지 않기', '사과하기', '용서하기',
+    '존중하는 말', '친구 칭찬하기'
+  ],
+  '🛏️ 생활 습관': [
+    '일찍 자기', '규칙적인 식사', '아침 먹고 오기',
+    '손 씻기 생활화', '양치 꼼꼼히', '편식 줄이기',
+    '책가방 스스로 챙기기', '방 정리하기',
+    '숙제 점검', '책 읽는 습관'
+  ],
+  '📱 디지털 지도': [
+    '스마트폰 사용 줄이기', '게임 시간 지키기',
+    '유튜브 적정 시청', 'SNS 주의', '사이버 예절',
+    '개인정보 보호'
+  ],
+  '💬 예절·태도': [
+    '아침 인사 잘하기', '감사 표현하기', '공손한 말투',
+    '어른께 존댓말', '전화 예절', '식사 예절',
+    '이웃에 인사하기'
+  ],
+  '💭 마음 건강': [
+    '감정 표현하기', '화 참는 법', '스트레스 관리',
+    '자신감 갖기', '칭찬 받아들이기', '실패도 괜찮아'
+  ],
+  '📚 학습 태도': [
+    '집중력 기르기', '끝까지 해내기', '꾸준히 하기',
+    '실수 극복하기', '질문하는 습관', '스스로 공부'
+  ],
+  '🌱 자립심': [
+    '혼자서 해보기', '용돈 관리', '시간 관리',
+    '약속 지키기', '책임감 갖기', '자기 물건 챙기기'
+  ],
+  '❤️ 배려·봉사': [
+    '가족 돕기', '설거지 돕기', '동생 돌보기',
+    '할머니 할아버지 안부', '이웃 배려', '나누는 기쁨'
+  ]
+};
+
 const CATS = [
+  { label: '🏠 가정생활지도 (가정에서)', kws: ['일찍 자기','책가방 스스로 챙기기','방 청소하기','숙제 점검하기','스마트폰 사용 줄이기','규칙적인 식사','아침 인사 잘하기','책 읽는 습관'] },
   { label: '🎒 준비물 (챙겨오는 것)',   kws: ['체육복 챙기기','실내화 챙기기','물통 준비','우산 챙기기','간식 준비','스케치북 가져오기','악기 가져오기','교과서 챙기기'] },
   { label: '📚 숙제·과제 (해오는 것)',  kws: ['일기 쓰기','독서록 작성','받아쓰기 연습','수학 문제집 풀기','발표 준비','조사 과제 해오기','단원평가 공부','독서 30분'] },
   { label: '📝 평가 (치르는 것)',       kws: ['단원평가 준비','수행평가 안내','월말평가 대비','학기말 평가','받아쓰기 평가','구구단 평가','오답 정리하기','평가 결과 안내'] },
   { label: '📅 행사·일정 (알리는 것)',  kws: ['운동회 안내','학예회 준비','현장체험학습 안내','소풍 안내','학부모 상담 주간','공개수업 참관','방학식 안내','개학식 안내'] },
   { label: '⚠️ 안전·건강 (당부하는 것)',kws: ['안전한 귀가','손 씻기 강조','마스크 착용','교통안전 주의','감기 예방','물놀이 안전','식중독 주의','독감 예방'] },
   { label: '📋 제출·신청 (제출하는 것)',kws: ['동의서 제출','설문 참여','신청서 작성','수업료 납부','급식 신청','방과후 신청','교육비 지원 신청','수련활동 신청'] },
-  { label: '🏠 가정생활지도 (가정에서)', kws: ['일찍 자기','책가방 스스로 챙기기','방 청소하기','숙제 점검하기','스마트폰 사용 줄이기','규칙적인 식사','아침 인사 잘하기','책 읽는 습관'] },
 ];
 
 const SUBJECTS = [
@@ -1796,6 +1919,69 @@ function buildExpandGroup(containerId, data) {
 }
 buildExpandGroup('catGroup',     CATS);
 buildExpandGroup('subjectGroup', SUBJECTS);
+
+// ── 가정생활지도: 오늘의 추천 3개 (서로 다른 카테고리에서 랜덤) ──
+function loadDailyHomeGuidance() {
+  const cont = document.getElementById('dailyHomePills');
+  if (!cont) return;
+  cont.innerHTML = '';
+
+  const categories = Object.keys(HOME_GUIDANCE);
+  const selected = [];
+  const usedCats = new Set();
+  const shuffledCats = [...categories].sort(() => Math.random() - 0.5);
+
+  for (const cat of shuffledCats) {
+    if (selected.length >= 3) break;
+    if (usedCats.has(cat)) continue;
+    usedCats.add(cat);
+    const kws = HOME_GUIDANCE[cat];
+    const kw = kws[Math.floor(Math.random() * kws.length)];
+    selected.push(kw);
+  }
+
+  selected.forEach(kw => cont.appendChild(makePill(kw, 'home-daily')));
+  updateAllPills();
+}
+
+// 카테고리별 전체 키워드 펼치기
+function buildHomeCategoriesExpand() {
+  const body = document.getElementById('homeCategoriesBody');
+  if (!body) return;
+  body.innerHTML = '';
+
+  Object.entries(HOME_GUIDANCE).forEach(([label, kws]) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.width = '100%';
+    const subHeader = document.createElement('div');
+    subHeader.className = 'expand-header sub';
+    subHeader.innerHTML = '<span class="expand-arrow">▶</span><span>' + label + ' (' + kws.length + ')</span>';
+
+    const subBody = document.createElement('div');
+    subBody.className = 'expand-body';
+    kws.forEach(kw => subBody.appendChild(makePill(kw)));
+
+    subHeader.addEventListener('click', () => {
+      const open = subBody.classList.toggle('open');
+      subHeader.classList.toggle('open', open);
+    });
+
+    wrapper.appendChild(subHeader);
+    wrapper.appendChild(subBody);
+    body.appendChild(wrapper);
+  });
+}
+
+document.getElementById('expandAllHome').addEventListener('click', (e) => {
+  e.currentTarget.classList.toggle('open');
+  const body = document.getElementById('homeCategoriesBody');
+  body.classList.toggle('open');
+});
+
+document.getElementById('reshuffleHome').addEventListener('click', loadDailyHomeGuidance);
+
+loadDailyHomeGuidance();
+buildHomeCategoriesExpand();
 
 function loadSeasonalKeywords() {
   const { title, kws } = getSeasonalInfo();
