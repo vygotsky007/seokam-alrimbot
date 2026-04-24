@@ -423,34 +423,39 @@ body {
 }
 .expand-body.open { display: flex; }
 
-/* ── 가정생활지도 특별 블록 ── */
+/* ── 가정생활지도 상단 주황 블록 ── */
 .home-guidance-block {
   background: linear-gradient(135deg, #fef3c7, #fed7aa);
   border-left: 4px solid #f97316;
-  padding: 14px 16px;
-  border-radius: 10px;
-  margin-bottom: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 .home-title {
-  color: #78350f !important;
-  font-weight: 800 !important;
-  font-size: 0.85rem !important;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #78350f;
 }
-.daily-recommend { margin-top: 10px; }
+.home-subtitle {
+  font-size: 0.7rem;
+  color: #92400e;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
 .daily-recommend-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #92400e;
-  margin-bottom: 7px;
+  margin-bottom: 6px;
 }
 .reshuffle-btn {
-  margin-top: 10px;
-  padding: 6px 14px;
+  margin-top: 8px;
+  padding: 5px 11px;
   border: 1.5px solid #f97316;
   background: #fff;
   color: #c2410c;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -459,8 +464,6 @@ body {
 .reshuffle-btn:hover {
   background: #f97316;
   color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
 }
 .pill.home-daily {
   background: linear-gradient(135deg, #fed7aa, #fdba74) !important;
@@ -468,36 +471,47 @@ body {
   color: #78350f !important;
   font-weight: 600;
 }
-.home-categories {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(249, 115, 22, 0.25);
+
+/* ── 카테고리 섹션 (일반 하얀 배경) ── */
+#homeCatToggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.home-main-expand {
-  color: #78350f !important;
-  font-weight: 700 !important;
-}
-.expand-header.sub {
-  padding-left: 12px;
-  font-size: 0.76rem;
+.expand-arrow-small {
+  font-size: 0.68rem;
   color: var(--muted);
+  transition: transform 0.2s;
 }
-.home-sub-cat {
-  width: 100%;
-  margin-bottom: 10px;
+.home-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(5, auto);
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  margin-top: 8px;
 }
-.home-sub-cat:last-child { margin-bottom: 0; }
-.home-sub-title {
+.home-grid.collapsed { display: none; }
+.home-cat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.home-cat-title {
   font-size: 0.74rem;
   font-weight: 700;
-  color: #78350f;
-  margin-bottom: 5px;
+  color: var(--text);
+  margin-bottom: 3px;
 }
-#homeCategoriesBody.open {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  padding: 6px 4px 2px;
+.home-cat-item .pills { gap: 4px; }
+@media (max-width: 600px) {
+  .home-grid {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── 설정 ── */
@@ -1534,22 +1548,23 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <div id="supplyPills" class="pills"></div>
     </div>
 
-    <div class="rec-block home-guidance-block">
-      <div class="rec-block-title home-title">🏠 오늘의 가정생활지도 <span style="font-size:.68rem; font-weight:500; color:#92400e;">매일 다른 지도로 기록하는 습관을!</span></div>
+    <div class="home-guidance-block">
+      <div class="home-title">🏠 오늘의 가정생활지도</div>
+      <div class="home-subtitle">매일 다른 지도로 기록하는 습관을!</div>
 
       <div class="daily-recommend">
         <div class="daily-recommend-label">🌟 오늘 추천 3가지</div>
         <div class="pills" id="dailyHomePills"></div>
         <button class="reshuffle-btn" id="reshuffleHome">🎲 다른 추천 보기</button>
       </div>
+    </div>
 
-      <div class="home-categories">
-        <div class="expand-header home-main-expand open" id="expandAllHome">
-          <span class="expand-arrow">▼</span>
-          <span>📂 카테고리별 전체 보기 (9개 영역, 60+ 키워드)</span>
-        </div>
-        <div class="expand-body open" id="homeCategoriesBody"></div>
+    <div class="rec-block home-categories-section">
+      <div class="rec-block-title" id="homeCatToggle">
+        <span class="expand-arrow-small">▼</span>
+        📂 카테고리별 전체 보기 <span style="font-weight:500; color:var(--muted);">(9개 영역, 60+ 키워드)</span>
       </div>
+      <div class="home-grid" id="homeCategoriesBody"></div>
     </div>
 
     <div class="divider"></div>
@@ -1957,7 +1972,7 @@ function loadDailyHomeGuidance() {
   updateAllPills();
 }
 
-// 카테고리별 전체 키워드 — 항상 펼친 상태로 표시
+// 카테고리별 전체 키워드 — 2단 그리드로 항상 펼쳐 표시
 function buildHomeCategoriesExpand() {
   const body = document.getElementById('homeCategoriesBody');
   if (!body) return;
@@ -1965,26 +1980,27 @@ function buildHomeCategoriesExpand() {
 
   Object.entries(HOME_GUIDANCE).forEach(([label, kws]) => {
     const catDiv = document.createElement('div');
-    catDiv.className = 'home-sub-cat';
+    catDiv.className = 'home-cat-item';
 
     const catTitle = document.createElement('div');
-    catTitle.className = 'home-sub-title';
+    catTitle.className = 'home-cat-title';
     catTitle.textContent = label + ' (' + kws.length + ')';
     catDiv.appendChild(catTitle);
 
     const catPills = document.createElement('div');
     catPills.className = 'pills';
-    kws.forEach(kw => catPills.appendChild(makePill(kw, 'home-pill')));
+    kws.forEach(kw => catPills.appendChild(makePill(kw)));
     catDiv.appendChild(catPills);
 
     body.appendChild(catDiv);
   });
 }
 
-document.getElementById('expandAllHome').addEventListener('click', (e) => {
-  e.currentTarget.classList.toggle('open');
-  const body = document.getElementById('homeCategoriesBody');
-  body.classList.toggle('open');
+document.getElementById('homeCatToggle').addEventListener('click', e => {
+  const body  = document.getElementById('homeCategoriesBody');
+  const arrow = e.currentTarget.querySelector('.expand-arrow-small');
+  const collapsed = body.classList.toggle('collapsed');
+  arrow.textContent = collapsed ? '▶' : '▼';
 });
 
 document.getElementById('reshuffleHome').addEventListener('click', loadDailyHomeGuidance);
