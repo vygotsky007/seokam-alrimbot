@@ -305,6 +305,46 @@ body {
   box-shadow: var(--shadow-xs);
 }
 
+/* 문체 버튼 호버 예시 툴팁 */
+.qo-group button[data-preview] { position: relative; }
+.qo-group button[data-preview]:hover::after {
+  content: attr(data-preview);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  border-radius: 6px;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  line-height: 1.5;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease;
+  text-align: left;
+}
+.qo-group button[data-preview]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e293b;
+  z-index: 100;
+  pointer-events: none;
+}
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .qo-checkbox-group { display: flex; gap: 8px; flex-wrap: wrap; }
 .qo-check {
   display: inline-flex;
@@ -1526,14 +1566,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <div class="qo-row">
       <span class="qo-label">📝 문체</span>
       <div class="qo-group" id="templateGroup">
-        <button data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)">📋 개조식</button>
-        <button data-v="기본">📝 기본</button>
-        <button data-v="목록형">📋 목록형</button>
-        <button data-v="핵심만">⚡ 핵심만</button>
-        <button data-v="친근한">😊 친근</button>
-        <button data-v="공식적">📜 공식</button>
-        <button data-v="감성적">🌸 감성</button>
-        <button data-v="활기찬">🎉 활기</button>
+        <button data-v="개조식" data-preview="체육대회 안내 | 반티 착용 필수 | 4교시 후 급식">📋 개조식</button>
+        <button data-v="기본" data-preview="안녕하세요. 내일은 체육대회가 있습니다. 반티를 입고 와주세요.">📝 기본</button>
+        <button data-v="목록형" data-preview="1) 체육대회 일정 안내 2) 반티 착용 필수 3) 급식은 4교시 후">📋 목록형</button>
+        <button data-v="핵심만" data-preview="내일 체육대회. 반티 필수. 급식 4교시 후.">⚡ 핵심만</button>
+        <button data-v="친근한" data-preview="안녕하세요~ 드디어 내일 체육대회예요! 반티 꼭 입고 오세요 😊">😊 친근</button>
+        <button data-v="공식적" data-preview="학부모님께 안내드립니다. ○월 ○일 체육대회가 개최됩니다.">📜 공식</button>
+        <button data-v="감성적" data-preview="내일은 우리 아이들이 기다리던 체육대회 날입니다. 신나게 뛰어놀 수 있도록 응원 부탁드려요.">🌸 감성</button>
+        <button data-v="활기찬" data-preview="내일 드디어 체육대회! 🎉 모두 반티 챙겨서 신나게 만나요!">🎉 활기</button>
       </div>
     </div>
     <div class="qo-row">
