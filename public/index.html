@@ -482,6 +482,23 @@ body {
   font-size: 0.76rem;
   color: var(--muted);
 }
+.home-sub-cat {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.home-sub-cat:last-child { margin-bottom: 0; }
+.home-sub-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #78350f;
+  margin-bottom: 5px;
+}
+#homeCategoriesBody.open {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 6px 4px 2px;
+}
 
 /* ── 설정 ── */
 .settings-header {
@@ -1511,29 +1528,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <aside class="side-col">
 
   <div class="card rec-section">
-    <div class="section-title">💡 키워드 추천</div>
-    <div class="divider"></div>
 
     <div id="supplyBlock" style="display:none;">
       <div class="rec-block-title">🎒 관련 준비물 제안</div>
       <div id="supplyPills" class="pills"></div>
-    </div>
-
-    <div id="seasonalBlock">
-      <div class="rec-block-title" id="seasonalTitle"></div>
-      <div id="seasonalPills" class="pills"></div>
-    </div>
-
-    <div class="rec-block">
-      <div class="rec-block-title">🔥 트렌딩 (최근 7일)</div>
-      <div id="trendingPills" class="pills">
-        <span id="trendingEmpty" style="font-size:.76rem;color:var(--muted);display:none;">아직 데이터가 없어요</span>
-      </div>
-    </div>
-
-    <div id="personalBlock" style="display:none;">
-      <div class="rec-block-title">⭐ 내가 자주 쓰는</div>
-      <div id="personalPills" class="pills"></div>
     </div>
 
     <div class="rec-block home-guidance-block">
@@ -1546,11 +1544,26 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       </div>
 
       <div class="home-categories">
-        <div class="expand-header home-main-expand" id="expandAllHome">
-          <span class="expand-arrow">▶</span>
+        <div class="expand-header home-main-expand open" id="expandAllHome">
+          <span class="expand-arrow">▼</span>
           <span>📂 카테고리별 전체 보기 (9개 영역, 60+ 키워드)</span>
         </div>
-        <div class="expand-body" id="homeCategoriesBody"></div>
+        <div class="expand-body open" id="homeCategoriesBody"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-title">💡 추천 키워드</div>
+
+    <div id="seasonalBlock">
+      <div class="rec-block-title" id="seasonalTitle"></div>
+      <div id="seasonalPills" class="pills"></div>
+    </div>
+
+    <div class="rec-block">
+      <div class="rec-block-title">🔥 트렌딩 (최근 7일)</div>
+      <div id="trendingPills" class="pills">
+        <span id="trendingEmpty" style="font-size:.76rem;color:var(--muted);display:none;">아직 데이터가 없어요</span>
       </div>
     </div>
 
@@ -1944,31 +1957,27 @@ function loadDailyHomeGuidance() {
   updateAllPills();
 }
 
-// 카테고리별 전체 키워드 펼치기
+// 카테고리별 전체 키워드 — 항상 펼친 상태로 표시
 function buildHomeCategoriesExpand() {
   const body = document.getElementById('homeCategoriesBody');
   if (!body) return;
   body.innerHTML = '';
 
   Object.entries(HOME_GUIDANCE).forEach(([label, kws]) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.width = '100%';
-    const subHeader = document.createElement('div');
-    subHeader.className = 'expand-header sub';
-    subHeader.innerHTML = '<span class="expand-arrow">▶</span><span>' + label + ' (' + kws.length + ')</span>';
+    const catDiv = document.createElement('div');
+    catDiv.className = 'home-sub-cat';
 
-    const subBody = document.createElement('div');
-    subBody.className = 'expand-body';
-    kws.forEach(kw => subBody.appendChild(makePill(kw)));
+    const catTitle = document.createElement('div');
+    catTitle.className = 'home-sub-title';
+    catTitle.textContent = label + ' (' + kws.length + ')';
+    catDiv.appendChild(catTitle);
 
-    subHeader.addEventListener('click', () => {
-      const open = subBody.classList.toggle('open');
-      subHeader.classList.toggle('open', open);
-    });
+    const catPills = document.createElement('div');
+    catPills.className = 'pills';
+    kws.forEach(kw => catPills.appendChild(makePill(kw, 'home-pill')));
+    catDiv.appendChild(catPills);
 
-    wrapper.appendChild(subHeader);
-    wrapper.appendChild(subBody);
-    body.appendChild(wrapper);
+    body.appendChild(catDiv);
   });
 }
 
@@ -2021,25 +2030,23 @@ async function loadTrending() {
     empty.style.display = 'none';
     cont.innerHTML = '';
 
-    // 카테고리별로 분류
+    // 카테고리별로 분류 (기타는 제외)
     const grouped = {};
     json.data.forEach(({ keyword, count }) => {
       const cat = classifyKeyword(keyword);
+      if (cat === '📝 기타') return;
       if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push({ keyword, count });
     });
 
-    // 카테고리 순서대로 표시 (기타는 맨 뒤)
-    const catOrder = ['🎒 준비물','📚 숙제·과제','📅 행사·일정','⚠️ 안전·건강','📋 제출·신청','🏠 가정생활지도','🌤️ 날씨·계절','📝 기타'];
+    const catOrder = ['🎒 준비물','📚 숙제·과제','📅 행사·일정','⚠️ 안전·건강','📋 제출·신청','🏠 가정생활지도','🌤️ 날씨·계절'];
     catOrder.forEach(cat => {
       if (!grouped[cat]) return;
-      // 카테고리 제목
       const catTitle = document.createElement('div');
       catTitle.style.cssText = 'font-size:.68rem; font-weight:700; color:var(--muted); margin:5px 0 3px; width:100%;';
       catTitle.textContent = cat + ' (' + grouped[cat].length + ')';
       cont.appendChild(catTitle);
 
-      // 키워드 pills
       grouped[cat].forEach(({ keyword, count }) => {
         const el = makePill(keyword + ' ' + count, 'trending');
         el.dataset.kw = keyword;
@@ -2047,28 +2054,23 @@ async function loadTrending() {
         cont.appendChild(el);
       });
     });
+
+    // 분류된 키워드가 하나도 없으면 안내
+    if (cont.querySelectorAll('.pill').length === 0) {
+      empty.style.display = '';
+      cont.appendChild(empty);
+    }
   } catch (_) {}
 }
 loadTrending();
 
-function loadPersonalKws() {
-  const p      = lsJ('alrimbot_personal_kw') || {};
-  const sorted = Object.entries(p).sort(([, a], [, b]) => b - a).slice(0, 10).map(([k]) => k);
-  const block  = document.getElementById('personalBlock');
-  const cont   = document.getElementById('personalPills');
-  cont.innerHTML = '';
-  if (sorted.length === 0) { block.style.display = 'none'; return; }
-  block.style.display = '';
-  sorted.forEach(kw => cont.appendChild(makePill(kw)));
-  updateAllPills();
-}
-loadPersonalKws();
+// 내가 자주 쓰는 키워드는 화면에 표시하지 않음 (데이터는 내부적으로 계속 축적)
+function loadPersonalKws() { /* no-op */ }
 
 function trackPersonalKws(kws) {
   const p = lsJ('alrimbot_personal_kw') || {};
   kws.forEach(k => { p[k] = (p[k] || 0) + 1; });
   lsSJ('alrimbot_personal_kw', p);
-  loadPersonalKws();
 }
 
 function extractKeywords(text) {
