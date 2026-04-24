@@ -376,6 +376,143 @@ body {
   font-weight: 600;
 }
 
+/* ── 빠른 입력 카드 ── */
+.quick-input-card {
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1px solid #bae6fd;
+}
+.quick-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.quick-input-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0369a1;
+}
+.quick-input-config {
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  color: #0369a1;
+  background: #fff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+}
+.quick-input-config:hover {
+  background: #0369a1;
+  color: #fff;
+}
+.quick-input-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.quick-insert-btn {
+  padding: 5px 11px;
+  background: #fff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 99px;
+  font-size: 0.76rem;
+  color: #0c4a6e;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.quick-insert-btn:hover {
+  background: #0ea5e9;
+  color: #fff;
+  border-color: #0ea5e9;
+  transform: translateY(-1px);
+}
+
+/* ── 시간표 설정 모달 ── */
+.schedule-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.schedule-modal-box {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.schedule-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.schedule-modal-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.schedule-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+.schedule-modal-body { padding: 20px; }
+.schedule-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.schedule-day-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.schedule-day-row label {
+  min-width: 55px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.schedule-day-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+.schedule-day-row input:focus { border-color: var(--blue); }
+.schedule-save-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.schedule-save-btn:hover { background: var(--blue-d); }
+
 .translate-hint {
   margin-top: 8px;
   padding: 8px 12px;
@@ -1540,6 +1677,21 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <div class="main-grid">
   <div class="main-col">
 
+  <div class="card quick-input-card">
+    <div class="quick-input-header">
+      <span class="quick-input-title">💡 빠른 입력</span>
+      <button class="quick-input-config" id="scheduleConfigBtn">⚙️ 시간표 설정</button>
+    </div>
+    <div class="quick-input-buttons">
+      <button class="quick-insert-btn" id="insertTodaySchedule">📅 오늘 과목</button>
+      <button class="quick-insert-btn" id="insertTomorrowSchedule">📅 내일 과목</button>
+      <button class="quick-insert-btn" data-insert="준비물: ">🎒 준비물</button>
+      <button class="quick-insert-btn" data-insert="숙제: ">📝 숙제</button>
+      <button class="quick-insert-btn" data-insert="안내: ">📢 안내</button>
+      <button class="quick-insert-btn" data-insert="당부: ">💡 당부</button>
+    </div>
+  </div>
+
   <div class="card">
     <div class="hero-label">오늘 알림장에 담을 내용을 입력하세요</div>
     <div class="textarea-wrap">
@@ -1807,6 +1959,39 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <h3>알림장 미리보기</h3>
     <div id="modalText"></div>
     <button class="modal-close" id="modalClose">닫기</button>
+  </div>
+</div>
+
+<div id="scheduleModal" class="schedule-modal" style="display:none;">
+  <div class="schedule-modal-box">
+    <div class="schedule-modal-header">
+      <h3>⚙️ 주간 시간표 설정</h3>
+      <button class="schedule-close" id="scheduleClose">✕</button>
+    </div>
+    <div class="schedule-modal-body">
+      <p class="schedule-hint">요일별로 주요 과목을 입력하세요. (공백 또는 쉼표로 구분)</p>
+      <div class="schedule-day-row">
+        <label>월요일</label>
+        <input type="text" id="schedule-mon" placeholder="예: 국어 수학 영어 과학 음악">
+      </div>
+      <div class="schedule-day-row">
+        <label>화요일</label>
+        <input type="text" id="schedule-tue" placeholder="예: 국어 수학 사회 체육 미술">
+      </div>
+      <div class="schedule-day-row">
+        <label>수요일</label>
+        <input type="text" id="schedule-wed" placeholder="예: 국어 수학 영어 체육 창체">
+      </div>
+      <div class="schedule-day-row">
+        <label>목요일</label>
+        <input type="text" id="schedule-thu" placeholder="예: 국어 수학 사회 과학 음악">
+      </div>
+      <div class="schedule-day-row">
+        <label>금요일</label>
+        <input type="text" id="schedule-fri" placeholder="예: 국어 수학 영어 미술 창체">
+      </div>
+      <button class="schedule-save-btn" id="scheduleSaveBtn">💾 저장</button>
+    </div>
   </div>
 </div>
 
@@ -2989,6 +3174,80 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
+
+/* ── 빠른 입력 / 시간표 ── */
+let weeklySchedule = lsJ('alrimbot_schedule') || { '월':[], '화':[], '수':[], '목':[], '금':[] };
+const DAYS = ['일','월','화','수','목','금','토'];
+
+function getTodayDayLabel() { return DAYS[new Date().getDay()]; }
+function getTomorrowDayLabel() {
+  const t = new Date();
+  t.setDate(t.getDate() + 1);
+  return DAYS[t.getDay()];
+}
+
+function insertToMainInput(text) {
+  const input = document.getElementById('mainInput');
+  const current = input.value;
+  input.value = current
+    ? current.replace(/\s+$/, '') + '\n' + text
+    : text;
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function loadScheduleInputs() {
+  const map = { mon:'월', tue:'화', wed:'수', thu:'목', fri:'금' };
+  Object.entries(map).forEach(([key, label]) => {
+    const el = document.getElementById('schedule-' + key);
+    if (el) el.value = (weeklySchedule[label] || []).join(' ');
+  });
+}
+
+function saveScheduleFromInputs() {
+  const map = { mon:'월', tue:'화', wed:'수', thu:'목', fri:'금' };
+  Object.entries(map).forEach(([key, label]) => {
+    const el = document.getElementById('schedule-' + key);
+    if (el) {
+      weeklySchedule[label] = el.value.split(/[\s,]+/).map(s => s.trim()).filter(Boolean);
+    }
+  });
+  lsSJ('alrimbot_schedule', weeklySchedule);
+  showToast('✅ 시간표 저장됨');
+  document.getElementById('scheduleModal').style.display = 'none';
+}
+
+function insertScheduleFor(day, prefixLabel) {
+  if (['토','일'].includes(day)) {
+    showToast(prefixLabel === '오늘' ? '주말은 시간표가 없어요' : '내일은 주말이에요');
+    return;
+  }
+  const subjects = weeklySchedule[day] || [];
+  if (subjects.length === 0) {
+    showToast('⚙️ 시간표 설정에서 먼저 ' + day + '요일 과목을 입력하세요');
+    return;
+  }
+  insertToMainInput(prefixLabel + ' 수업: ' + subjects.join(', '));
+}
+
+document.getElementById('insertTodaySchedule').addEventListener('click', () => insertScheduleFor(getTodayDayLabel(), '오늘'));
+document.getElementById('insertTomorrowSchedule').addEventListener('click', () => insertScheduleFor(getTomorrowDayLabel(), '내일'));
+
+document.querySelectorAll('.quick-insert-btn[data-insert]').forEach(btn => {
+  btn.addEventListener('click', () => insertToMainInput(btn.dataset.insert));
+});
+
+const scheduleModalEl = document.getElementById('scheduleModal');
+document.getElementById('scheduleConfigBtn').addEventListener('click', () => {
+  loadScheduleInputs();
+  scheduleModalEl.style.display = 'flex';
+});
+document.getElementById('scheduleClose').addEventListener('click', () => scheduleModalEl.style.display = 'none');
+document.getElementById('scheduleSaveBtn').addEventListener('click', saveScheduleFromInputs);
+scheduleModalEl.addEventListener('click', e => {
+  if (e.target === scheduleModalEl) scheduleModalEl.style.display = 'none';
+});
 </script>
 </body>
 </html>
