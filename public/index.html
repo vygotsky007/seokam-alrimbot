@@ -1416,14 +1416,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <div class="card qo-card">
     <div class="qo-row">
-      <span class="qo-label">🎨 톤</span>
+      <span class="qo-label">📋 문체</span>
       <div class="qo-group" id="toneGroup">
+        <button data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)">📋 개조식</button>
+        <button data-v="기본">🌱 부드러운</button>
         <button data-v="친근한">😊 친근</button>
         <button data-v="공식적">📝 공식</button>
         <button data-v="감성적">❤️ 따뜻</button>
-        <button data-v="핵심만">📋 간결</button>
+        <button data-v="핵심만">⚡ 간결</button>
         <button data-v="활기찬">🎉 활기</button>
-        <button data-v="기본">🌱 부드러운</button>
       </div>
     </div>
     <div class="qo-row">
@@ -1606,13 +1607,13 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
         <label>문체 스타일 (상세)</label>
         <div class="template-grid" id="templateGrid">
           <div class="template-card" data-v="기본"><div class="tc-icon">📝</div><div class="tc-label">기본</div></div>
+          <div class="template-card" data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)"><div class="tc-icon">📋</div><div class="tc-label">개조식</div></div>
           <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div></div>
           <div class="template-card" data-v="핵심만"><div class="tc-icon">⚡</div><div class="tc-label">핵심만</div></div>
           <div class="template-card" data-v="친근한"><div class="tc-icon">😊</div><div class="tc-label">친근한</div></div>
           <div class="template-card" data-v="공식적"><div class="tc-icon">📜</div><div class="tc-label">공식적</div></div>
           <div class="template-card" data-v="감성적"><div class="tc-icon">🌸</div><div class="tc-label">감성적</div></div>
           <div class="template-card" data-v="활기찬"><div class="tc-icon">🎉</div><div class="tc-label">활기찬</div></div>
-          <div class="template-card" data-v="목록형"><div class="tc-icon">📋</div><div class="tc-label">목록형</div></div>
         </div>
       </div>
 
@@ -1739,7 +1740,7 @@ const lsJ = k => { try { return JSON.parse(ls(k) || 'null'); } catch { return nu
 const lsSJ = (k, v) => lsS(k, JSON.stringify(v));
 
 let selectedGrade    = ls('alrimbot_grade')      || '초등학교 3~4학년';
-let selectedStyle    = ls('alrimbot_style')      || '기본';
+let selectedStyle    = ls('alrimbot_style')      || '개조식';
 let greetingLength   = ls('alrimbot_length')     || '중간';
 let greetingPosition = ls('alrimbot_position')   || '맨 위';
 let greetingIcon     = ls('alrimbot_icon')       || '없음';
@@ -2371,7 +2372,7 @@ async function callResize(direction) {
   }
 }
 
-const STYLE_CYCLE = ['기본','목록형','핵심만','친근한','공식적','감성적','활기찬'];
+const STYLE_CYCLE = ['개조식','기본','목록형','핵심만','친근한','공식적','감성적','활기찬'];
 function cycleTone() {
   const idx = STYLE_CYCLE.indexOf(selectedStyle);
   selectedStyle = STYLE_CYCLE[(idx + 1) % STYLE_CYCLE.length];
