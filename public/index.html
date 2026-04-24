@@ -1124,30 +1124,25 @@ body {
 .pc-trans-body  { font-size: .88rem; line-height: 1.85; white-space: pre-wrap; color: var(--text); }
 
 /* ── 번역 패널 ── */
-.translate-panel-open {
-  margin-top: 16px;
-  padding: 18px;
+.pre-translate-card {
   background: linear-gradient(135deg, #F8FAFF 0%, #EFF6FF 100%);
   border: 1px solid #DBEAFE;
-  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  margin-bottom: 10px;
 }
-.translate-panel-title {
-  font-size: .92rem;
+.pre-translate-title {
+  font-size: .88rem;
   font-weight: 800;
   color: var(--navy);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
   letter-spacing: -0.02em;
   flex-wrap: wrap;
 }
-.translate-panel-title > span {
-  font-size: .74rem !important;
-  font-weight: 500 !important;
-  color: var(--muted-2) !important;
-  letter-spacing: -0.005em;
-}
+.pre-translate-card .translate-grid { margin-bottom: 0; }
+
 .translate-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1190,23 +1185,6 @@ body {
   flex-shrink: 0;
 }
 .trans-check.checked input[type="checkbox"] { accent-color: #fff; }
-#translateAllBtn {
-  width: 100%;
-  padding: 13px;
-  background: var(--navy);
-  color: #fff;
-  border: none;
-  border-radius: var(--r-md);
-  font-size: .92rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all var(--t);
-  font-family: inherit;
-  letter-spacing: -0.01em;
-  box-shadow: var(--shadow-sm);
-}
-#translateAllBtn:hover { background: var(--navy-d); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-#translateAllBtn:disabled { background: #94A3B8; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* 번역 결과 영역 */
 .trans-results-header {
@@ -1455,6 +1433,21 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     </div>
   </div>
 
+  <div class="card pre-translate-card">
+    <div class="pre-translate-title">🌐 함께 만들 다국어 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(체크한 언어는 생성 시 자동 번역돼요)</span></div>
+    <div class="translate-grid" id="preTranslateGrid">
+      <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
+      <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
+    </div>
+  </div>
+
   <button id="generateBtn">✨ 알림장 생성</button>
 
   <div class="card" id="resultCard" style="display:none;">
@@ -1475,23 +1468,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
       <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
       <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
-    </div>
-
-    <!-- 번역 패널 (항상 펼쳐진 상태) -->
-    <div class="translate-panel-open">
-      <div class="translate-panel-title">🌐 다국어 번역 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(번역할 언어를 체크하세요)</span></div>
-      <div class="translate-grid" id="translateGrid">
-        <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
-        <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
-      </div>
-      <button id="translateAllBtn">✨ 선택한 <span id="translateCount">0</span>개 언어 번역하기</button>
     </div>
 
     <!-- 번역 결과 헤더 (결과 있을 때만 보임) -->
@@ -2310,6 +2286,7 @@ async function callGenerate(overrideLength) {
     document.getElementById('resultCard').style.display = '';
     document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
     sendUsage(freeText);
+    autoTranslateSelected(json.text);
   } catch (err) {
     showToast('오류: ' + err.message);
   } finally {
@@ -2481,26 +2458,19 @@ const LANGUAGES = {
 const translateCache = new Map();
 const transResults = new Map(); // 현재 표시 중인 번역 결과 저장
 
-document.getElementById('translateGrid').addEventListener('change', e => {
+// 생성 전 언어 체크박스 - 시각 피드백
+document.getElementById('preTranslateGrid').addEventListener('change', e => {
   if (e.target.matches('input[type="checkbox"][data-lang]')) {
-    // 체크된 라벨 스타일 변경
     const label = e.target.closest('.trans-check');
     label.classList.toggle('checked', e.target.checked);
-    // 카운트 업데이트
-    const count = document.querySelectorAll('#translateGrid input[type="checkbox"]:checked').length;
-    document.getElementById('translateCount').textContent = count;
   }
 });
 
-document.getElementById('translateAllBtn').addEventListener('click', async () => {
-  const checked = document.querySelectorAll('#translateGrid input[type="checkbox"]:checked');
-  if (checked.length === 0) { showToast('번역할 언어를 선택해주세요'); return; }
-
-  const text = document.getElementById('resultText').value;
-  if (!text) { showToast('번역할 알림장이 없어요.'); return; }
-
-  const btn = document.getElementById('translateAllBtn');
-  btn.disabled = true;
+// 생성 직후 선택된 언어들 자동 번역
+async function autoTranslateSelected(text) {
+  const checked = document.querySelectorAll('#preTranslateGrid input[type="checkbox"]:checked');
+  if (checked.length === 0) return;
+  if (!text) return;
 
   const langs = Array.from(checked).map(c => ({ lang: c.dataset.lang, native: c.dataset.native }));
   langs.forEach(({ lang }) => {
@@ -2532,16 +2502,9 @@ document.getElementById('translateAllBtn').addEventListener('click', async () =>
     }
   }));
 
-  // 체크박스 초기화
-  checked.forEach(c => {
-    c.checked = false;
-    c.closest('.trans-check').classList.remove('checked');
-  });
-  document.getElementById('translateCount').textContent = '0';
   updateTransResultsHeader();
   showToast('✅ ' + langs.length + '개 언어 번역 완료!');
-  btn.disabled = false;
-});
+}
 
 // 전체 복사 버튼
 document.getElementById('copyAllTransBtn').addEventListener('click', () => {
