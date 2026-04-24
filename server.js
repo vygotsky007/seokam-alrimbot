@@ -137,6 +137,7 @@ app.post('/api/generate-free', async (req, res) => {
     freeText, teacherName, className, grade,
     style, greetingLength, greetingPosition, greetingIcon,
     emojiLevel, honorific, signature, weatherContext,
+    includeGreeting, includeDate, dateInfo,
   } = req.body;
 
   if (!freeText || !freeText.trim()) {
@@ -162,6 +163,12 @@ app.post('/api/generate-free', async (req, res) => {
     POSITION_GUIDE[greetingPosition] || POSITION_GUIDE['맨 위'],
     LENGTH_GUIDE[greetingLength]    || LENGTH_GUIDE['중간'],
     buildEmojiGuide(emojiLevel, greetingIcon),
+    includeGreeting === false
+      ? '[인사말 제외] "안녕하세요" 같은 인사말은 넣지 마세요. 바로 본론부터 시작해주세요.'
+      : '',
+    (includeDate && dateInfo)
+      ? `[날짜 표시] 알림장 맨 위 첫 줄에 "${dateInfo}"를 그대로 포함해 주세요. 그 아래에 한 줄 띄우고 본문을 시작합니다.`
+      : '',
     weatherContext ? `오늘 날씨: ${weatherContext}. 자연스럽게 날씨 관련 내용을 한 줄 언급해줘.` : '',
     signature ? `알림장 끝에 다음 서명을 그대로 추가해:\n${signature}` : '',
     '마크다운 없이 순수 텍스트로만 출력해.',

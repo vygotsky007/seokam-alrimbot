@@ -305,6 +305,53 @@ body {
   box-shadow: var(--shadow-xs);
 }
 
+.qo-checkbox-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.qo-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: .78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.qo-check:hover { border-color: var(--blue); color: var(--blue); }
+.qo-check input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--blue);
+  margin: 0;
+}
+.qo-check input[type="checkbox"]:checked ~ span {
+  color: var(--blue-d);
+  font-weight: 600;
+}
+
+.translate-hint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  color: var(--blue-d);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.flag-preview {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
 /* ── 생성 버튼 (프라이머리) ── */
 #generateBtn {
   width: 100%;
@@ -1464,6 +1511,19 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <div class="card qo-card">
     <div class="qo-row">
+      <span class="qo-label">🎀 옵션</span>
+      <div class="qo-group qo-checkbox-group">
+        <label class="qo-check">
+          <input type="checkbox" id="includeGreeting" checked>
+          <span>🙋 인사말 포함</span>
+        </label>
+        <label class="qo-check">
+          <input type="checkbox" id="includeDate">
+          <span>📅 날짜·요일 표시</span>
+        </label>
+      </div>
+    </div>
+    <div class="qo-row">
       <span class="qo-label">📝 문체</span>
       <div class="qo-group" id="templateGroup">
         <button data-v="개조식" title="명사형 어미, 간결한 표현 (예: 우산 지참 필수)">📋 개조식</button>
@@ -1487,6 +1547,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   </div>
 
   <button id="generateBtn">✨ 알림장 생성</button>
+
+  <div class="translate-hint">
+    💬 생성 후 9개 언어로 번역할 수 있어요
+    <span class="flag-preview">🇺🇸 🇨🇳 🇻🇳 🇷🇺 🇺🇿 🇲🇳 🇹🇭 🇵🇭 🇯🇵</span>
+  </div>
 
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
@@ -1716,6 +1781,34 @@ let schoolName       = ls('alrimbot_school')     || '석암초등학교';
 let sigPhrase        = ls('alrimbot_sig_phrase') || '';
 let weatherData      = null;
 const activeKws      = new Set();
+
+let includeGreeting  = ls('alrimbot_include_greeting') !== 'false';
+let includeDate      = ls('alrimbot_include_date')     === 'true';
+
+function getTodayDateString() {
+  const today = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  return today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + days[today.getDay()] + '요일';
+}
+
+(function initIncludeToggles() {
+  const g = document.getElementById('includeGreeting');
+  const d = document.getElementById('includeDate');
+  if (g) {
+    g.checked = includeGreeting;
+    g.addEventListener('change', e => {
+      includeGreeting = e.target.checked;
+      lsS('alrimbot_include_greeting', includeGreeting);
+    });
+  }
+  if (d) {
+    d.checked = includeDate;
+    d.addEventListener('change', e => {
+      includeDate = e.target.checked;
+      lsS('alrimbot_include_date', includeDate);
+    });
+  }
+})();
 
 const PLACEHOLDERS = [
   '떠오르는 대로 입력하세요…',
@@ -2046,32 +2139,16 @@ async function loadTrending() {
     empty.style.display = 'none';
     cont.innerHTML = '';
 
-    // 카테고리별로 분류 (기타는 제외)
-    const grouped = {};
+    // 카테고리 분류 없이 단순 리스트 (기타 키워드는 제외)
     json.data.forEach(({ keyword, count }) => {
       const cat = classifyKeyword(keyword);
       if (cat === '📝 기타') return;
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push({ keyword, count });
+      const el = makePill(keyword + ' ' + count, 'trending');
+      el.dataset.kw = keyword;
+      el.addEventListener('click', e => { e.stopPropagation(); toggleKw(keyword); }, true);
+      cont.appendChild(el);
     });
 
-    const catOrder = ['🎒 준비물','📚 숙제·과제','📅 행사·일정','⚠️ 안전·건강','📋 제출·신청','🏠 가정생활지도','🌤️ 날씨·계절'];
-    catOrder.forEach(cat => {
-      if (!grouped[cat]) return;
-      const catTitle = document.createElement('div');
-      catTitle.style.cssText = 'font-size:.68rem; font-weight:700; color:var(--muted); margin:5px 0 3px; width:100%;';
-      catTitle.textContent = cat + ' (' + grouped[cat].length + ')';
-      cont.appendChild(catTitle);
-
-      grouped[cat].forEach(({ keyword, count }) => {
-        const el = makePill(keyword + ' ' + count, 'trending');
-        el.dataset.kw = keyword;
-        el.addEventListener('click', e => { e.stopPropagation(); toggleKw(keyword); }, true);
-        cont.appendChild(el);
-      });
-    });
-
-    // 분류된 키워드가 하나도 없으면 안내
     if (cont.querySelectorAll('.pill').length === 0) {
       empty.style.display = '';
       cont.appendChild(empty);
@@ -2313,6 +2390,9 @@ async function callGenerate(overrideLength) {
         greetingLength:   overrideLength || greetingLength,
         greetingPosition,
         honorific,
+        includeGreeting,
+        includeDate,
+        dateInfo:         includeDate ? getTodayDateString() : '',
         signature:        buildSignature(),
         weatherContext:   buildWeatherContext(),
       }),
