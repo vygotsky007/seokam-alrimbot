@@ -2036,6 +2036,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col { position: sticky; top: 28px; max-height: calc(100vh - 56px); overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
   .side-col::-webkit-scrollbar { width: 6px; }
   .side-col::-webkit-scrollbar-thumb { background: var(--border); border: none; }
+
+  /* main-grid 아래 카드들도 메인 컬럼과 같은 너비 + 왼쪽 정렬 */
+  #settingsCard,
+  #quoteCard,
+  #historyCard {
+    max-width: calc((100% - 24px) * 3 / 5);
+    margin-left: 0;
+    margin-right: auto;
+  }
 }
 
 </style>
