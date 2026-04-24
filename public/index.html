@@ -1393,21 +1393,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
         <button data-v="길게">길게</button>
       </div>
     </div>
-    <div class="qo-row">
-      <span class="qo-label">🗣️ 어투</span>
-      <div class="qo-group" id="honorificGroup">
-        <button data-v="존댓말">존댓말</button>
-        <button data-v="반말">반말</button>
-      </div>
-    </div>
-    <div class="qo-row">
-      <span class="qo-label">📍 인사말</span>
-      <div class="qo-group" id="positionGroup">
-        <button data-v="맨 위">맨 위</button>
-        <button data-v="맨 아래">맨 아래</button>
-        <button data-v="둘 다">둘 다</button>
-      </div>
-    </div>
   </div>
 
   <button id="generateBtn">✨ 알림장 생성</button>
@@ -1619,8 +1604,8 @@ const lsSJ = (k, v) => lsS(k, JSON.stringify(v));
 const selectedGrade  = '초등학교';
 let selectedStyle    = ls('alrimbot_style')      || '개조식';
 let greetingLength   = ls('alrimbot_length')     || '중간';
-let greetingPosition = ls('alrimbot_position')   || '맨 위';
-let honorific        = ls('alrimbot_honorific')  || '존댓말';
+const greetingPosition = '맨 위';
+const honorific        = '존댓말';
 let schoolName       = ls('alrimbot_school')     || '석암초등학교';
 let sigPhrase        = ls('alrimbot_sig_phrase') || '';
 let weatherData      = null;
@@ -2042,9 +2027,7 @@ function updateSettingsSummary() {
 
 function syncUI() {
   document.querySelectorAll('#templateGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
-  document.querySelectorAll('#positionGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingPosition));
   document.querySelectorAll('#quickLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingLength));
-  document.querySelectorAll('#honorificGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === honorific));
   updateSettingsSummary();
 }
 
@@ -2052,17 +2035,9 @@ document.getElementById('templateGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   selectedStyle = v; lsS('alrimbot_style', v); syncUI();
 });
-document.getElementById('positionGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  greetingPosition = v; lsS('alrimbot_position', v); syncUI();
-});
 document.getElementById('quickLengthGroup').addEventListener('click', e => {
   const v = e.target.dataset.v; if (!v) return;
   greetingLength = v; lsS('alrimbot_length', v); syncUI();
-});
-document.getElementById('honorificGroup').addEventListener('click', e => {
-  const v = e.target.dataset.v; if (!v) return;
-  honorific = v; lsS('alrimbot_honorific', v); syncUI();
 });
 
 const schoolInput = document.getElementById('schoolNameInput');
