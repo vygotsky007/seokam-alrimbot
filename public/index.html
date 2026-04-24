@@ -1286,6 +1286,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .main-col,
 .side-col { display: contents; }
 
+/* 빠른 설정 카드: 기본은 숨김 (모바일에서는 하단 설정 아코디언만 사용) */
+.quick-settings-card { display: none; }
+
 /* 1024px+ : 60:40 투 컬럼 */
 @media (min-width: 1024px) {
   body { padding: 24px 24px 80px; }
@@ -1310,6 +1313,47 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col .section-title { font-size: .88rem; }
   .side-col .rec-block-title { font-size: .74rem; margin-bottom: 8px; }
   .side-col .pill { padding: 5px 10px; font-size: .74rem; }
+
+  /* 빠른 설정 카드 */
+  .quick-settings-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+  }
+  .qs-title {
+    font-size: .88rem;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .qs-row { display: flex; flex-direction: column; gap: 8px; }
+  .qs-label {
+    font-size: .76rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: -0.015em;
+  }
+  .qs-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-s);
+  }
+  .qs-more {
+    font-size: .78rem;
+    color: var(--blue-d);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    padding-top: 4px;
+    transition: color var(--t-fast);
+  }
+  .qs-more:hover { color: var(--blue); text-decoration: underline; }
 }
 </style>
 </head>
@@ -1408,6 +1452,42 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   </div>
 
   <button id="generateBtn">✨ 알림장 생성</button>
+
+  <div class="card quick-settings-card" id="quickSettingsCard">
+    <div class="qs-title">⚡ 빠른 설정</div>
+
+    <div class="qs-row">
+      <label class="qs-label">학년</label>
+      <div class="btn-group" id="gradeGroupQuick">
+        <button data-v="초등학교 1~2학년">1~2학년</button>
+        <button data-v="초등학교 3~4학년">3~4학년</button>
+        <button data-v="초등학교 5~6학년">5~6학년</button>
+        <button data-v="초등학교">전체</button>
+      </div>
+    </div>
+
+    <div class="qs-row">
+      <label class="qs-label">학교명</label>
+      <input id="schoolNameInputQuick" class="text-input" placeholder="석암초등학교">
+    </div>
+
+    <div class="qs-toggles">
+      <div class="toggle-row">
+        <label for="sigToggleQuick">서명 자동 추가</label>
+        <label class="toggle"><input type="checkbox" id="sigToggleQuick"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <label for="weatherToggleQuick">날씨 자동 반영</label>
+        <label class="toggle"><input type="checkbox" id="weatherToggleQuick"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <label for="specialDayToggleQuick">특별한 날 알림</label>
+        <label class="toggle"><input type="checkbox" id="specialDayToggleQuick"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <a href="#settingsCard" class="qs-more" id="qsMoreLink">🔧 더 자세한 설정</a>
+  </div>
 
   <div class="card" id="resultCard" style="display:none;">
     <div class="result-header">
@@ -2085,7 +2165,7 @@ function updateSettingsSummary() {
 }
 
 function syncUI() {
-  document.querySelectorAll('#gradeGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
+  document.querySelectorAll('#gradeGroup button, #gradeGroupQuick button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedGrade));
   document.querySelectorAll('#templateGrid .template-card').forEach(c => c.classList.toggle('active', c.dataset.v === selectedStyle));
   document.querySelectorAll('#positionGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingPosition));
   document.querySelectorAll('#iconGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingIcon));
@@ -2131,7 +2211,59 @@ document.getElementById('honorificGroup').addEventListener('click', e => {
 
 const schoolInput = document.getElementById('schoolNameInput');
 schoolInput.value = schoolName;
-schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
+schoolInput.addEventListener('input', () => {
+  schoolName = schoolInput.value.trim() || '석암초등학교';
+  lsS('alrimbot_school', schoolName);
+  const qi = document.getElementById('schoolNameInputQuick');
+  if (qi && qi.value !== schoolInput.value) qi.value = schoolInput.value;
+});
+
+/* ── 빠른 설정 카드 ↔ 상세 설정 동기화 ── */
+(function initQuickSettings() {
+  const gradeQ   = document.getElementById('gradeGroupQuick');
+  const schoolQ  = document.getElementById('schoolNameInputQuick');
+  const sigQ     = document.getElementById('sigToggleQuick');
+  const weatherQ = document.getElementById('weatherToggleQuick');
+  const specialQ = document.getElementById('specialDayToggleQuick');
+  const sigM     = document.getElementById('sigToggle');
+  const weatherM = document.getElementById('weatherToggle');
+  const specialM = document.getElementById('specialDayToggle');
+
+  // 학년: 빠른 설정에서 바꾸면 selectedGrade 업데이트 + syncUI가 양쪽 버튼 모두 하이라이트
+  gradeQ.addEventListener('click', e => {
+    const v = e.target.dataset.v; if (!v) return;
+    selectedGrade = v;
+    lsS('alrimbot_grade', v);
+    syncUI();
+  });
+
+  // 학교명: 양방향 미러링
+  schoolQ.value = schoolName;
+  schoolQ.addEventListener('input', () => {
+    schoolName = schoolQ.value.trim() || '석암초등학교';
+    lsS('alrimbot_school', schoolName);
+    if (schoolInput.value !== schoolQ.value) schoolInput.value = schoolQ.value;
+  });
+
+  // 토글 3개: 양방향 미러링
+  function mirror(a, b) {
+    a.checked = b.checked;
+    a.addEventListener('change', () => { b.checked = a.checked; });
+    b.addEventListener('change', () => { a.checked = b.checked; });
+  }
+  mirror(sigQ,     sigM);
+  mirror(weatherQ, weatherM);
+  mirror(specialQ, specialM);
+
+  // "더 자세한 설정" 링크: 아코디언 펼치고 스크롤
+  document.getElementById('qsMoreLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (typeof settingsOpen !== 'undefined' && !settingsOpen) {
+      document.getElementById('settingsToggle').click();
+    }
+    document.getElementById('settingsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
 
 const sigInput = document.getElementById('sigPhraseInput');
 sigInput.value = sigPhrase;
