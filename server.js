@@ -179,7 +179,27 @@ app.post('/api/generate-free', async (req, res) => {
     const msg  = await anthropic.messages.create({ model: 'claude-haiku-4-5-20251001', max_tokens: maxTokens, system, messages: [{ role: 'user', content: userMessage }] });
     const text = msg.content[0].text;
     console.log('[/api/generate-free] 성공 -', text.length, '자');
-    res.json({ text });
+
+    // 핵심 키워드 추출 (백그라운드 — 실패해도 응답에 지장 없음)
+    let extractedKeywords = [];
+    try {
+      const kwPrompt = `다음 알림장에서 핵심 키워드(명사, 활동명) 5개만 쉼표로 구분해서 추출해주세요. 일반명사 제외, 구체적인 것만.\n\n알림장: "${text}"\n\n예시 형식: 숲 체험, 환경 교육, 나무 심기, 체험학습, 자연 관찰`;
+      const kwRes = await anthropic.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
+        messages: [{ role: 'user', content: kwPrompt }],
+      });
+      extractedKeywords = kwRes.content[0].text
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k.length >= 2 && k.length <= 15)
+        .slice(0, 5);
+      console.log('[/api/generate-free] 추출 키워드:', extractedKeywords.join(' | '));
+    } catch (kwErr) {
+      console.warn('[/api/generate-free] 키워드 추출 실패:', kwErr.message);
+    }
+
+    res.json({ text, extractedKeywords });
   } catch (err) {
     console.error('[/api/generate-free] 오류:', err.status, err.message);
     res.status(500).json({ error: 'AI 생성 중 오류가 발생했습니다.', detail: err.message });

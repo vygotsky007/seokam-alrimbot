@@ -247,6 +247,44 @@ body {
   padding: 0;
 }
 #clearBtn:hover { background: var(--navy); color: #fff; }
+.mic-btn {
+  position: absolute;
+  top: 9px;
+  right: 42px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-family: inherit;
+  line-height: 1;
+}
+.mic-btn:hover { background: var(--blue-l); color: var(--blue); }
+.mic-btn.recording {
+  color: var(--red);
+  animation: micPulse 1.2s infinite;
+}
+.mic-btn.recording::after {
+  content: '● 녹음 중';
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  padding: 3px 8px;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  font-weight: 600;
+}
+@keyframes micPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.1); opacity: 0.7; }
+}
 .char-count {
   font-size: .72rem;
   color: var(--muted-2);
@@ -1695,7 +1733,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <div class="card">
     <div class="hero-label">오늘 알림장에 담을 내용을 입력하세요</div>
     <div class="textarea-wrap">
-      <textarea id="mainInput" placeholder="떠오르는 대로 입력하세요…"></textarea>
+      <textarea id="mainInput" placeholder="떠오르는 대로 입력하거나 🎤를 눌러 말씀하세요..."></textarea>
+      <button id="micBtn" class="mic-btn" title="음성 입력">🎤</button>
       <button id="clearBtn" title="지우기">✕</button>
     </div>
     <div class="char-count"><span id="charCount">0</span>자</div>
@@ -2040,12 +2079,12 @@ function getTodayDateString() {
 })();
 
 const PLACEHOLDERS = [
-  '떠오르는 대로 입력하세요…',
+  '떠오르는 대로 입력하거나 🎤 말씀하세요',
   '예: 숙제 리코더 3번 연습',
   '예: 내일 안전 하교 당부',
-  '예: 칭찬 발표 아주 잘함',
+  '🎤 음성으로도 입력할 수 있어요',
   '예: 체험학습 동의서 제출',
-  '아무거나 입력하면 AI가 정리해요 😊',
+  'AI가 오타도 자동 보정해드려요 ✨',
 ];
 let phIdx = 0;
 const mainInput = document.getElementById('mainInput');
@@ -2645,6 +2684,15 @@ async function callGenerate(overrideLength) {
     document.getElementById('resultCard').style.display = '';
     document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
     sendUsage(freeText);
+
+    // AI가 추출한 핵심 키워드도 트렌딩에 기록 (fire-and-forget)
+    if (Array.isArray(json.extractedKeywords) && json.extractedKeywords.length > 0) {
+      fetch('/api/usage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords: json.extractedKeywords }),
+      }).catch(() => {});
+    }
   } catch (err) {
     showToast('오류: ' + err.message);
   } finally {
@@ -3248,6 +3296,77 @@ document.getElementById('scheduleSaveBtn').addEventListener('click', saveSchedul
 scheduleModalEl.addEventListener('click', e => {
   if (e.target === scheduleModalEl) scheduleModalEl.style.display = 'none';
 });
+
+/* ── 음성 입력 (Web Speech API) ── */
+(function setupSpeechInput() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('micBtn');
+  if (!micBtn) return;
+  if (!SpeechRecognition) { micBtn.style.display = 'none'; return; }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'ko-KR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  let isRecording = false;
+  let finalTranscript = '';
+
+  micBtn.addEventListener('click', () => {
+    if (isRecording) {
+      recognition.stop();
+    } else {
+      finalTranscript = mainInput.value;
+      try { recognition.start(); }
+      catch (e) { showToast('⚠️ 음성 인식을 시작할 수 없어요'); }
+    }
+  });
+
+  recognition.onstart = () => {
+    isRecording = true;
+    micBtn.classList.add('recording');
+    micBtn.textContent = '⏹️';
+    showToast('🎤 말씀하세요...');
+  };
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += (finalTranscript && !finalTranscript.endsWith(' ') ? ' ' : '') + transcript;
+      } else {
+        interim += transcript;
+      }
+    }
+    mainInput.value = finalTranscript + (interim ? ' ' + interim : '');
+    updateCharCount();
+  };
+
+  recognition.onerror = (event) => {
+    console.error('음성 인식 오류:', event.error);
+    if      (event.error === 'not-allowed') showToast('❌ 마이크 권한이 필요해요');
+    else if (event.error === 'no-speech')   showToast('🔇 음성이 감지되지 않았어요');
+    else if (event.error === 'aborted')     {/* 사용자가 중지 — 무음 */}
+    else                                    showToast('⚠️ 음성 인식 오류: ' + event.error);
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.textContent = '🎤';
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.textContent = '🎤';
+    if (finalTranscript && finalTranscript !== mainInput.value) {
+      mainInput.value = finalTranscript;
+    }
+    updateCharCount();
+    lsS('alrimbot_free_text', mainInput.value);
+    updateSupplyHints();
+    if (mainInput.value) showToast('✅ 음성 입력 완료 (생성 시 오타 자동 보정)');
+  };
+})();
 </script>
 </body>
 </html>
