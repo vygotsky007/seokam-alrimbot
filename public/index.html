@@ -211,31 +211,6 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(249, 115, 22, 0.18), 0 0 0 1px rgba(249, 115, 22, 0.28);
 }
-.app-header .h-btn {
-  position: absolute;
-  top: 12px;
-  right: 0;
-  padding: 9px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  background: var(--card);
-  font-size: .78rem;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--navy);
-  transition: all var(--t);
-  box-shadow: var(--shadow-xs);
-  font-family: inherit;
-  letter-spacing: -0.01em;
-}
-.app-header .h-btn:hover {
-  border-color: var(--border-d);
-  color: var(--blue-d);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-.app-header .h-btn:active { transform: translateY(0); }
-
 /* ─────────────────────────── 카드 ─────────────────────────── */
 .card {
   background: var(--card);
@@ -1517,215 +1492,6 @@ body {
 }
 .btn-divider { width: 1px; background: var(--border); margin: 4px 6px; align-self: stretch; }
 
-/* ─────────────────────────── 히스토리 메인 리스트 ─────────────────────────── */
-.history-list { display: flex; flex-direction: column; gap: 8px; }
-.history-item {
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 13px 16px;
-  font-size: .84rem;
-  cursor: pointer;
-  transition: all var(--t);
-  background: #fff;
-}
-.history-item:hover {
-  border-color: var(--border-d);
-  background: var(--soft-2);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-.history-meta {
-  font-size: .72rem;
-  color: var(--muted-2);
-  margin-bottom: 5px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-}
-.history-preview {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--navy);
-  font-weight: 500;
-}
-.no-history {
-  font-size: .86rem;
-  color: var(--muted-2);
-  text-align: center;
-  padding: 28px 0;
-  font-weight: 500;
-}
-
-/* ─────────────────────────── 히스토리 모달 ─────────────────────────── */
-.h-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 200;
-  overflow: hidden;
-  animation: fadeBg .2s var(--ease);
-}
-.h-modal.open { display: flex; align-items: flex-end; justify-content: center; }
-@media (min-width: 480px) { .h-modal.open { align-items: center; } }
-.h-box {
-  background: #fff;
-  border-radius: var(--r-xl) var(--r-xl) 0 0;
-  width: 100%;
-  max-width: 740px;
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-lg);
-  animation: modalPop .28s var(--ease-out);
-}
-@media (min-width: 480px) { .h-box { border-radius: var(--r-xl); height: 88vh; } }
-.h-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.h-head h2 {
-  font-size: 1.06rem;
-  font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -0.025em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.h-head-close {
-  background: var(--soft);
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  color: var(--muted);
-  padding: 7px 11px;
-  border-radius: var(--r-sm);
-  transition: all var(--t-fast);
-}
-.h-head-close:hover { color: var(--navy); background: #E2E8F0; }
-.h-toolbar {
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-}
-.h-search {
-  width: 100%;
-  padding: 11px 15px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-md);
-  font-size: .88rem;
-  outline: none;
-  font-family: inherit;
-  background: var(--soft-2);
-  color: var(--text);
-  transition: all var(--t);
-}
-.h-search::placeholder { color: var(--muted-3); }
-.h-search:focus { border-color: var(--blue); background: #fff; box-shadow: var(--ring-blue); }
-.h-tabs { display: flex; gap: 6px; }
-.h-tab {
-  padding: 7px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-full);
-  font-size: .78rem;
-  background: #fff;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all var(--t);
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.h-tab:hover { border-color: var(--border-d); color: var(--navy); background: var(--soft-2); }
-.h-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); box-shadow: var(--shadow-xs); }
-.h-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.h-card {
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 15px 17px;
-  transition: all var(--t);
-  background: #fff;
-}
-.h-card:hover { border-color: var(--border-d); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-.h-card-meta {
-  font-size: .72rem;
-  color: var(--muted-2);
-  margin-bottom: 7px;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-weight: 500;
-}
-.h-card-date { font-weight: 700; color: var(--navy); }
-.h-card-preview {
-  font-size: .88rem;
-  line-height: 1.65;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  color: var(--text);
-  margin-bottom: 12px;
-  white-space: pre-wrap;
-  letter-spacing: -0.005em;
-}
-.h-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.h-card-actions button {
-  padding: 6px 11px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  background: #fff;
-  font-size: .74rem;
-  cursor: pointer;
-  color: var(--navy);
-  transition: all var(--t);
-  font-family: inherit;
-  font-weight: 600;
-}
-.h-card-actions button:hover { border-color: var(--blue); color: var(--blue-d); background: var(--blue-l); }
-.h-card-del:hover { border-color: var(--red) !important; color: var(--red) !important; background: var(--red-l) !important; }
-.h-empty {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--muted-2);
-  font-size: .88rem;
-  line-height: 1.8;
-  font-weight: 500;
-}
-.h-load-more {
-  width: calc(100% - 40px);
-  margin: 0 20px 16px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  background: #fff;
-  font-size: .84rem;
-  cursor: pointer;
-  color: var(--blue-d);
-  font-weight: 700;
-  flex-shrink: 0;
-  transition: all var(--t);
-  font-family: inherit;
-}
-.h-load-more:hover { background: var(--blue-l); border-color: var(--blue); }
-
 /* ─────────────────────────── 인용구 ─────────────────────────── */
 .quote-card {
   text-align: center;
@@ -2129,7 +1895,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
-.pill:focus-visible, .h-tab:focus-visible { outline-offset: 1px; }
+.pill:focus-visible { outline-offset: 1px; }
 
 /* ─────────────────────────── 작은 화면 ─────────────────────────── */
 @media (max-width: 480px) {
@@ -2140,7 +1906,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .app-header h1 { font-size: 1.48rem; }
   .app-header .app-slogan { font-size: 0.78rem; padding: 7px 14px 7px 12px; }
   .app-header .app-slogan strong { font-size: 0.82rem; }
-  .app-header .h-btn { padding: 7px 11px; font-size: .74rem; }
   .template-grid { grid-template-columns: repeat(3, 1fr); }
   #generateBtn { padding: 16px 18px; font-size: 1rem; }
   #resultText { padding: 16px 18px; min-height: 200px; }
@@ -2219,7 +1984,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <h1>📋 석암 알림봇</h1>
     <p>AI가 알림장을 완성해 드려요</p>
     <p class="app-slogan"><strong>✍️ 적자생존</strong> — 우리는 적어야 살아요. 매일 기록해요.</p>
-    <button class="h-btn" id="historyModalBtn">📚 히스토리</button>
   </div>
 
   <div class="main-grid">
@@ -2322,7 +2086,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <button id="longerBtn"  onclick="callResize('longer')">📏 길게</button>
       <button id="toneBtn"    onclick="cycleTone()">🎨 문체</button>
       <div class="btn-divider"></div>
-      <button id="saveBtn" class="btn-primary" onclick="saveAlrim()" title="나중에 재사용 가능">💾 히스토리에 저장</button>
       <button id="kakaoBtn" class="btn-mint"    onclick="shareKakao()">💬 카톡</button>
       <button id="imgBtn"   class="btn-amber"   onclick="saveAsImage()">📸 이미지</button>
     </div>
@@ -2455,13 +2218,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <div class="quote-author" id="quoteAuthor"></div>
   </div>
 
-  <div class="card" id="historyCard">
-    <div class="section-title" style="margin-bottom:9px;">📅 오늘 저장된 알림장</div>
-    <div class="history-list" id="historyList">
-      <div class="no-history">아직 저장된 알림장이 없어요.</div>
-    </div>
-  </div>
-
   </div><!-- /.main-col -->
 
   <aside class="side-col">
@@ -2521,26 +2277,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   </aside>
   </div><!-- /.main-grid -->
 
-</div>
-
-<div id="historyModal" class="h-modal">
-  <div class="h-box">
-    <div class="h-head">
-      <h2>📚 저장된 알림장</h2>
-      <button class="h-head-close" id="historyModalClose">✕</button>
-    </div>
-    <div class="h-toolbar">
-      <input class="h-search" id="hSearch" placeholder="🔍 키워드로 검색…">
-      <div class="h-tabs">
-        <button class="h-tab active" data-period="all">전체</button>
-        <button class="h-tab" data-period="today">오늘</button>
-        <button class="h-tab" data-period="week">이번 주</button>
-        <button class="h-tab" data-period="month">이번 달</button>
-      </div>
-    </div>
-    <div class="h-list" id="hList"></div>
-    <button class="h-load-more" id="hLoadMore" style="display:none;">더 보기</button>
-  </div>
 </div>
 
 <div id="toast"></div>
@@ -3254,64 +2990,6 @@ async function saveAsImage(transLang, transInfo, transText) {
   }
 }
 
-async function saveAlrim() {
-  const generated = document.getElementById('resultText').value;
-  if (!generated) return;
-  const btn = document.getElementById('saveBtn');
-  btn.disabled = true;
-  try {
-    const res  = await fetch('/api/alrim', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        teacher_name:   teacherInput.value.trim() || null,
-        class_name:     classInput.value.trim()   || null,
-        topics:         null,
-        generated_text: generated,
-        edited_text:    generated,
-        settings:       { grade: selectedGrade, style: selectedStyle, greetingLength, greetingPosition, honorific },
-      }),
-    });
-    const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error);
-    showToast('✅ 히스토리에 저장됨');
-    loadHistory();
-  } catch (err) {
-    showToast('저장 오류: ' + err.message);
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-async function loadHistory() {
-  const list = document.getElementById('historyList');
-  try {
-    const res  = await fetch('/api/alrim');
-    const json = await res.json();
-    if (!json.data || json.data.length === 0) {
-      list.innerHTML = '<div class="no-history">아직 저장된 알림장이 없어요.</div>';
-      return;
-    }
-    list.innerHTML = '';
-    json.data.forEach(item => {
-      const el      = document.createElement('div');
-      el.className  = 'history-item';
-      const preview = (item.edited_text || item.generated_text || '').slice(0, 55);
-      const time    = item.created_at ? item.created_at.slice(11, 16) : '';
-      el.innerHTML  = '<div class="history-meta">' + (item.teacher_name || '선생님') + ' · ' + (item.class_name || '') + ' · ' + time + '</div><div class="history-preview">' + preview + '…</div>';
-      el.addEventListener('click', () => {
-        document.getElementById('resultText').value = item.edited_text || item.generated_text;
-        document.getElementById('resultCard').style.display = '';
-        document.getElementById('resultCard').scrollIntoView({ behavior:'smooth' });
-      });
-      list.appendChild(el);
-    });
-  } catch (_) {
-    list.innerHTML = '<div class="no-history">불러오기 실패</div>';
-  }
-}
-loadHistory();
-
 /* ── 번역 (체크박스 멀티선택) ── */
 const LANGUAGES = {
   'en': { name:'영어',      native:'English',      flag:'🇬🇧' },
@@ -3509,174 +3187,6 @@ function removeTransCard(lang) {
   transResults.delete(lang);
   updateTransResultsHeader();
 }
-
-/* ── 히스토리 모달 ── */
-const H_PAGE = 20;
-let hState = { offset: 0, total: 0, period: 'all', search: '', loading: false };
-
-function openHistoryModal() {
-  document.getElementById('historyModal').classList.add('open');
-  hState = { offset: 0, total: 0, period: 'all', search: '', loading: false };
-  document.getElementById('hSearch').value = '';
-  document.querySelectorAll('.h-tab').forEach(t => t.classList.toggle('active', t.dataset.period === 'all'));
-  loadHistoryModal(true);
-}
-
-function closeHistoryModal() {
-  document.getElementById('historyModal').classList.remove('open');
-}
-
-function hPeriodDates(period) {
-  const today = new Date();
-  const fmt = d => d.toISOString().split('T')[0];
-  const todayStr = fmt(today);
-  if (period === 'today') return { from: todayStr, to: todayStr };
-  if (period === 'week') {
-    const mon = new Date(today);
-    mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    return { from: fmt(mon), to: fmt(sun) };
-  }
-  if (period === 'month') {
-    const first = new Date(today.getFullYear(), today.getMonth(), 1);
-    const last  = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    return { from: fmt(first), to: fmt(last) };
-  }
-  return {};
-}
-
-async function loadHistoryModal(reset = false) {
-  if (hState.loading) return;
-  if (reset) { hState.offset = 0; hState.total = 0; }
-  hState.loading = true;
-
-  const params = new URLSearchParams({ all: '1', limit: String(H_PAGE), offset: String(hState.offset) });
-  if (hState.search) params.set('search', hState.search);
-  const dates = hPeriodDates(hState.period);
-  if (dates.from) params.set('from', dates.from);
-  if (dates.to)   params.set('to',   dates.to);
-
-  const list = document.getElementById('hList');
-  if (reset) list.innerHTML = '<div class="h-empty">불러오는 중…</div>';
-
-  try {
-    const res  = await fetch('/api/alrim?' + params);
-    const json = await res.json();
-    hState.total = json.total || 0;
-
-    if (reset) list.innerHTML = '';
-    if (!json.data || json.data.length === 0) {
-      if (reset) list.innerHTML = '<div class="h-empty">아직 저장된 알림장이 없어요.<br>💾 히스토리에 저장 버튼으로<br>첫 알림장을 저장해보세요!</div>';
-      document.getElementById('hLoadMore').style.display = 'none';
-      return;
-    }
-    json.data.forEach(item => list.appendChild(buildHistoryCard(item)));
-    hState.offset += json.data.length;
-    document.getElementById('hLoadMore').style.display = hState.offset < hState.total ? '' : 'none';
-  } catch (_) {
-    if (reset) list.innerHTML = '<div class="h-empty">불러오기 실패. 다시 시도해주세요.</div>';
-  } finally {
-    hState.loading = false;
-  }
-}
-
-function buildHistoryCard(item) {
-  const card = document.createElement('div');
-  card.className  = 'h-card';
-  card.dataset.id = item.id;
-
-  const text    = item.edited_text || item.generated_text || '';
-  const dateStr = item.date || (item.created_at ? item.created_at.split('T')[0] : '');
-  const timeStr = item.created_at ? item.created_at.slice(11, 16) : '';
-  const who     = [item.teacher_name, item.class_name].filter(Boolean).join(' · ');
-
-  const meta = document.createElement('div');
-  meta.className = 'h-card-meta';
-  meta.innerHTML = '<span class="h-card-date">' + dateStr + '</span>' + (who ? '<span>·</span><span>' + who + '</span>' : '') + '<span style="margin-left:auto">' + timeStr + '</span>';
-
-  const preview = document.createElement('div');
-  preview.className   = 'h-card-preview';
-  preview.textContent = text;
-
-  const actions = document.createElement('div');
-  actions.className = 'h-card-actions';
-
-  const viewBtn = document.createElement('button');
-  viewBtn.textContent = '👁️ 보기';
-  viewBtn.addEventListener('click', () => {
-    document.getElementById('modalText').textContent = text;
-    document.getElementById('modal').classList.add('open');
-  });
-
-  const copyBtn = document.createElement('button');
-  copyBtn.textContent = '📋 복사';
-  copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(text)
-      .then(() => showToast('복사됐어요! 📋'))
-      .catch(() => showToast('복사 실패'));
-  });
-
-  const reuseBtn = document.createElement('button');
-  reuseBtn.textContent = '🔄 재사용';
-  reuseBtn.addEventListener('click', () => {
-    document.getElementById('resultText').value = text;
-    document.getElementById('resultCard').style.display = '';
-    closeHistoryModal();
-    document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
-    showToast('불러왔어요! 수정해서 사용하세요 ✏️');
-  });
-
-  const delBtn = document.createElement('button');
-  delBtn.textContent = '🗑️ 삭제';
-  delBtn.className   = 'h-card-del';
-  delBtn.addEventListener('click', () => deleteHistoryItem(item.id, card));
-
-  actions.append(viewBtn, copyBtn, reuseBtn, delBtn);
-  card.append(meta, preview, actions);
-  return card;
-}
-
-async function deleteHistoryItem(id, cardEl) {
-  if (!confirm('이 알림장을 삭제할까요?')) return;
-  try {
-    const res  = await fetch('/api/alrim/' + id, { method: 'DELETE' });
-    const json = await res.json();
-    if (!res.ok || json.error) throw new Error(json.error);
-    cardEl.remove();
-    hState.total  = Math.max(0, hState.total - 1);
-    hState.offset = Math.max(0, hState.offset - 1);
-    showToast('삭제됐어요 🗑️');
-    const list = document.getElementById('hList');
-    if (list.children.length === 0) {
-      list.innerHTML = '<div class="h-empty">아직 저장된 알림장이 없어요.<br>💾 히스토리에 저장 버튼으로<br>첫 알림장을 저장해보세요!</div>';
-    }
-    loadHistory();
-  } catch (err) {
-    showToast('삭제 실패: ' + err.message);
-  }
-}
-
-document.getElementById('historyModalBtn').addEventListener('click', openHistoryModal);
-document.getElementById('historyModalClose').addEventListener('click', closeHistoryModal);
-document.getElementById('historyModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('historyModal')) closeHistoryModal();
-});
-document.getElementById('hLoadMore').addEventListener('click', () => loadHistoryModal(false));
-
-let hSearchTimer;
-document.getElementById('hSearch').addEventListener('input', e => {
-  clearTimeout(hSearchTimer);
-  hState.search = e.target.value.trim();
-  hSearchTimer  = setTimeout(() => loadHistoryModal(true), 400);
-});
-
-document.querySelectorAll('.h-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    hState.period = tab.dataset.period;
-    document.querySelectorAll('.h-tab').forEach(t => t.classList.toggle('active', t === tab));
-    loadHistoryModal(true);
-  });
-});
 
 let toastTimer;
 function showToast(msg) {
