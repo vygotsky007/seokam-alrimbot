@@ -2209,10 +2209,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <button class="banner-close" id="specialBannerClose">✕</button>
   </div>
 
-  <div id="ddayBanner" class="banner banner-dday" style="display:none;">
-    <span id="ddayBannerText"></span>
-  </div>
-
   <div id="weatherBanner" class="banner banner-weather" style="display:none;">
     <span id="weatherInfo"></span>
     <span class="w-sugg" id="weatherSugg"></span>
@@ -2454,24 +2450,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   </div><!-- /#parentMode -->
 
-  <div class="card" id="settingsCard">
-    <div class="settings-header" id="settingsToggle">
-      <div class="settings-header-left">
-        ⚙️ 설정
-        <span class="settings-summary" id="settingsSummary"></span>
-      </div>
-      <span class="settings-arrow" id="settingsArrow">▲</span>
-    </div>
-    <div class="settings-body" id="settingsBody">
-
-      <div class="setting-row">
-        <label>🎯 D-Day 이벤트</label>
-        <button class="dday-open-btn" id="ddayOpenBtn">📋 이벤트 관리 (<span id="ddayCount">0</span>개)</button>
-      </div>
-
-    </div>
-  </div>
-
   <div class="card quote-card" id="quoteCard">
     <div class="quote-text"   id="quoteText"></div>
     <div class="quote-author" id="quoteAuthor"></div>
@@ -2572,23 +2550,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     <h3>알림장 미리보기</h3>
     <div id="modalText"></div>
     <button class="modal-close" id="modalClose">닫기</button>
-  </div>
-</div>
-
-<div id="ddayModal" class="dday-modal" style="display:none;">
-  <div class="dday-modal-box">
-    <div class="dday-modal-header">
-      <h3>🎯 D-Day 이벤트 관리</h3>
-      <button class="dday-modal-close" id="ddayModalClose">✕</button>
-    </div>
-    <div class="dday-modal-body">
-      <div class="dday-form-modal">
-        <input id="ddayName" placeholder="이벤트 이름 (예: 운동회)">
-        <input id="ddayDate" type="date">
-        <button class="dday-add-btn" id="ddayAddBtn">추가</button>
-      </div>
-      <div class="dday-list" id="ddayList"></div>
-    </div>
   </div>
 </div>
 
@@ -3100,72 +3061,6 @@ document.getElementById('specialBannerClose').addEventListener('click', () => {
   document.getElementById('specialBanner').style.display = 'none';
 });
 
-function loadDDay() {
-  const events = lsJ('alrimbot_dday') || [];
-  const list   = document.getElementById('ddayList');
-  list.innerHTML = '';
-  const today = new Date(); today.setHours(0,0,0,0);
-  let nearest = null;
-
-  events.forEach((ev, i) => {
-    const d  = new Date(ev.date); d.setHours(0,0,0,0);
-    const diff = Math.round((d - today) / 86400000);
-    if (diff >= 0 && (!nearest || diff < nearest.diff)) nearest = { ...ev, diff };
-
-    const item = document.createElement('div');
-    item.className = 'dday-item';
-    item.innerHTML = '<span><span class="dday-item-name">' + ev.name + '</span><span class="dday-item-date">' + ev.date + (diff >= 0 ? ' (D-' + diff + ')' : ' (완료)') + '</span></span>';
-    const del = document.createElement('button');
-    del.className = 'dday-item-del';
-    del.textContent = '✕';
-    del.addEventListener('click', () => {
-      const arr = lsJ('alrimbot_dday') || [];
-      arr.splice(i, 1);
-      lsSJ('alrimbot_dday', arr);
-      loadDDay();
-    });
-    item.appendChild(del);
-    list.appendChild(item);
-  });
-
-  const banner = document.getElementById('ddayBanner');
-  if (nearest) {
-    document.getElementById('ddayBannerText').textContent = '🎯 ' + nearest.name + ' D-' + nearest.diff;
-    banner.style.display = '';
-  } else {
-    banner.style.display = 'none';
-  }
-  updateDDayCount();
-}
-function updateDDayCount() {
-  const el = document.getElementById('ddayCount');
-  if (el) el.textContent = (lsJ('alrimbot_dday') || []).length;
-}
-loadDDay();
-
-document.getElementById('ddayOpenBtn').addEventListener('click', () => {
-  document.getElementById('ddayModal').style.display = 'flex';
-});
-document.getElementById('ddayModalClose').addEventListener('click', () => {
-  document.getElementById('ddayModal').style.display = 'none';
-});
-document.getElementById('ddayModal').addEventListener('click', e => {
-  if (e.target.id === 'ddayModal') document.getElementById('ddayModal').style.display = 'none';
-});
-
-document.getElementById('ddayAddBtn').addEventListener('click', () => {
-  const name = document.getElementById('ddayName').value.trim();
-  const date = document.getElementById('ddayDate').value;
-  if (!name || !date) { showToast('이름과 날짜를 모두 입력해주세요.'); return; }
-  const arr = lsJ('alrimbot_dday') || [];
-  arr.push({ name, date });
-  arr.sort((a, b) => a.date.localeCompare(b.date));
-  lsSJ('alrimbot_dday', arr);
-  document.getElementById('ddayName').value = '';
-  document.getElementById('ddayDate').value = '';
-  loadDDay();
-});
-
 function loadQuote() {
   const today = new Date();
   const idx   = (today.getFullYear() * 366 + today.getMonth() * 31 + today.getDate()) % QUOTES.length;
@@ -3175,31 +3070,9 @@ function loadQuote() {
 }
 loadQuote();
 
-const firstVisit = !ls('alrimbot_initialized');
-if (firstVisit) lsS('alrimbot_initialized', 'true');
-let settingsOpen = ls('alrimbot_settings_open') !== null ? ls('alrimbot_settings_open') === 'true' : firstVisit;
-
-function applySettingsOpen() {
-  const body  = document.getElementById('settingsBody');
-  const arrow = document.getElementById('settingsArrow');
-  body.classList.toggle('closed', !settingsOpen);
-  arrow.classList.toggle('open',   settingsOpen);
-  updateSettingsSummary();
-}
-document.getElementById('settingsToggle').addEventListener('click', () => {
-  settingsOpen = !settingsOpen;
-  lsS('alrimbot_settings_open', settingsOpen);
-  applySettingsOpen();
-});
-
-function updateSettingsSummary() {
-  document.getElementById('settingsSummary').textContent = settingsOpen ? '' : selectedStyle + ' · ' + greetingLength;
-}
-
 function syncUI() {
   document.querySelectorAll('#templateGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === selectedStyle));
   document.querySelectorAll('#quickLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === greetingLength));
-  updateSettingsSummary();
 }
 
 document.getElementById('templateGroup').addEventListener('click', e => {
@@ -3219,7 +3092,6 @@ teacherInput.addEventListener('input', () => lsS('alrimbot_teacher', teacherInpu
 classInput.addEventListener('input',   () => lsS('alrimbot_class',   classInput.value));
 
 syncUI();
-applySettingsOpen();
 
 // 날씨 자동 반영은 항상 활성 (UI 토글 제거됨)
 function buildWeatherContext() {
