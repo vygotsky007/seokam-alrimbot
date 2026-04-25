@@ -507,6 +507,7 @@ body {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+#parentMicBtn { right: 9px; }
 .parent-generate-btn {
   width: 100%;
   padding: 14px;
@@ -2391,7 +2392,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
     <div class="card">
       <label class="section-label">📄 전달할 내용</label>
-      <textarea id="parentContent" class="parent-textarea" placeholder="예: 민수가 오늘 수업 시간에 발표를 잘했어요. 칭찬해주세요."></textarea>
+      <div class="textarea-wrap">
+        <textarea id="parentContent" class="parent-textarea" placeholder="예: 민수가 오늘 수업 시간에 발표를 잘했어요. 칭찬해주세요."></textarea>
+        <button id="parentMicBtn" class="mic-btn" title="음성 입력">🎤</button>
+      </div>
       <div class="char-count"><span id="parentCharCount">0</span>자</div>
     </div>
 
@@ -2459,34 +2463,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <span class="settings-arrow" id="settingsArrow">▲</span>
     </div>
     <div class="settings-body" id="settingsBody">
-
-      <div class="setting-row">
-        <label>🏫 학교명</label>
-        <input id="schoolNameInput" class="text-input" placeholder="석암초등학교">
-      </div>
-
-      <div class="setting-row">
-        <label>✏️ 시그니처 문구 (선택)</label>
-        <input id="sigPhraseInput" class="text-input" placeholder="예: 오늘도 감사합니다">
-      </div>
-
-      <div class="setting-row">
-        <label>⚙️ 자동 옵션</label>
-        <div class="toggle-list">
-          <div class="toggle-row">
-            <label for="sigToggle">🖋️ 서명 자동 추가</label>
-            <label class="toggle"><input type="checkbox" id="sigToggle"><span class="toggle-slider"></span></label>
-          </div>
-          <div class="toggle-row">
-            <label for="weatherToggle">🌤️ 날씨 자동 반영</label>
-            <label class="toggle"><input type="checkbox" id="weatherToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-          <div class="toggle-row">
-            <label for="specialDayToggle">🎉 특별한 날 알림</label>
-            <label class="toggle"><input type="checkbox" id="specialDayToggle" checked><span class="toggle-slider"></span></label>
-          </div>
-        </div>
-      </div>
 
       <div class="setting-row">
         <label>🎯 D-Day 이벤트</label>
@@ -2660,8 +2636,6 @@ let selectedStyle    = ls('alrimbot_style')      || '개조식';
 let greetingLength   = ls('alrimbot_length')     || '중간';
 const greetingPosition = '맨 위';
 const honorific        = '존댓말';
-let schoolName       = ls('alrimbot_school')     || '석암초등학교';
-let sigPhrase        = ls('alrimbot_sig_phrase') || '';
 let weatherData      = null;
 const activeKws      = new Set();
 
@@ -3121,7 +3095,7 @@ function checkSpecialDay() {
     mainInput.focus();
   });
 }
-if (ls('alrimbot_special_day') !== 'off') checkSpecialDay();
+checkSpecialDay();
 document.getElementById('specialBannerClose').addEventListener('click', () => {
   document.getElementById('specialBanner').style.display = 'none';
 });
@@ -3237,14 +3211,6 @@ document.getElementById('quickLengthGroup').addEventListener('click', e => {
   greetingLength = v; lsS('alrimbot_length', v); syncUI();
 });
 
-const schoolInput = document.getElementById('schoolNameInput');
-schoolInput.value = schoolName;
-schoolInput.addEventListener('input', () => { schoolName = schoolInput.value.trim() || '석암초등학교'; lsS('alrimbot_school', schoolName); });
-
-const sigInput = document.getElementById('sigPhraseInput');
-sigInput.value = sigPhrase;
-sigInput.addEventListener('input', () => { sigPhrase = sigInput.value; lsS('alrimbot_sig_phrase', sigPhrase); });
-
 const teacherInput = document.getElementById('teacherName');
 const classInput   = document.getElementById('className');
 teacherInput.value = ls('alrimbot_teacher') || '';
@@ -3255,18 +3221,9 @@ classInput.addEventListener('input',   () => lsS('alrimbot_class',   classInput.
 syncUI();
 applySettingsOpen();
 
-function buildSignature() {
-  if (!document.getElementById('sigToggle').checked) return '';
-  const lines = [];
-  if (schoolName)            lines.push(schoolName);
-  if (classInput.value.trim()) lines.push(classInput.value.trim());
-  if (teacherInput.value.trim()) lines.push(teacherInput.value.trim() + ' 드림');
-  if (sigPhrase)             lines.push(sigPhrase);
-  return lines.length >= 2 ? lines.join('\n') : '';
-}
-
+// 날씨 자동 반영은 항상 활성 (UI 토글 제거됨)
 function buildWeatherContext() {
-  if (!document.getElementById('weatherToggle').checked || !weatherData) return '';
+  if (!weatherData) return '';
   const parts = [];
   if (weatherData.weatherLabel) parts.push(weatherData.weatherLabel);
   if (weatherData.temp !== null) parts.push(Math.round(weatherData.temp) + '°C');
@@ -3298,7 +3255,6 @@ async function callGenerate(overrideLength) {
         includeGreeting,
         includeDate,
         dateInfo:         includeDate ? getTodayDateString() : '',
-        signature:        buildSignature(),
         weatherContext:   buildWeatherContext(),
       }),
     });
@@ -3395,10 +3351,10 @@ async function saveAsImage(transLang, transInfo, transText) {
   if (!text) return;
 
   const card = document.getElementById('printCard');
-  document.getElementById('pcSchool').textContent  = schoolName;
+  document.getElementById('pcSchool').textContent  = '';
   document.getElementById('pcDate').textContent    = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('pcContent').textContent = text;
-  document.getElementById('pcSig').textContent     = buildSignature();
+  document.getElementById('pcSig').textContent     = '';
 
   const transWrap = document.getElementById('pcTransWrap');
   if (transLang && transText) {
@@ -3442,7 +3398,6 @@ async function saveAlrim() {
         generated_text: generated,
         edited_text:    generated,
         settings:       { grade: selectedGrade, style: selectedStyle, greetingLength, greetingPosition, honorific },
-        signature:      buildSignature(),
       }),
     });
     const json = await res.json();
@@ -4005,6 +3960,76 @@ scheduleModalEl.addEventListener('click', e => {
   };
 })();
 
+/* ── 학부모 탭 음성 입력 ── */
+(function setupParentSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = document.getElementById('parentMicBtn');
+  const input = document.getElementById('parentContent');
+  if (!btn || !input) return;
+  if (!SR) { btn.style.display = 'none'; return; }
+
+  const recognition = new SR();
+  recognition.lang = 'ko-KR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  let isRecording = false;
+  let finalTranscript = '';
+
+  btn.addEventListener('click', () => {
+    if (isRecording) {
+      recognition.stop();
+    } else {
+      finalTranscript = input.value;
+      try { recognition.start(); }
+      catch (e) { showToast('⚠️ 음성 인식을 시작할 수 없어요'); }
+    }
+  });
+
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.textContent = '⏹️';
+    showToast('🎤 말씀하세요...');
+  };
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += (finalTranscript && !finalTranscript.endsWith(' ') ? ' ' : '') + transcript;
+      } else {
+        interim += transcript;
+      }
+    }
+    input.value = finalTranscript + (interim ? ' ' + interim : '');
+    document.getElementById('parentCharCount').textContent = input.value.length;
+  };
+
+  recognition.onerror = (event) => {
+    console.error('학부모 음성 인식 오류:', event.error);
+    if      (event.error === 'not-allowed') showToast('❌ 마이크 권한이 필요해요');
+    else if (event.error === 'no-speech')   showToast('🔇 음성이 감지되지 않았어요');
+    else if (event.error === 'aborted')     {/* 무음 */}
+    else                                    showToast('⚠️ 음성 인식 오류: ' + event.error);
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤';
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤';
+    if (finalTranscript && finalTranscript !== input.value) {
+      input.value = finalTranscript;
+    }
+    document.getElementById('parentCharCount').textContent = input.value.length;
+    if (input.value) showToast('✅ 음성 입력 완료 (생성 시 자동 정리)');
+  };
+})();
+
 /* ── 모드 탭 + 학부모 개인 메시지 ── */
 let parentSituation = '';
 let parentTone = '따뜻하게';
@@ -4066,7 +4091,6 @@ async function generateParentMessage() {
         studentName, title, situation: parentSituation,
         content, tone: parentTone, length: parentLength,
         teacherName: teacherInput.value.trim(),
-        signature: buildSignature(),
       }),
     });
     const json = await res.json();

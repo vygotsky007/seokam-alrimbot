@@ -136,7 +136,7 @@ app.post('/api/generate-free', async (req, res) => {
   const {
     freeText, teacherName, className, grade,
     style, greetingLength, greetingPosition, greetingIcon,
-    emojiLevel, honorific, signature, weatherContext,
+    emojiLevel, honorific, weatherContext,
     includeGreeting, includeDate, dateInfo,
   } = req.body;
 
@@ -170,7 +170,6 @@ app.post('/api/generate-free', async (req, res) => {
       ? `[날짜 표시] 알림장 맨 위 첫 줄에 "${dateInfo}"를 그대로 포함해 주세요. 그 아래에 한 줄 띄우고 본문을 시작합니다.`
       : '',
     weatherContext ? `오늘 날씨: ${weatherContext}. 자연스럽게 날씨 관련 내용을 한 줄 언급해줘.` : '',
-    signature ? `알림장 끝에 다음 서명을 그대로 추가해:\n${signature}` : '',
     '마크다운 없이 순수 텍스트로만 출력해.',
   ].filter(Boolean).join('\n');
 
