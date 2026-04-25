@@ -420,6 +420,150 @@ body {
   color: #fff;
 }
 
+/* 글 스타일 버튼 한 줄 정렬용 컴팩트 */
+#templateGroup button {
+  padding: 5px 10px;
+  font-size: 0.73rem;
+  white-space: nowrap;
+}
+
+/* ── 모드 탭 (반 알림장 / 학부모 메시지) ── */
+.mode-tabs-card { padding: 6px; }
+.mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
+}
+.mode-tab {
+  flex: 1;
+  padding: 9px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.mode-tab.active {
+  background: #fff;
+  color: var(--blue-d);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.mode-tab:hover:not(.active) { color: var(--text); }
+.mode-content { display: flex; flex-direction: column; gap: 22px; }
+
+/* ── 학부모 메시지 모드 ── */
+.section-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.parent-info-row {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 10px;
+}
+.parent-situation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.psit-btn {
+  padding: 9px 10px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text);
+}
+.psit-btn:hover { border-color: var(--blue); color: var(--blue); }
+.psit-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+.parent-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  resize: vertical;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  outline: none;
+  font-family: inherit;
+}
+.parent-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.parent-generate-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.parent-generate-btn:hover { background: var(--blue-d); transform: translateY(-1px); }
+.parent-generate-btn:disabled { background: #94A3B8; cursor: not-allowed; transform: none; }
+
+.parent-result-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-top: 10px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+.parent-result-textarea:focus { border-color: var(--blue); }
+.parent-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.parent-result-actions button {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+}
+.parent-result-actions button:hover { border-color: var(--blue); color: var(--blue); }
+.parent-result-actions button.btn-mint { background: var(--mint); color: #fff; border-color: var(--mint); }
+.parent-result-actions button.btn-mint:hover { background: #047857; border-color: #047857; color: #fff; }
+.parent-result-actions button:disabled { opacity: .5; cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .parent-info-row { grid-template-columns: 1fr; }
+  .parent-situation-grid { grid-template-columns: 1fr; }
+}
+
 /* 문체 버튼 호버 예시 툴팁 */
 .qo-group button[data-preview] { position: relative; }
 .qo-group button[data-preview]:hover::after {
@@ -2084,6 +2228,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <div class="main-grid">
   <div class="main-col">
 
+  <div class="card mode-tabs-card">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="alrim">📋 반 전체 알림장</button>
+      <button class="mode-tab" data-mode="parent">💌 학부모 개인 메시지</button>
+    </div>
+  </div>
+
+  <div id="alrimMode" class="mode-content">
+
   <div class="card quick-input-card">
     <div class="quick-input-header">
       <span class="quick-input-title">💡 빠른 입력</span>
@@ -2205,6 +2358,97 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
     <div id="translatePanel"></div>
   </div>
+
+  </div><!-- /#alrimMode -->
+
+  <div id="parentMode" class="mode-content" style="display:none;">
+
+    <div class="card">
+      <label class="section-label">👨‍👩‍👧 학생 정보</label>
+      <div class="parent-info-row">
+        <input id="parentStudentName" class="text-input" placeholder="학생 이름 (예: 김민수)">
+        <select id="parentTitle" class="text-input">
+          <option value="어머님">어머님</option>
+          <option value="아버님">아버님</option>
+          <option value="학부모님">학부모님</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="section-label">📝 상황</label>
+      <div class="parent-situation-grid" id="parentSituationGrid">
+        <button class="psit-btn" data-v="학교생활 보고">😊 학교생활 보고</button>
+        <button class="psit-btn" data-v="학업 지도 부탁">📚 학업 지도 부탁</button>
+        <button class="psit-btn" data-v="친구 관계 안내">👫 친구 관계</button>
+        <button class="psit-btn" data-v="건강·안전 우려">⚠️ 건강·안전</button>
+        <button class="psit-btn" data-v="상담 요청">🤝 상담 요청</button>
+        <button class="psit-btn" data-v="칭찬 전달">👏 칭찬 전달</button>
+        <button class="psit-btn" data-v="행동 지도 요청">💡 행동 지도</button>
+        <button class="psit-btn" data-v="감사 인사">💝 감사 인사</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="section-label">📄 전달할 내용</label>
+      <textarea id="parentContent" class="parent-textarea" placeholder="예: 민수가 오늘 수업 시간에 발표를 잘했어요. 칭찬해주세요."></textarea>
+      <div class="char-count"><span id="parentCharCount">0</span>자</div>
+    </div>
+
+    <div class="card qo-card">
+      <div class="qo-row">
+        <span class="qo-label">🎨 톤</span>
+        <div class="qo-group" id="parentToneGroup">
+          <button data-v="따뜻하게" class="active">😊 따뜻하게</button>
+          <button data-v="공식적">📜 공식적</button>
+          <button data-v="협의형">🤝 협의형</button>
+          <button data-v="간결하게">⚡ 간결하게</button>
+        </div>
+      </div>
+      <div class="qo-row">
+        <span class="qo-label">📐 분량</span>
+        <div class="qo-group" id="parentLengthGroup">
+          <button data-v="짧게">짧게</button>
+          <button data-v="중간" class="active">중간</button>
+          <button data-v="길게">길게</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="parentGenerateBtn" class="parent-generate-btn">💌 학부모 메시지 생성</button>
+
+    <div class="card" id="parentResultCard" style="display:none;">
+      <div class="result-header">
+        <span>💌 생성된 메시지</span>
+        <button id="parentCopyBtn" style="padding:4px 9px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:.73rem;cursor:pointer;">📋 복사</button>
+      </div>
+      <textarea id="parentResultText" class="parent-result-textarea" spellcheck="false"></textarea>
+      <div class="parent-result-actions">
+        <button id="parentRegenBtn">🔄 다시 생성</button>
+        <button id="parentSoftenBtn">😊 더 부드럽게</button>
+        <button id="parentFormalBtn">📜 더 공식적으로</button>
+        <button id="parentKakaoBtn" class="btn-mint">💬 카톡 공유</button>
+      </div>
+
+      <div class="translate-panel-open" style="margin-top:16px;">
+        <div class="translate-panel-title">🌍 다국어 번역 <span style="font-size:.72rem; font-weight:500; color:var(--muted);">(다문화 가정)</span></div>
+        <div class="translate-grid" id="parentTranslateGrid">
+          <label class="trans-check"><input type="checkbox" data-lang="en" data-native="English"> 🇬🇧 영어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="zh" data-native="中文"> 🇨🇳 중국어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="vi" data-native="Tiếng Việt"> 🇻🇳 베트남어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="ru" data-native="Русский"> 🇷🇺 러시아어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="uz" data-native="Oʻzbek"> 🇺🇿 우즈베크어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="mn" data-native="Монгол"> 🇲🇳 몽골어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="th" data-native="ภาษาไทย"> 🇹🇭 태국어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="tl" data-native="Filipino"> 🇵🇭 필리핀어</label>
+          <label class="trans-check"><input type="checkbox" data-lang="ja" data-native="日本語"> 🇯🇵 일본어</label>
+        </div>
+        <button id="parentTranslateAllBtn">✨ 선택한 <span id="parentTranslateCount">0</span>개 언어 번역하기</button>
+      </div>
+      <div id="parentTranslatePanel" style="margin-top:12px;"></div>
+    </div>
+
+  </div><!-- /#parentMode -->
 
   <div class="card" id="settingsCard">
     <div class="settings-header" id="settingsToggle">
@@ -3760,6 +4004,193 @@ scheduleModalEl.addEventListener('click', e => {
     if (mainInput.value) showToast('✅ 음성 입력 완료 (생성 시 오타 자동 보정)');
   };
 })();
+
+/* ── 모드 탭 + 학부모 개인 메시지 ── */
+let parentSituation = '';
+let parentTone = '따뜻하게';
+let parentLength = '중간';
+
+document.querySelectorAll('.mode-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('alrimMode').style.display  = mode === 'alrim'  ? '' : 'none';
+    document.getElementById('parentMode').style.display = mode === 'parent' ? '' : 'none';
+  });
+});
+
+document.getElementById('parentSituationGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.psit-btn');
+  if (!btn) return;
+  document.querySelectorAll('.psit-btn').forEach(b => b.classList.toggle('active', b === btn));
+  parentSituation = btn.dataset.v;
+});
+
+document.getElementById('parentToneGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v;
+  if (!v) return;
+  parentTone = v;
+  document.querySelectorAll('#parentToneGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+});
+
+document.getElementById('parentLengthGroup').addEventListener('click', e => {
+  const v = e.target.dataset.v;
+  if (!v) return;
+  parentLength = v;
+  document.querySelectorAll('#parentLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+});
+
+document.getElementById('parentContent').addEventListener('input', e => {
+  document.getElementById('parentCharCount').textContent = e.target.value.length;
+});
+
+async function generateParentMessage() {
+  const studentName = document.getElementById('parentStudentName').value.trim();
+  const title       = document.getElementById('parentTitle').value;
+  const content     = document.getElementById('parentContent').value.trim();
+
+  if (!studentName)     { showToast('학생 이름을 입력해주세요'); return; }
+  if (!parentSituation) { showToast('상황을 선택해주세요'); return; }
+  if (!content)         { showToast('전달할 내용을 입력해주세요'); return; }
+
+  const btn = document.getElementById('parentGenerateBtn');
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '💌 생성 중...';
+
+  try {
+    const res = await fetch('/api/parent-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentName, title, situation: parentSituation,
+        content, tone: parentTone, length: parentLength,
+        teacherName: teacherInput.value.trim(),
+        signature: buildSignature(),
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
+
+    document.getElementById('parentResultText').value = json.text;
+    document.getElementById('parentTranslatePanel').innerHTML = '';
+    document.getElementById('parentResultCard').style.display = '';
+    document.getElementById('parentResultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    showToast('오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+document.getElementById('parentGenerateBtn').addEventListener('click', () => generateParentMessage());
+document.getElementById('parentRegenBtn').addEventListener('click', () => generateParentMessage());
+
+document.getElementById('parentCopyBtn').addEventListener('click', () => {
+  const text = document.getElementById('parentResultText').value;
+  if (!text) return;
+  navigator.clipboard.writeText(text)
+    .then(() => showToast('✅ 복사됨'))
+    .catch(() => showToast('복사 실패'));
+});
+
+document.getElementById('parentKakaoBtn').addEventListener('click', async () => {
+  const text = document.getElementById('parentResultText').value;
+  if (!text) return;
+  if (navigator.share) {
+    try { await navigator.share({ title: '학부모 메시지', text }); return; } catch (_) {}
+  }
+  await navigator.clipboard.writeText(text).catch(() => {});
+  showToast('📋 복사됨 - 카톡에 붙여넣기');
+});
+
+async function adjustParentTone(mode, btnId) {
+  const original = document.getElementById('parentResultText').value;
+  if (!original) return;
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/parent-message-tone', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: original, mode }),
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
+    if (json.text) document.getElementById('parentResultText').value = json.text;
+  } catch (err) {
+    showToast('오류: ' + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('parentSoftenBtn').addEventListener('click', () => adjustParentTone('softer', 'parentSoftenBtn'));
+document.getElementById('parentFormalBtn').addEventListener('click', () => adjustParentTone('formal', 'parentFormalBtn'));
+
+document.getElementById('parentTranslateGrid').addEventListener('change', e => {
+  if (e.target.matches('input[type="checkbox"][data-lang]')) {
+    e.target.closest('.trans-check').classList.toggle('checked', e.target.checked);
+    const count = document.querySelectorAll('#parentTranslateGrid input:checked').length;
+    document.getElementById('parentTranslateCount').textContent = count;
+  }
+});
+
+document.getElementById('parentTranslateAllBtn').addEventListener('click', async () => {
+  const checked = document.querySelectorAll('#parentTranslateGrid input:checked');
+  if (checked.length === 0) { showToast('번역할 언어를 선택하세요'); return; }
+  const text = document.getElementById('parentResultText').value;
+  if (!text) { showToast('번역할 메시지가 없어요'); return; }
+
+  const btn = document.getElementById('parentTranslateAllBtn');
+  btn.disabled = true;
+  const panel = document.getElementById('parentTranslatePanel');
+  panel.innerHTML = '';
+
+  const langs = Array.from(checked).map(c => ({ lang: c.dataset.lang, native: c.dataset.native }));
+  await Promise.all(langs.map(async ({ lang, native }) => {
+    const info = LANGUAGES[lang];
+    try {
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, targetLang: lang, targetLangName: native || info.native }),
+      });
+      const json = await res.json();
+      if (!res.ok || json.error) throw new Error(json.error || ('HTTP ' + res.status));
+
+      const card = document.createElement('div');
+      card.className = 'trans-card';
+      const header = document.createElement('div');
+      header.className = 'trans-card-header';
+      const langSpan = document.createElement('span');
+      langSpan.className = 'trans-card-lang';
+      langSpan.textContent = info.flag + ' ' + info.native + ' (' + info.name + ')';
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = '📋 복사';
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(json.translated).then(() => showToast(info.flag + ' 복사됐어요!'));
+      });
+      header.appendChild(langSpan);
+      header.appendChild(copyBtn);
+      const body = document.createElement('div');
+      body.className = 'trans-card-body';
+      body.textContent = json.translated;
+      card.appendChild(header);
+      card.appendChild(body);
+      panel.appendChild(card);
+    } catch (err) {
+      showToast(info.flag + ' 번역 실패: ' + err.message);
+    }
+  }));
+
+  // 체크박스 초기화
+  checked.forEach(c => { c.checked = false; c.closest('.trans-check').classList.remove('checked'); });
+  document.getElementById('parentTranslateCount').textContent = '0';
+  btn.disabled = false;
+  showToast('✅ ' + langs.length + '개 언어 번역 완료!');
+});
 </script>
 </body>
 </html>

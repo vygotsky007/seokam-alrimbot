@@ -430,6 +430,106 @@ app.post('/api/translate', async (req, res) => {
   }
 });
 
+// ── POST /api/parent-message ──────────────────────────────────────────────────
+app.post('/api/parent-message', async (req, res) => {
+  const { studentName, title, situation, content, tone, length, teacherName, signature } = req.body;
+  if (!studentName) return res.status(400).json({ error: '학생 이름이 없습니다.' });
+  if (!content)     return res.status(400).json({ error: '전달할 내용이 없습니다.' });
+
+  const lengthMap = { '짧게': '3-5문장', '중간': '5-8문장', '길게': '8-12문장' };
+  const toneMap = {
+    '따뜻하게': '따뜻하고 친근한 어조로, 하지만 교사로서의 전문성은 유지하면서',
+    '공식적':   '정중하고 공식적인 어조로, 격식을 갖춰서',
+    '협의형':   '학부모와 함께 의논하는 듯한 협의적인 어조로, 일방적이지 않게',
+    '간결하게': '핵심만 간결하게, 불필요한 수식어 없이',
+  };
+  const toneGuide   = toneMap[tone]     || tone;
+  const lengthGuide = lengthMap[length] || length;
+
+  const prompt = [
+    '당신은 초등학교 교사가 학부모에게 보낼 개인 메시지를 작성합니다.',
+    '',
+    '[기본 정보]',
+    `- 학생 이름: ${studentName}`,
+    `- 호칭: ${title || '학부모님'}`,
+    `- 상황: ${situation}`,
+    `- 톤: ${toneGuide}`,
+    `- 분량: ${lengthGuide}`,
+    '',
+    '[전달할 내용]',
+    content,
+    '',
+    '[작성 가이드]',
+    `1. "안녕하세요, ${studentName} ${title || '학부모님'}." 으로 시작`,
+    `2. ${toneGuide}`,
+    '3. 학생을 존중하고 부모와 협력하는 자세',
+    '4. 오해 소지가 없도록 명확하게',
+    '5. 마지막에 "감사합니다" 또는 적절한 마무리',
+    `6. 분량: ${lengthGuide}`,
+    teacherName ? `7. 마지막에 "담임 ${teacherName} 드림" 추가` : '',
+    '',
+    '[주의사항]',
+    '- 학생의 잘못이나 문제를 다룰 때도 비난하지 않고 협력 요청',
+    '- 학부모의 입장을 존중',
+    '- 교사로서의 권위와 학부모와의 동등한 관계 균형',
+    '- 한국 교육 문화에 맞는 정중함',
+    '',
+    '메시지 본문만 출력하세요. 마크다운 없이 순수 텍스트로.',
+  ].filter(Boolean).join('\n');
+
+  try {
+    console.log('[/api/parent-message] 시작 - 학생:', studentName, '| 상황:', situation, '| 톤:', tone);
+    const msg  = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const text = msg.content[0].text;
+    console.log('[/api/parent-message] 성공 -', text.length, '자');
+    res.json({ text });
+  } catch (err) {
+    console.error('[/api/parent-message] 오류:', err.status, err.message);
+    res.status(500).json({ error: '메시지 생성 중 오류가 발생했습니다.', detail: err.message });
+  }
+});
+
+// ── POST /api/parent-message-tone ─────────────────────────────────────────────
+app.post('/api/parent-message-tone', async (req, res) => {
+  const { text, mode } = req.body;
+  if (!text) return res.status(400).json({ error: '원본 텍스트가 없습니다.' });
+
+  const modeMap = {
+    'softer': '더 부드럽고 따뜻하게, 친근한 표현을 사용해서',
+    'formal': '더 공식적이고 정중하게, 격식 있는 표현을 사용해서',
+  };
+  const guide = modeMap[mode] || mode;
+
+  const prompt = [
+    `다음 학부모 메시지를 ${guide} 다시 작성해주세요.`,
+    '원본 의미와 전달 정보는 그대로 유지하면서 톤만 변경합니다.',
+    '',
+    '[원본]',
+    text,
+    '',
+    '변경된 메시지 본문만 출력. 마크다운 없이 순수 텍스트로.',
+  ].join('\n');
+
+  try {
+    console.log('[/api/parent-message-tone] 시작 - mode:', mode);
+    const msg  = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const out = msg.content[0].text;
+    console.log('[/api/parent-message-tone] 성공 -', out.length, '자');
+    res.json({ text: out });
+  } catch (err) {
+    console.error('[/api/parent-message-tone] 오류:', err.status, err.message);
+    res.status(500).json({ error: '톤 변경 중 오류가 발생했습니다.', detail: err.message });
+  }
+});
+
 // ── 404 / 전역 에러 핸들러 ────────────────────────────────────────────────────
 app.use((req, res) => {
   console.warn('[404]', req.method, req.url);
