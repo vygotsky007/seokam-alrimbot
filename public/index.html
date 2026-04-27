@@ -445,26 +445,52 @@ body {
   grid-template-columns: 1fr 130px;
   gap: 10px;
 }
-.parent-situation-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-}
-.psit-btn {
-  padding: 9px 10px;
-  background: #fff;
+
+/* 메시지 대상 세그먼트 컨트롤 — [학부모 | 교직원] */
+.target-segment {
+  display: inline-flex;
+  background: #F1F5F9;
   border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 0.78rem;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s;
-  font-weight: 600;
-  font-family: inherit;
-  color: var(--text);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
 }
-.psit-btn:hover { border-color: var(--blue); color: var(--blue); }
-.psit-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.target-segment button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  color: #64748B;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.target-segment button:hover:not(.active) { color: var(--text); }
+.target-segment button.active {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.25);
+}
+
+/* 대상 전환 시 학생 정보 카드 부드럽게 사라지기 */
+.parent-student-card {
+  transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.2s ease, margin 0.2s ease, border-width 0.2s ease;
+  overflow: hidden;
+  max-height: 600px;
+}
+.parent-student-card.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-width: 0;
+  pointer-events: none;
+}
 
 .parent-textarea {
   width: 100%;
@@ -537,7 +563,8 @@ body {
 
 @media (max-width: 600px) {
   .parent-info-row { grid-template-columns: 1fr; }
-  .parent-situation-grid { grid-template-columns: 1fr; }
+  .target-segment { display: flex; }
+  .target-segment button { flex: 1; padding: 9px 10px; font-size: 0.82rem; }
 }
 
 /* 문체 버튼 호버 예시 툴팁 */
@@ -1991,8 +2018,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <div class="card mode-tabs-card">
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="alrim">📋 반 전체 알림장</button>
-      <button class="mode-tab" data-mode="parent">💌 학부모 개인 메시지</button>
+      <button class="mode-tab active" data-mode="alrim">📋 알림장</button>
+      <button class="mode-tab" data-mode="parent">📨 학부모/교직원 메시지</button>
     </div>
   </div>
 
@@ -2038,6 +2065,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
         <label class="qo-check">
           <input type="checkbox" id="includeDate">
           <span>📅 날짜·요일 표시</span>
+        </label>
+        <label class="qo-check">
+          <input type="checkbox" id="includeWeather">
+          <span>🌤️ 오늘 날씨 정보 포함</span>
         </label>
       </div>
     </div>
@@ -2124,28 +2155,22 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <div id="parentMode" class="mode-content" style="display:none;">
 
     <div class="card">
+      <label class="section-label">📨 메시지 대상</label>
+      <div class="target-segment" id="parentTargetSegment" role="tablist" aria-label="메시지 대상 선택">
+        <button type="button" data-target="parent" class="active" role="tab" aria-selected="true">👨‍👩‍👧 학부모</button>
+        <button type="button" data-target="staff"  role="tab" aria-selected="false">🏫 교직원</button>
+      </div>
+    </div>
+
+    <div class="card parent-student-card" id="parentStudentCard">
       <label class="section-label">👨‍👩‍👧 학생 정보</label>
       <div class="parent-info-row">
-        <input id="parentStudentName" class="text-input" placeholder="학생 이름 (예: 김민수)">
+        <input id="parentStudentName" class="text-input" placeholder="학생 이름 (선택)">
         <select id="parentTitle" class="text-input">
           <option value="어머님">어머님</option>
           <option value="아버님">아버님</option>
           <option value="학부모님">학부모님</option>
         </select>
-      </div>
-    </div>
-
-    <div class="card">
-      <label class="section-label">📝 상황</label>
-      <div class="parent-situation-grid" id="parentSituationGrid">
-        <button class="psit-btn" data-v="학교생활 보고">😊 학교생활 보고</button>
-        <button class="psit-btn" data-v="학업 지도 부탁">📚 학업 지도 부탁</button>
-        <button class="psit-btn" data-v="친구 관계 안내">👫 친구 관계</button>
-        <button class="psit-btn" data-v="건강·안전 우려">⚠️ 건강·안전</button>
-        <button class="psit-btn" data-v="상담 요청">🤝 상담 요청</button>
-        <button class="psit-btn" data-v="칭찬 전달">👏 칭찬 전달</button>
-        <button class="psit-btn" data-v="행동 지도 요청">💡 행동 지도</button>
-        <button class="psit-btn" data-v="감사 인사">💝 감사 인사</button>
       </div>
     </div>
 
@@ -2159,6 +2184,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     </div>
 
     <div class="card qo-card">
+      <div class="qo-row">
+        <span class="qo-label">🎀 옵션</span>
+        <div class="qo-group qo-checkbox-group">
+          <label class="qo-check">
+            <input type="checkbox" id="parentIncludeWeather">
+            <span>🌤️ 오늘 날씨 정보 포함</span>
+          </label>
+        </div>
+      </div>
       <div class="qo-row">
         <span class="qo-label">🎨 톤</span>
         <div class="qo-group" id="parentToneGroup">
@@ -2338,6 +2372,7 @@ const activeKws      = new Set();
 
 let includeGreeting  = ls('alrimbot_include_greeting') !== 'false';
 let includeDate      = ls('alrimbot_include_date')     === 'true';
+let includeWeather   = ls('alrimbot_include_weather')  === 'true'; // 기본 OFF
 
 function getTodayDateString() {
   const today = new Date();
@@ -2348,6 +2383,7 @@ function getTodayDateString() {
 (function initIncludeToggles() {
   const g = document.getElementById('includeGreeting');
   const d = document.getElementById('includeDate');
+  const w = document.getElementById('includeWeather');
   if (g) {
     g.checked = includeGreeting;
     g.addEventListener('change', e => {
@@ -2360,6 +2396,13 @@ function getTodayDateString() {
     d.addEventListener('change', e => {
       includeDate = e.target.checked;
       lsS('alrimbot_include_date', includeDate);
+    });
+  }
+  if (w) {
+    w.checked = includeWeather;
+    w.addEventListener('change', e => {
+      includeWeather = e.target.checked;
+      lsS('alrimbot_include_weather', includeWeather);
     });
   }
 })();
@@ -2829,7 +2872,8 @@ classInput.addEventListener('input',   () => lsS('alrimbot_class',   classInput.
 
 syncUI();
 
-// 날씨 자동 반영은 항상 활성 (UI 토글 제거됨)
+// 날씨 컨텍스트 — 옵션 체크박스로 분기. 호출자가 includeWeather 검사 안 해도
+// 안전하도록 내부에서도 가드. 알림장 탭 전용 호출 경로용.
 function buildWeatherContext() {
   if (!weatherData) return '';
   const parts = [];
@@ -2863,7 +2907,7 @@ async function callGenerate(overrideLength) {
         includeGreeting,
         includeDate,
         dateInfo:         includeDate ? getTodayDateString() : '',
-        weatherContext:   buildWeatherContext(),
+        weatherContext:   includeWeather ? buildWeatherContext() : '',
       }),
     });
     const json = await res.json();
@@ -3412,8 +3456,8 @@ scheduleModalEl.addEventListener('click', e => {
   };
 })();
 
-/* ── 모드 탭 + 학부모 개인 메시지 ── */
-let parentSituation = '';
+/* ── 모드 탭 + 학부모/교직원 메시지 ── */
+let parentTarget = 'parent'; // 'parent' | 'staff'
 let parentTone = '따뜻하게';
 let parentLength = '중간';
 
@@ -3426,12 +3470,26 @@ document.querySelectorAll('.mode-tab').forEach(btn => {
   });
 });
 
-document.getElementById('parentSituationGrid').addEventListener('click', e => {
-  const btn = e.target.closest('.psit-btn');
+// 메시지 대상 세그먼트 [학부모 | 교직원] — 학생 정보 카드 토글 + 버튼 라벨 갱신
+function applyParentTargetUI() {
+  document.getElementById('parentStudentCard').classList.toggle('hidden', parentTarget !== 'parent');
+  const genBtn = document.getElementById('parentGenerateBtn');
+  if (genBtn) {
+    genBtn.textContent = parentTarget === 'staff' ? '📨 교직원 메시지 생성' : '💌 학부모 메시지 생성';
+  }
+}
+document.getElementById('parentTargetSegment').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-target]');
   if (!btn) return;
-  document.querySelectorAll('.psit-btn').forEach(b => b.classList.toggle('active', b === btn));
-  parentSituation = btn.dataset.v;
+  parentTarget = btn.dataset.target;
+  document.querySelectorAll('#parentTargetSegment button').forEach(b => {
+    const active = b === btn;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  applyParentTargetUI();
 });
+applyParentTargetUI();
 
 document.getElementById('parentToneGroup').addEventListener('click', e => {
   const v = e.target.dataset.v;
@@ -3452,27 +3510,34 @@ document.getElementById('parentContent').addEventListener('input', e => {
 });
 
 async function generateParentMessage() {
-  const studentName = document.getElementById('parentStudentName').value.trim();
-  const title       = document.getElementById('parentTitle').value;
-  const content     = document.getElementById('parentContent').value.trim();
+  const studentName = parentTarget === 'parent'
+    ? document.getElementById('parentStudentName').value.trim()
+    : '';
+  const title   = parentTarget === 'parent'
+    ? document.getElementById('parentTitle').value
+    : '';
+  const content = document.getElementById('parentContent').value.trim();
 
-  if (!studentName)     { showToast('학생 이름을 입력해주세요'); return; }
-  if (!parentSituation) { showToast('상황을 선택해주세요'); return; }
-  if (!content)         { showToast('전달할 내용을 입력해주세요'); return; }
+  if (!content) { showToast('전달할 내용을 입력해주세요'); return; }
+
+  const includeWeather = !!document.getElementById('parentIncludeWeather')?.checked;
+  const weatherContext = includeWeather ? buildWeatherContext() : '';
 
   const btn = document.getElementById('parentGenerateBtn');
   btn.disabled = true;
   const orig = btn.textContent;
-  btn.textContent = '💌 생성 중...';
+  btn.textContent = parentTarget === 'staff' ? '📨 생성 중...' : '💌 생성 중...';
 
   try {
     const res = await fetch('/api/parent-message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        studentName, title, situation: parentSituation,
+        target: parentTarget,
+        studentName, title,
         content, tone: parentTone, length: parentLength,
         teacherName: teacherInput.value.trim(),
+        weatherContext,
       }),
     });
     const json = await res.json();

@@ -365,10 +365,16 @@ app.post('/api/translate', async (req, res) => {
 });
 
 // ── POST /api/parent-message ──────────────────────────────────────────────────
+// target='parent' (학부모 1:1 메시지) 또는 'staff' (교직원 공지/안내) 로 분기.
+// 학생 이름은 학부모 모드에서도 선택사항. 상황 카테고리는 더 이상 사용하지 않음.
 app.post('/api/parent-message', async (req, res) => {
-  const { studentName, title, situation, content, tone, length, teacherName, signature } = req.body;
-  if (!studentName) return res.status(400).json({ error: '학생 이름이 없습니다.' });
-  if (!content)     return res.status(400).json({ error: '전달할 내용이 없습니다.' });
+  const {
+    target, content, tone, length, teacherName,
+    studentName, title, weatherContext,
+  } = req.body;
+  if (!content) return res.status(400).json({ error: '전달할 내용이 없습니다.' });
+
+  const isStaff = target === 'staff';
 
   const lengthMap = { '짧게': '3-5문장', '중간': '5-8문장', '길게': '8-12문장' };
   const toneMap = {
@@ -377,42 +383,74 @@ app.post('/api/parent-message', async (req, res) => {
     '협의형':   '학부모와 함께 의논하는 듯한 협의적인 어조로, 일방적이지 않게',
     '간결하게': '핵심만 간결하게, 불필요한 수식어 없이',
   };
-  const toneGuide   = toneMap[tone]     || tone;
-  const lengthGuide = lengthMap[length] || length;
+  const toneGuide   = toneMap[tone]     || tone     || '';
+  const lengthGuide = lengthMap[length] || length   || '5-8문장';
+  const trimmedName = (studentName || '').trim();
+  const honor       = (title || '학부모님').trim();
 
-  const prompt = [
-    '당신은 초등학교 교사가 학부모에게 보낼 개인 메시지를 작성합니다.',
-    '',
-    '[기본 정보]',
-    `- 학생 이름: ${studentName}`,
-    `- 호칭: ${title || '학부모님'}`,
-    `- 상황: ${situation}`,
-    `- 톤: ${toneGuide}`,
-    `- 분량: ${lengthGuide}`,
-    '',
-    '[전달할 내용]',
-    content,
-    '',
-    '[작성 가이드]',
-    `1. "안녕하세요, ${studentName} ${title || '학부모님'}." 으로 시작`,
-    `2. ${toneGuide}`,
-    '3. 학생을 존중하고 부모와 협력하는 자세',
-    '4. 오해 소지가 없도록 명확하게',
-    '5. 마지막에 "감사합니다" 또는 적절한 마무리',
-    `6. 분량: ${lengthGuide}`,
-    teacherName ? `7. 마지막에 "담임 ${teacherName} 드림" 추가` : '',
-    '',
-    '[주의사항]',
-    '- 학생의 잘못이나 문제를 다룰 때도 비난하지 않고 협력 요청',
-    '- 학부모의 입장을 존중',
-    '- 교사로서의 권위와 학부모와의 동등한 관계 균형',
-    '- 한국 교육 문화에 맞는 정중함',
-    '',
-    '메시지 본문만 출력하세요. 마크다운 없이 순수 텍스트로.',
-  ].filter(Boolean).join('\n');
+  let prompt;
+  if (isStaff) {
+    prompt = [
+      '당신은 학교 교무부/행정실 담당자입니다. 동료 교직원에게 보내는 공지/안내 메시지를 작성합니다.',
+      '',
+      '[전달할 내용]',
+      content,
+      '',
+      '[작성 가이드]',
+      '1. 첫 문장: "행복하세요 석암 교직원 여러분" 으로 시작',
+      '2. 톤: 동료 간 존댓말, 간결하고 사무적',
+      '3. 학생 이야기보다는 업무/일정/행정 정보 위주로 작성',
+      '4. 끝맺음: "협조 부탁드립니다", "감사합니다" 같은 사무적 마무리',
+      `5. 분량: ${lengthGuide}`,
+      teacherName ? `6. 마지막에 "${teacherName} 드림" 추가` : '',
+      weatherContext ? `7. 다음 날씨 정보를 자연스럽게 한 줄 활용 가능: ${weatherContext}` : '',
+      '',
+      '메시지 본문만 출력. 마크다운 없이 순수 텍스트로.',
+    ].filter(Boolean).join('\n');
+  } else {
+    const greeting = trimmedName
+      ? `안녕하세요, ${trimmedName} ${honor}.`
+      : `안녕하세요, ${honor}.`;
+    prompt = [
+      '당신은 초등학교 교사입니다. 학부모에게 보내는 정중하고 신중한 1:1 메시지를 작성합니다.',
+      '',
+      '[기본 정보]',
+      trimmedName ? `- 학생 이름: ${trimmedName}` : '- 학생 이름: (미지정 — 일반 학부모님 형식)',
+      `- 호칭: ${honor}`,
+      toneGuide   ? `- 톤: ${toneGuide}` : '',
+      `- 분량: ${lengthGuide}`,
+      '',
+      '[전달할 내용]',
+      content,
+      '',
+      '[작성 가이드]',
+      `1. 첫 문장: "${greeting}" 으로 시작`,
+      toneGuide ? `2. ${toneGuide}` : '2. 정중한 격식 있는 존댓말로',
+      trimmedName
+        ? '3. 학생 이름을 자연스럽게 활용 (지나치게 반복하지 않기)'
+        : '3. 학생 이름이 주어지지 않았으므로 일반 학부모님께 드리는 형식으로',
+      '4. 학생을 존중하고 부모와 협력하는 자세',
+      '5. 오해 소지가 없도록 명확하게',
+      `6. 분량: ${lengthGuide}`,
+      '7. 마무리에 "추가로 궁금한 점이 있으시면 언제든 연락 주세요" 같은 멘트 권장',
+      teacherName ? `8. 마지막에 "담임 ${teacherName} 드림" 추가` : '',
+      weatherContext ? `9. 필요하면 다음 날씨 정보를 자연스럽게 한 줄 활용 가능: ${weatherContext}` : '',
+      '',
+      '[주의사항]',
+      '- 학생의 잘못이나 문제를 다룰 때도 비난하지 않고 협력 요청',
+      '- 학부모의 입장을 존중',
+      '- 한국 교육 문화에 맞는 정중함',
+      '',
+      '메시지 본문만 출력. 마크다운 없이 순수 텍스트로.',
+    ].filter(Boolean).join('\n');
+  }
 
   try {
-    console.log('[/api/parent-message] 시작 - 학생:', studentName, '| 상황:', situation, '| 톤:', tone);
+    console.log(
+      '[/api/parent-message] 시작 - target:', target || 'parent',
+      '| 학생:', trimmedName || '(없음)',
+      '| 톤:', tone, '| 날씨:', weatherContext ? 'O' : 'X'
+    );
     const msg  = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
