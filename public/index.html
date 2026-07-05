@@ -2057,7 +2057,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   <div class="app-header">
     <h1>📋 석암 알림봇</h1>
     <p>AI가 알림장을 완성해 드려요</p>
-    <p class="app-slogan"><strong>✍️ 적자생존</strong> — 우리는 적어야 살아요. 매일 기록해요.</p>
+    <p class="app-slogan"><strong>✍️ 적자생존</strong><span id="streakBadge" class="streak-badge"></span> — 우리는 적어야 살아요. 매일 기록해요.</p>
   </div>
 
   <div class="main-grid">
@@ -2977,6 +2977,35 @@ document.getElementById('continueApply').addEventListener('click', () => {
   showToast('✅ ' + checked.length + '개 항목을 불러왔어요');
 });
 renderContinueCard();
+
+// ── 적자생존 스트릭 (평일 기준 연속 기록. 주말·공휴일은 끊김으로 치지 않음) ──
+const STREAK_KEY = 'alrimbot_streak_days';
+function ymdOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function isWeekendDate(d) { const g = d.getDay(); return g === 0 || g === 6; }
+function prevWeekday(d) { const x = new Date(d); do { x.setDate(x.getDate() - 1); } while (isWeekendDate(x)); return x; }
+function loadStreakDays() { const a = lsJ(STREAK_KEY); return Array.isArray(a) ? a : []; }
+function recordStreakDay() {
+  const set = new Set(loadStreakDays());
+  set.add(ymdOf(new Date()));
+  lsSJ(STREAK_KEY, [...set].sort());
+}
+function computeStreak() {
+  const set = new Set(loadStreakDays());
+  let d = new Date();
+  while (isWeekendDate(d)) d = prevWeekday(d);   // 주말이면 직전 평일을 기준점으로
+  if (!set.has(ymdOf(d))) d = prevWeekday(d);    // 오늘(평일) 아직 미기록이면 어제까지 이어온 연속을 유지(오늘은 유예)
+  let n = 0;
+  while (set.has(ymdOf(d))) { n++; d = prevWeekday(d); } // 평일만 뒤로 이동 → 주말은 자동 건너뜀
+  return n;
+}
+function renderStreak() {
+  const el = document.getElementById('streakBadge');
+  if (!el) return;
+  const n = computeStreak();
+  if (n > 0) { el.textContent = '🔥 연속 ' + n + '일'; el.style.display = 'inline-flex'; }
+  else { el.textContent = ''; el.style.display = 'none'; }
+}
+renderStreak();
 buildHomeCategoriesExpand();
 
 function loadSeasonalKeywords() {
@@ -3199,6 +3228,12 @@ async function callGenerate(overrideLength) {
     saveHistoryEntry(json.text);
     continueSelIdx = 0;
     renderContinueCard();
+
+    // 적자생존 스트릭 기록 + 축하 토스트
+    recordStreakDay();
+    renderStreak();
+    const streakN = computeStreak();
+    if (streakN > 0) showToast('🔥 ' + streakN + '일째 기록 중!');
 
     // AI가 추출한 핵심 키워드도 트렌딩에 기록 (fire-and-forget)
     if (Array.isArray(json.extractedKeywords) && json.extractedKeywords.length > 0) {
