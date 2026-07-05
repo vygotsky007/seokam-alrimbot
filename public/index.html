@@ -1975,6 +1975,53 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
   .side-col::-webkit-scrollbar-thumb { background: var(--border); border: none; }
 }
 
+/* ── 기본값 저장됨 표시 (localStorage 자동 기억) ── */
+.saved-hint {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: .66rem; font-weight: 600; color: var(--green, #16a34a);
+  margin-left: 8px; white-space: nowrap; vertical-align: middle;
+}
+.saved-hint::before { content: '✓'; font-weight: 800; }
+
+/* ── 적자생존 스트릭 배지 ── */
+.streak-badge {
+  display: none; align-items: center; gap: 4px;
+  margin-left: 10px; padding: 2px 10px; border-radius: 999px;
+  background: rgba(249,115,22,.14); color: #ea580c;
+  font-size: .78rem; font-weight: 800; vertical-align: middle;
+}
+
+/* ── 이어서 쓰기 카드 ── */
+.continue-card { border: 1.5px solid var(--blue, #2563eb); background: linear-gradient(180deg, rgba(37,99,235,.04), transparent); }
+.continue-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.continue-title { font-weight: 800; font-size: .92rem; }
+.continue-hist { display: flex; gap: 6px; flex-wrap: wrap; }
+.hist-chip {
+  padding: 4px 10px; border-radius: 999px; border: 1.5px solid var(--border);
+  background: #fff; font-size: .72rem; font-weight: 600; cursor: pointer; color: var(--ink, #333);
+}
+.hist-chip:hover { border-color: var(--blue, #2563eb); }
+.hist-chip.active { background: var(--blue, #2563eb); border-color: var(--blue, #2563eb); color: #fff; }
+.continue-lines { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; margin-bottom: 10px; }
+.continue-line {
+  display: flex; align-items: flex-start; gap: 8px; padding: 6px 8px;
+  border-radius: 8px; font-size: .82rem; cursor: pointer; line-height: 1.4;
+}
+.continue-line:hover { background: rgba(0,0,0,.03); }
+.continue-line input { margin-top: 3px; flex-shrink: 0; }
+.continue-apply {
+  width: 100%; padding: 10px; border-radius: 9px; border: none; cursor: pointer;
+  background: var(--blue, #2563eb); color: #fff; font-weight: 700; font-size: .85rem;
+}
+.continue-apply:hover { filter: brightness(1.05); }
+.continue-apply:disabled { opacity: .5; cursor: default; }
+
+/* ── 지도문구 삽입 칩 피드백 ── */
+.pill.inserted { position: relative; }
+.pill.inserted::after {
+  content: '✓'; margin-left: 5px; font-weight: 800; color: var(--green, #16a34a);
+}
+
 </style>
 </head>
 <body>
@@ -2052,11 +2099,12 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
       <input id="teacherName" placeholder="담임 선생님 이름 (선택)">
       <input id="className"   placeholder="학급 (선택, 예: 3학년 3반)">
     </div>
+    <div style="margin-top:6px"><span class="saved-hint">담임·학급 기본값으로 저장됨</span></div>
   </div>
 
   <div class="card qo-card">
     <div class="qo-row">
-      <span class="qo-label">🎀 옵션</span>
+      <span class="qo-label">🎀 옵션 <span class="saved-hint">기본값으로 저장됨</span></span>
       <div class="qo-group qo-checkbox-group">
         <label class="qo-check">
           <input type="checkbox" id="includeGreeting" checked>
@@ -2163,7 +2211,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
     </div>
 
     <div class="card parent-student-card" id="parentStudentCard">
-      <label class="section-label">👨‍👩‍👧 학생 정보</label>
+      <label class="section-label">👨‍👩‍👧 학생 정보 <span class="saved-hint">호칭 기본값으로 저장됨</span></label>
       <div class="parent-info-row">
         <input id="parentStudentName" class="text-input" placeholder="학생 이름 (선택)">
         <select id="parentTitle" class="text-input">
@@ -2194,7 +2242,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
         </div>
       </div>
       <div class="qo-row">
-        <span class="qo-label">🎨 톤</span>
+        <span class="qo-label">🎨 톤 <span class="saved-hint">톤·분량 기본값으로 저장됨</span></span>
         <div class="qo-group" id="parentToneGroup">
           <button data-v="따뜻하게" class="active">😊 따뜻하게</button>
           <button data-v="공식적">📜 공식적</button>
@@ -3458,8 +3506,8 @@ scheduleModalEl.addEventListener('click', e => {
 
 /* ── 모드 탭 + 학부모/교직원 메시지 ── */
 let parentTarget = 'parent'; // 'parent' | 'staff'
-let parentTone = '따뜻하게';
-let parentLength = '중간';
+let parentTone = ls('alrimbot_parent_tone') || '따뜻하게';
+let parentLength = ls('alrimbot_parent_length') || '중간';
 
 document.querySelectorAll('.mode-tab').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -3495,6 +3543,7 @@ document.getElementById('parentToneGroup').addEventListener('click', e => {
   const v = e.target.dataset.v;
   if (!v) return;
   parentTone = v;
+  lsS('alrimbot_parent_tone', v);
   document.querySelectorAll('#parentToneGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
 });
 
@@ -3502,8 +3551,21 @@ document.getElementById('parentLengthGroup').addEventListener('click', e => {
   const v = e.target.dataset.v;
   if (!v) return;
   parentLength = v;
+  lsS('alrimbot_parent_length', v);
   document.querySelectorAll('#parentLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
 });
+
+// 학부모 톤·분량·호칭 기본값 복원 (localStorage)
+(function restoreParentDefaults() {
+  document.querySelectorAll('#parentToneGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === parentTone));
+  document.querySelectorAll('#parentLengthGroup button').forEach(b => b.classList.toggle('active', b.dataset.v === parentLength));
+  const titleSel = document.getElementById('parentTitle');
+  if (titleSel) {
+    const savedTitle = ls('alrimbot_parent_title');
+    if (savedTitle) titleSel.value = savedTitle;
+    titleSel.addEventListener('change', () => lsS('alrimbot_parent_title', titleSel.value));
+  }
+})();
 
 document.getElementById('parentContent').addEventListener('input', e => {
   document.getElementById('parentCharCount').textContent = e.target.value.length;
