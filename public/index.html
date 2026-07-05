@@ -2072,6 +2072,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
   <div id="alrimMode" class="mode-content">
 
+  <div class="card continue-card" id="continueCard" style="display:none;">
+    <div class="continue-head">
+      <span class="continue-title">📋 이어서 쓰기</span>
+      <div class="continue-hist" id="continueHist"></div>
+    </div>
+    <div class="continue-lines" id="continueLines"></div>
+    <button class="continue-apply" id="continueApply">✅ 선택 항목 불러오기</button>
+  </div>
+
   <div class="card quick-input-card">
     <div class="quick-input-header">
       <span class="quick-input-title">💡 빠른 입력</span>
@@ -2760,6 +2769,79 @@ document.getElementById('homeCatToggle').addEventListener('click', e => {
 document.getElementById('reshuffleHome').addEventListener('click', loadDailyHomeGuidance);
 
 loadDailyHomeGuidance();
+
+// ── 이어서 쓰기: 최근 알림장 히스토리(localStorage) ──
+const HISTORY_KEY = 'alrimbot_history';
+function loadHistory() { const h = lsJ(HISTORY_KEY); return Array.isArray(h) ? h : []; }
+function saveHistoryEntry(text) {
+  if (!text || !text.trim()) return;
+  const d = new Date();
+  const date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const hist = loadHistory();
+  hist.unshift({ date, ts: Date.now(), text: text.trim() });
+  lsSJ(HISTORY_KEY, hist.slice(0, 10)); // 최근 10건만 유지
+}
+function parseHistoryLines(text) {
+  return String(text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+}
+function fmtChipDate(ymd) {
+  const [y, m, dd] = ymd.split('-').map(Number);
+  const wd = ['일','월','화','수','목','금','토'][new Date(y, m - 1, dd).getDay()];
+  return m + '/' + dd + '(' + wd + ')';
+}
+let continueSelIdx = 0; // 표시 중인 히스토리 인덱스
+function renderContinueLines() {
+  const hist = loadHistory();
+  const entry = hist[continueSelIdx];
+  const linesEl = document.getElementById('continueLines');
+  linesEl.innerHTML = '';
+  if (!entry) return;
+  const lines = parseHistoryLines(entry.text);
+  if (!lines.length) {
+    linesEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted);padding:6px 8px">불러올 항목이 없어요</div>';
+    return;
+  }
+  lines.forEach(line => {
+    const row = document.createElement('label');
+    row.className = 'continue-line';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = true; cb.dataset.line = line;
+    const span = document.createElement('span');
+    span.textContent = line;
+    row.appendChild(cb); row.appendChild(span);
+    linesEl.appendChild(row);
+  });
+}
+function renderContinueCard() {
+  const card = document.getElementById('continueCard');
+  if (!card) return;
+  const hist = loadHistory();
+  if (!hist.length) { card.style.display = 'none'; return; } // 히스토리 없으면 카드 숨김
+  card.style.display = '';
+  if (continueSelIdx >= hist.length) continueSelIdx = 0;
+  const histEl = document.getElementById('continueHist');
+  histEl.innerHTML = '';
+  hist.slice(0, 3).forEach((h, i) => { // 최근 3건 날짜 칩
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'hist-chip' + (i === continueSelIdx ? ' active' : '');
+    chip.textContent = fmtChipDate(h.date);
+    chip.addEventListener('click', () => {
+      continueSelIdx = i;
+      document.querySelectorAll('#continueHist .hist-chip').forEach((c, j) => c.classList.toggle('active', j === i));
+      renderContinueLines();
+    });
+    histEl.appendChild(chip);
+  });
+  renderContinueLines();
+}
+document.getElementById('continueApply').addEventListener('click', () => {
+  const checked = [...document.querySelectorAll('#continueLines input:checked')].map(c => c.dataset.line);
+  if (!checked.length) { showToast('불러올 항목을 선택하세요'); return; }
+  insertToMainInput(checked.join('\n'));
+  showToast('✅ ' + checked.length + '개 항목을 불러왔어요');
+});
+renderContinueCard();
 buildHomeCategoriesExpand();
 
 function loadSeasonalKeywords() {
@@ -2977,6 +3059,11 @@ async function callGenerate(overrideLength) {
     document.getElementById('resultCard').style.display = '';
     document.getElementById('resultCard').scrollIntoView({ behavior:'smooth', block:'start' });
     sendUsage(freeText);
+
+    // 이어서 쓰기용 히스토리 저장 + 카드 갱신
+    saveHistoryEntry(json.text);
+    continueSelIdx = 0;
+    renderContinueCard();
 
     // AI가 추출한 핵심 키워드도 트렌딩에 기록 (fire-and-forget)
     if (Array.isArray(json.extractedKeywords) && json.extractedKeywords.length > 0) {
